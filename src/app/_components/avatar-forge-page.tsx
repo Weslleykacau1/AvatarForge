@@ -986,10 +986,10 @@ export default function AvatarForgePage() {
                             </div>
                         </CardContent>
                     </Card>
-                    <Card className="p-4 bg-accent/10 border border-accent">
+                    <Card className="p-4 bg-green-950/30 border border-green-700/50">
                       <CardHeader className="p-0 pb-4 flex flex-row items-center justify-between">
-                        <CardTitle className="flex items-center gap-2 font-headline text-base text-accent">
-                            <Package className="text-accent"/>
+                        <CardTitle className="flex items-center gap-2 font-headline text-base text-green-400">
+                            <Package className="text-green-400"/>
                             Integração de Produto (Opcional)
                         </CardTitle>
                           <Button type="button" variant="secondary" size="sm" onClick={handleSaveProduct}>
