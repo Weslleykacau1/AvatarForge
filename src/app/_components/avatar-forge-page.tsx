@@ -25,6 +25,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Checkbox } from "@/components/ui/checkbox";
 import { cn } from "@/lib/utils";
+import { Switch } from "@/components/ui/switch";
 
 const formSchema = z.object({
   name: z.string().min(1, "Nome é obrigatório.").max(100, "Nome muito longo."),
@@ -54,6 +55,9 @@ const formSchema = z.object({
   productImage: z.string().optional(),
   productDescription: z.string().optional(),
   isPartnership: z.boolean().optional(),
+  hyperrealism: z.boolean().optional(),
+  fourK: z.boolean().optional(),
+  professionalCamera: z.boolean().optional(),
 });
 
 type FormData = z.infer<typeof formSchema>;
@@ -171,6 +175,9 @@ export default function AvatarForgePage() {
       productImage: "",
       productDescription: "",
       isPartnership: false,
+      hyperrealism: false,
+      fourK: false,
+      professionalCamera: false,
     },
   });
   
@@ -216,6 +223,9 @@ export default function AvatarForgePage() {
         videoFormat: data.videoFormat,
         allowDigitalText: data.allowDigitalText === 'true',
         allowPhysicalText: data.allowPhysicalText === 'true',
+        hyperrealism: data.hyperrealism,
+        fourK: data.fourK,
+        professionalCamera: data.professionalCamera,
       });
 
       if (result.success && result.videoDataUri) {
@@ -894,6 +904,48 @@ export default function AvatarForgePage() {
                                 </FormItem>
                               )} />
 
+                              <Card className="p-4 bg-blue-900/10 border border-blue-700">
+                                  <CardTitle className="flex items-center text-base mb-4 gap-2 text-blue-400">
+                                      <Sparkles className="text-blue-400" />
+                                      Melhorias de Qualidade
+                                  </CardTitle>
+                                  <div className="space-y-4 text-foreground">
+                                    <FormField control={form.control} name="hyperrealism" render={({ field }) => (
+                                        <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm bg-card/80">
+                                            <div className="space-y-0.5">
+                                                <FormLabel>Hiper-realismo</FormLabel>
+                                                <FormMessage />
+                                            </div>
+                                            <FormControl>
+                                                <Switch checked={field.value} onCheckedChange={field.onChange} />
+                                            </FormControl>
+                                        </FormItem>
+                                    )} />
+                                    <FormField control={form.control} name="fourK" render={({ field }) => (
+                                        <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm bg-card/80">
+                                            <div className="space-y-0.5">
+                                                <FormLabel>4K</FormLabel>
+                                                <FormMessage />
+                                            </div>
+                                            <FormControl>
+                                                <Switch checked={field.value} onCheckedChange={field.onChange} />
+                                            </FormControl>
+                                        </FormItem>
+                                    )} />
+                                    <FormField control={form.control} name="professionalCamera" render={({ field }) => (
+                                        <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm bg-card/80">
+                                            <div className="space-y-0.5">
+                                                <FormLabel>Câmera Profissional</FormLabel>
+                                                <FormMessage />
+                                            </div>
+                                            <FormControl>
+                                                <Switch checked={field.value} onCheckedChange={field.onChange} />
+                                            </FormControl>
+                                        </FormItem>
+                                    )} />
+                                  </div>
+                              </Card>
+
                               <Card className="p-4 bg-destructive/10 border border-destructive/50">
                                   <CardTitle className="flex items-center text-base mb-2 gap-2 text-red-400">
                                       <FileText className="text-red-400" />
@@ -994,7 +1046,7 @@ export default function AvatarForgePage() {
                           </Tabs>
 
                           <div className="flex flex-wrap gap-2 pt-4">
-                            <Button type="submit" disabled={isPending || !form.formState.isValid} className={cn("flex-grow", !isPending && "text-primary-foreground bg-gradient-to-r from-pink-500 to-orange-400 hover:from-pink-600 hover:to-orange-500")}>
+                            <Button type="submit" disabled={isPending || !form.formState.isValid} className={cn("flex-grow", !isPending && "text-white bg-gradient-to-r from-pink-500 to-orange-400 hover:from-pink-600 hover:to-orange-500")}>
                               {isPending ? <Loader className="animate-spin mr-2 h-4 w-4" /> : <Bot className="mr-2 h-4 w-4" />}
                               {isPending ? "Gerando..." : "Gerar Vídeo"}
                             </Button>

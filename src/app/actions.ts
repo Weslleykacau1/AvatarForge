@@ -9,7 +9,7 @@ import { analyzeProductImage, type AnalyzeProductImageOutput } from "@/ai/flows/
 import { analyzeImage } from "@/ai/flows/analyze-image-flow";
 import { analyzeText } from "@/ai/flows/analyze-text-flow";
 import { generateFullScene, type GenerateFullSceneOutput } from "@/ai/flows/generate-full-scene-flow";
-import { generateVideoFromScript, type GenerateVideoFromScriptInput } from "@/ai/flows/generate-video-from-script-flow";
+import { generateVideoFromScript } from "@/ai/flows/generate-video-from-script-flow";
 
 
 const generateFullSceneSchema = z.object({
@@ -26,6 +26,9 @@ const generateFullSceneSchema = z.object({
   videoFormat: z.string().optional(),
   allowDigitalText: z.boolean().optional(),
   allowPhysicalText: z.boolean().optional(),
+  hyperrealism: z.boolean().optional(),
+  fourK: z.boolean().optional(),
+  professionalCamera: z.boolean().optional(),
 });
 
 type FullSceneState = {

@@ -25,6 +25,9 @@ const GenerateFullSceneInputSchema = z.object({
   videoFormat: z.string().optional().describe('The format of the video (e.g., 9:16).'),
   allowDigitalText: z.boolean().optional().describe('Whether to allow digital on-screen text.'),
   allowPhysicalText: z.boolean().optional().describe('Whether to allow only physical text like labels and signs.'),
+  hyperrealism: z.boolean().optional().describe('Whether to generate a hyperrealistic video.'),
+  fourK: z.boolean().optional().describe('Whether to generate a 4k video.'),
+  professionalCamera: z.boolean().optional().describe('Whether to simulate a professional camera.'),
 });
 
 export type GenerateFullSceneInput = z.infer<typeof GenerateFullSceneInputSchema>;
@@ -101,6 +104,9 @@ const generateFullSceneFlow = ai.defineFlow(
         videoFormat: input.videoFormat,
         allowDigitalText: input.allowDigitalText,
         allowPhysicalText: input.allowPhysicalText,
+        hyperrealism: input.hyperrealism,
+        fourK: input.fourK,
+        professionalCamera: input.professionalCamera,
     });
 
     return {

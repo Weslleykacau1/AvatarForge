@@ -27,6 +27,9 @@ export type Scene = {
   productImage?: string;
   productDescription?: string;
   isPartnership?: boolean;
+  hyperrealism?: boolean;
+  fourK?: boolean;
+  professionalCamera?: boolean;
 };
 
 export type Avatar = {

@@ -25,6 +25,9 @@ const GenerateAvatarVideoInputSchema = z.object({
   allowDigitalText: z.boolean().optional().describe('Whether to allow digital on-screen text.'),
   allowPhysicalText: z.boolean().optional().describe('Whether to allow only physical text like labels and signs.'),
   sceneImageDataUri: z.string().optional().describe("An optional reference photo for the scene, as a data URI that must include a MIME type and use Base64 encoding. Expected format: 'data:<mimetype>;base64,<encoded_data>'."),
+  hyperrealism: z.boolean().optional().describe('Whether to generate a hyperrealistic video.'),
+  fourK: z.boolean().optional().describe('Whether to generate a 4k video.'),
+  professionalCamera: z.boolean().optional().describe('Whether to simulate a professional camera.'),
 });
 
 export type GenerateAvatarVideoInput = z.infer<typeof GenerateAvatarVideoInputSchema>;
@@ -48,9 +51,14 @@ const generateAvatarVideoFlow = ai.defineFlow(
   },
   async input => {
     
+    let scenario = input.scenarioPrompt;
+    if (input.hyperrealism) scenario += ", hyperrealistic";
+    if (input.fourK) scenario += ", 4k";
+    if (input.professionalCamera) scenario += ", professional camera footage";
+
     const promptText = `
       Scene Title: ${input.sceneTitle}
-      Scenario and Influencer Details: ${input.scenarioPrompt}
+      Scenario and Influencer Details: ${scenario}
       Main Action: ${input.actionPrompt}
       Dialogue: ${input.dialogue || 'No dialogue.'}
       Accent: ${input.accent || 'Padrão'}
