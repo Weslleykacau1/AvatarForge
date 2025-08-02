@@ -599,507 +599,509 @@ export default function AvatarForgePage() {
             </TabsList>
 
             <TabsContent value="creator">
-              <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 pt-6">
-
-                <div className="lg:col-span-2 flex flex-col gap-8">
-                  <Card className="bg-card/80">
-                    <CardHeader>
-                      <CardTitle className="flex items-center gap-2 font-headline text-xl">
-                        <Film className="text-accent" />
-                        Editor
-                      </CardTitle>
-                      <CardDescription>Crie seu avatar, defina a cena e gere o vídeo.</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                      <Form {...form}>
-                        <form onSubmit={onGenerateSubmit} className="space-y-6">
-                          <Tabs defaultValue="scene" className="w-full">
-                            <TabsList className="grid w-full grid-cols-2">
-                              <TabsTrigger value="scene"><Camera className="mr-2" />Cena</TabsTrigger>
-                              <TabsTrigger value="avatar"><Users className="mr-2" />Avatar</TabsTrigger>
-                            </TabsList>
-                            <TabsContent value="avatar" className="space-y-6 pt-4">
-                              <Card className="bg-muted/30">
-                                <CardHeader>
-                                    <CardTitle className="flex items-center gap-2 font-headline text-base">
-                                        <UploadCloud className="text-accent"/>
-                                        1. Comece com uma Imagem
-                                    </CardTitle>
-                                </CardHeader>
-                                <CardContent className="flex flex-col items-center gap-4">
-                                    <Button type="button" size="lg" onClick={() => referenceFileInputRef.current?.click()} className="text-white bg-gradient-to-r from-gradient-purple to-gradient-orange hover:from-gradient-purple/90 hover:to-gradient-orange/90">
-                                        <FileImage className="mr-2" />
-                                        Escolher
-                                    </Button>
-                                    <input type="file" accept="image/*" ref={referenceFileInputRef} onChange={handleReferenceFileChange} className="hidden" />
-                                    
-                                    <div className="w-full aspect-square rounded-lg bg-black/20 flex items-center justify-center">
-                                      {referenceImagePreview ? (
-                                        <Image src={referenceImagePreview} alt="Prévia da referência" width={200} height={200} className="object-cover rounded-md" />
-                                      ) : (
-                                        <p className="text-muted-foreground">Prévia</p>
-                                      )}
-                                    </div>
-                                    
-                                    <Button type="button" className="w-full" onClick={handleAnalyzeAndFill} disabled={isAnalyzingAvatar || !form.getValues("referenceImage")}>
-                                        {isAnalyzingAvatar ? <Loader className="animate-spin mr-2"/> : <Bot />}
-                                        Analisar Imagem e Preencher Campos
-                                    </Button>
-                                    <p className="text-xs text-muted-foreground text-center">Dica: A análise preencherá todos os campos do avatar com base na imagem.</p>
-                                </CardContent>
-                              </Card>
-
-                              <Card className="bg-muted/30">
-                                <CardHeader>
-                                    <CardTitle className="flex items-center gap-2 font-headline text-base">
-                                        <FileText className="text-accent"/>
-                                        2. Ou Comece com Texto
-                                    </CardTitle>
-                                </CardHeader>
-                                <CardContent className="space-y-4">
-                                    <FormField control={form.control} name="characteristics" render={({ field }) => (
-                                      <FormItem>
-                                        <FormLabel>Cole as Características</FormLabel>
-                                        <FormControl><Textarea placeholder="Cole aqui um texto com as características do influenciador..." {...field} rows={5} /></FormControl>
-                                        <FormMessage />
-                                      </FormItem>
-                                    )} />
-                                    <Button type="button" className="w-full" onClick={handleAnalyzeText} disabled={isAnalyzingText}>
-                                      {isAnalyzingText ? <Loader className="animate-spin mr-2" /> : <Search />} Analisar Texto e Preencher Nome/Nicho
-                                    </Button>
-                                </CardContent>
-                              </Card>
-                              
-                              <div className="flex justify-end">
-                                  <Button type="button" variant="secondary" size="sm" onClick={handleSaveAvatar}>
-                                      <Save className="mr-2 h-4 w-4" />
-                                      Salvar Avatar
-                                  </Button>
-                              </div>
-
-                              <FormField control={form.control} name="name" render={({ field }) => (
-                                <FormItem>
-                                  <FormLabel>Nome</FormLabel>
-                                  <FormControl><Input placeholder="Ex: Luna Silva" {...field} /></FormControl>
-                                  <FormMessage />
-                                </FormItem>
-                              )} />
-
-                              <FormField control={form.control} name="niche" render={({ field }) => (
-                                <FormItem>
-                                  <FormLabel>Nicho</FormLabel>
-                                  <FormControl><Input placeholder="Ex: Moda, Jogos" {...field} /></FormControl>
-                                  <FormMessage />
-                                </FormItem>
-                              )} />
-                              
-                              <FormField control={form.control} name="personalityTraits" render={({ field }) => (
-                                <FormItem>
-                                  <FormLabel>Traços de Personalidade</FormLabel>
-                                  <FormControl><Textarea placeholder="Descreva os traços de personalidade..." {...field} rows={3} /></FormControl>
-                                  <FormMessage />
-                                </FormItem>
-                              )} />
-                              
-                              <FormField control={form.control} name="appearanceDetails" render={({ field }) => (
-                                <FormItem>
-                                  <FormLabel>Detalhes de Aparência</FormLabel>
-                                  <FormControl><Textarea placeholder="Descreva a aparência física em detalhe extremo..." {...field} rows={4} /></FormControl>
-                                  <p className="text-xs text-muted-foreground">Dica: Seja detalhado - formato do rosto, cor dos olhos, textura do cabelo, etc. para melhor geração de vídeo.</p>
-                                  <FormMessage />
-                                </FormItem>
-                              )} />
-                              
-                              <FormField control={form.control} name="clothing" render={({ field }) => (
-                                <FormItem>
-                                  <FormLabel>Vestuário</FormLabel>
-                                  <FormControl><Textarea placeholder="Descreva as roupas, sapatos e acessórios que o personagem está a usar..." {...field} rows={3} /></FormControl>
-                                  <FormMessage />
-                                </FormItem>
-                              )} />
-                              
-                              <FormField control={form.control} name="shortBio" render={({ field }) => (
-                                <FormItem>
-                                  <FormLabel>Biografia Curta</FormLabel>
-                                  <FormControl><Input placeholder="Uma breve biografia..." {...field} /></FormControl>
-                                  <FormMessage />
-                                </FormItem>
-                              )} />
-                              
-                              <FormField control={form.control} name="uniqueTrait" render={({ field }) => (
-                                <FormItem>
-                                  <FormLabel>Traço Único/Peculiar</FormLabel>
-                                  <FormControl><Input placeholder="Um traço que torna o influenciador único..." {...field} /></FormControl>
-                                  <FormMessage />
-                                </FormItem>
-                              )} />
-                              
-                              <FormField control={form.control} name="age" render={({ field }) => (
-                                <FormItem>
-                                  <FormLabel>Idade</FormLabel>
-                                  <FormControl><Input placeholder="Idade do influenciador..." {...field} /></FormControl>
-                                  <FormMessage />
-                                </FormItem>
-                              )} />
-
-                              <FormField control={form.control} name="gender" render={({ field }) => (
-                                <FormItem>
-                                  <FormLabel>Gênero</FormLabel>
-                                  <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                    <FormControl>
-                                      <SelectTrigger>
-                                        <SelectValue placeholder="Selecione..." />
-                                      </SelectTrigger>
-                                    </FormControl>
-                                    <SelectContent>
-                                      <SelectItem value="Masculino">Masculino</SelectItem>
-                                      <SelectItem value="Feminino">Feminino</SelectItem>
-                                      <SelectItem value="Não-binário">Não-binário</SelectItem>
-                                      <SelectItem value="Outro">Outro</SelectItem>
-                                    </SelectContent>
-                                  </Select>
-                                  <FormMessage />
-                                </FormItem>
-                              )} />
-                              
-                              <FormField control={form.control} name="accent" render={({ field }) => (
-                                <FormItem>
-                                  <FormLabel>Sotaque (Português do Brasil)</FormLabel>
-                                  <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                    <FormControl>
-                                      <SelectTrigger>
-                                        <SelectValue placeholder="Selecione o sotaque..." />
-                                      </SelectTrigger>
-                                    </FormControl>
-                                    <SelectContent>
-                                      <SelectItem value="Padrão">Padrão</SelectItem>
-                                      <SelectItem value="Paulistano">Paulistano</SelectItem>
-                                      <SelectItem value="Carioca">Carioca</SelectItem>
-                                      <SelectItem value="Mineiro">Mineiro</SelectItem>
-                                      <SelectItem value="Nordestino">Nordestino</SelectItem>
-                                    </SelectContent>
-                                  </Select>
-                                  <FormMessage />
-                                </FormItem>
-                              )} />
-                              
-                               <FormField control={form.control} name="negativePrompt" render={({ field }) => (
-                                <FormItem>
-                                  <FormLabel>Prompt Negativo (o que evitar)</FormLabel>
-                                  <FormControl><Textarea placeholder="Ex: má qualidade, mãos deformadas, texto ilegível..." {...field} rows={2} /></FormControl>
-                                  <FormMessage />
-                                </FormItem>
-                              )} />
-                            </TabsContent>
-
-                            <TabsContent value="scene" className="space-y-6 pt-4">
-                              <FormField control={form.control} name="name" render={({ field }) => (
-                                <FormItem>
-                                  <FormLabel>Título da Cena</FormLabel>
-                                  <FormControl><Input placeholder="Um título curto e cativante..." {...field} /></FormControl>
-                                  <FormMessage />
-                                </FormItem>
-                              )} />
-
-                              <FormField control={form.control} name="scenarioPrompt" render={({ field }) => (
-                                <FormItem>
-                                  <FormLabel>Cenário</FormLabel>
-                                  <FormControl><Textarea placeholder="Descreva o ambiente em detalhes - iluminação, cores, objetos, atmosfera..." {...field} rows={5} /></FormControl>
-                                  <p className="text-xs text-muted-foreground">Dica: Seja específico sobre iluminação, cores dominantes, materiais, e atmosfera. Quanto mais detalhes, melhor o resultado.</p>
-                                  <FormMessage />
-                                </FormItem>
-                              )} />
-                              
-                              <FormField control={form.control} name="sceneImage" render={({ field }) => (
-                                <FormItem>
-                                  <FormLabel>Gerar a partir de uma imagem de referência</FormLabel>
-                                  <FormControl>
-                                    <div>
-                                      <input type="file" accept="image/*" ref={fileInputRef} onChange={handleSceneFileChange} className="hidden" />
-                                      <Button type="button" onClick={() => fileInputRef.current?.click()} disabled={isAnalyzingImage} className="text-white bg-gradient-to-r from-gradient-purple to-gradient-orange hover:from-gradient-purple/90 hover:to-gradient-orange/90">
-                                        {isAnalyzingImage ? <Loader className="animate-spin mr-2" /> : <FileImage className="mr-2" />}
-                                        {isAnalyzingImage ? 'Analisando...' : 'Escolher ficheiro'}
+              <Form {...form}>
+                <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 pt-6">
+                  <div className="lg:col-span-2 flex flex-col gap-8">
+                    <Card className="bg-card/80">
+                      <CardHeader>
+                        <CardTitle className="flex items-center gap-2 font-headline text-xl">
+                          <Film className="text-accent" />
+                          Editor
+                        </CardTitle>
+                        <CardDescription>Crie seu avatar, defina a cena e gere o vídeo.</CardDescription>
+                      </CardHeader>
+                      <CardContent>
+                          <form onSubmit={onGenerateSubmit} className="space-y-6">
+                            <Tabs defaultValue="scene" className="w-full">
+                              <TabsList className="grid w-full grid-cols-2">
+                                <TabsTrigger value="scene"><Camera className="mr-2" />Cena</TabsTrigger>
+                                <TabsTrigger value="avatar"><Users className="mr-2" />Avatar</TabsTrigger>
+                              </TabsList>
+                              <TabsContent value="avatar" className="space-y-6 pt-4">
+                                <Card className="bg-muted/30">
+                                  <CardHeader>
+                                      <CardTitle className="flex items-center gap-2 font-headline text-base">
+                                          <UploadCloud className="text-accent"/>
+                                          1. Comece com uma Imagem
+                                      </CardTitle>
+                                  </CardHeader>
+                                  <CardContent className="flex flex-col items-center gap-4">
+                                      <Button type="button" size="lg" onClick={() => referenceFileInputRef.current?.click()} className="text-white bg-gradient-to-r from-gradient-purple to-gradient-orange hover:from-gradient-purple/90 hover:to-gradient-orange/90">
+                                          <FileImage className="mr-2" />
+                                          Escolher
                                       </Button>
-                                    </div>
-                                  </FormControl>
-                                  <p className="text-xs text-muted-foreground">Preenche o campo "Cenário" ao carregar a imagem.</p>
-                                  {field.value && !isAnalyzingImage && <p className="text-sm text-muted-foreground">Imagem selecionada.</p>}
-                                  <FormMessage />
-                                </FormItem>
-                              )} />
+                                      <input type="file" accept="image/*" ref={referenceFileInputRef} onChange={handleReferenceFileChange} className="hidden" />
+                                      
+                                      <div className="w-full aspect-square rounded-lg bg-black/20 flex items-center justify-center">
+                                        {referenceImagePreview ? (
+                                          <Image src={referenceImagePreview} alt="Prévia da referência" width={200} height={200} className="object-cover rounded-md" />
+                                        ) : (
+                                          <p className="text-muted-foreground">Prévia</p>
+                                        )}
+                                      </div>
+                                      
+                                      <Button type="button" className="w-full" onClick={handleAnalyzeAndFill} disabled={isAnalyzingAvatar || !form.getValues("referenceImage")}>
+                                          {isAnalyzingAvatar ? <Loader className="animate-spin mr-2"/> : <Bot />}
+                                          Analisar Imagem e Preencher Campos
+                                      </Button>
+                                      <p className="text-xs text-muted-foreground text-center">Dica: A análise preencherá todos os campos do avatar com base na imagem.</p>
+                                  </CardContent>
+                                </Card>
 
-                              <FormField control={form.control} name="actionPrompt" render={({ field }) => (
-                                <FormItem>
-                                  <FormLabel>Ação Principal</FormLabel>
-                                  <FormControl><Textarea placeholder="O que o influenciador está a fazer..." {...field} rows={3} /></FormControl>
-                                  <FormMessage />
-                                </FormItem>
-                              )} />
-                              
-                              <FormField control={form.control} name="dialogue" render={({ field }) => (
+                                <Card className="bg-muted/30">
+                                  <CardHeader>
+                                      <CardTitle className="flex items-center gap-2 font-headline text-base">
+                                          <FileText className="text-accent"/>
+                                          2. Ou Comece com Texto
+                                      </CardTitle>
+                                  </CardHeader>
+                                  <CardContent className="space-y-4">
+                                      <FormField control={form.control} name="characteristics" render={({ field }) => (
+                                        <FormItem>
+                                          <FormLabel>Cole as Características</FormLabel>
+                                          <FormControl><Textarea placeholder="Cole aqui um texto com as características do influenciador..." {...field} rows={5} /></FormControl>
+                                          <FormMessage />
+                                        </FormItem>
+                                      )} />
+                                      <Button type="button" className="w-full" onClick={handleAnalyzeText} disabled={isAnalyzingText}>
+                                        {isAnalyzingText ? <Loader className="animate-spin mr-2" /> : <Search />} Analisar Texto e Preencher Nome/Nicho
+                                      </Button>
+                                  </CardContent>
+                                </Card>
+                                
+                                <div className="flex justify-end">
+                                    <Button type="button" variant="secondary" size="sm" onClick={handleSaveAvatar}>
+                                        <Save className="mr-2 h-4 w-4" />
+                                        Salvar Avatar
+                                    </Button>
+                                </div>
+
+                                <FormField control={form.control} name="name" render={({ field }) => (
                                   <FormItem>
-                                      <FormLabel className="flex items-center gap-2"><MessageSquare /> Diálogo</FormLabel>
-                                      <FormControl><Textarea placeholder="O que o influenciador diz (em Português do Brasil)..." {...field} rows={3} /></FormControl>
-                                      <FormMessage />
+                                    <FormLabel>Nome</FormLabel>
+                                    <FormControl><Input placeholder="Ex: Luna Silva" {...field} /></FormControl>
+                                    <FormMessage />
                                   </FormItem>
-                              )} />
-                              <div className="flex gap-2">
-                                  <Button type="button" variant="outline" size="sm" onClick={handleGenerateSeo} disabled={isGeneratingSeo}>
-                                      {isGeneratingSeo ? <Loader className="animate-spin mr-2"/> : <Briefcase />} Gerar SEO
-                                  </Button>
-                                  <Button type="button" variant="secondary" size="sm" onClick={handleSaveScene}>
-                                      <Save className="mr-2 h-4 w-4" />
-                                      Salvar Cena
-                                  </Button>
-                              </div>
+                                )} />
 
-                              <FormField control={form.control} name="cameraAngle" render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Ângulo da Câmera</FormLabel>
+                                <FormField control={form.control} name="niche" render={({ field }) => (
+                                  <FormItem>
+                                    <FormLabel>Nicho</FormLabel>
+                                    <FormControl><Input placeholder="Ex: Moda, Jogos" {...field} /></FormControl>
+                                    <FormMessage />
+                                  </FormItem>
+                                )} />
+                                
+                                <FormField control={form.control} name="personalityTraits" render={({ field }) => (
+                                  <FormItem>
+                                    <FormLabel>Traços de Personalidade</FormLabel>
+                                    <FormControl><Textarea placeholder="Descreva os traços de personalidade..." {...field} rows={3} /></FormControl>
+                                    <FormMessage />
+                                  </FormItem>
+                                )} />
+                                
+                                <FormField control={form.control} name="appearanceDetails" render={({ field }) => (
+                                  <FormItem>
+                                    <FormLabel>Detalhes de Aparência</FormLabel>
+                                    <FormControl><Textarea placeholder="Descreva a aparência física em detalhe extremo..." {...field} rows={4} /></FormControl>
+                                    <p className="text-xs text-muted-foreground">Dica: Seja detalhado - formato do rosto, cor dos olhos, textura do cabelo, etc. para melhor geração de vídeo.</p>
+                                    <FormMessage />
+                                  </FormItem>
+                                )} />
+                                
+                                <FormField control={form.control} name="clothing" render={({ field }) => (
+                                  <FormItem>
+                                    <FormLabel>Vestuário</FormLabel>
+                                    <FormControl><Textarea placeholder="Descreva as roupas, sapatos e acessórios que o personagem está a usar..." {...field} rows={3} /></FormControl>
+                                    <FormMessage />
+                                  </FormItem>
+                                )} />
+                                
+                                <FormField control={form.control} name="shortBio" render={({ field }) => (
+                                  <FormItem>
+                                    <FormLabel>Biografia Curta</FormLabel>
+                                    <FormControl><Input placeholder="Uma breve biografia..." {...field} /></FormControl>
+                                    <FormMessage />
+                                  </FormItem>
+                                )} />
+                                
+                                <FormField control={form.control} name="uniqueTrait" render={({ field }) => (
+                                  <FormItem>
+                                    <FormLabel>Traço Único/Peculiar</FormLabel>
+                                    <FormControl><Input placeholder="Um traço que torna o influenciador único..." {...field} /></FormControl>
+                                    <FormMessage />
+                                  </FormItem>
+                                )} />
+                                
+                                <FormField control={form.control} name="age" render={({ field }) => (
+                                  <FormItem>
+                                    <FormLabel>Idade</FormLabel>
+                                    <FormControl><Input placeholder="Idade do influenciador..." {...field} /></FormControl>
+                                    <FormMessage />
+                                  </FormItem>
+                                )} />
+
+                                <FormField control={form.control} name="gender" render={({ field }) => (
+                                  <FormItem>
+                                    <FormLabel>Gênero</FormLabel>
                                     <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                        <FormControl><SelectTrigger><SelectValue placeholder="Selecione..." /></SelectTrigger></FormControl>
-                                        <SelectContent>
-                                            <SelectItem value="dynamic">Câmera Dinâmica (Criatividade da IA)</SelectItem>
-                                            <SelectItem value="medium">Médio</SelectItem>
-                                            <SelectItem value="wide">Plano Geral</SelectItem>
-                                            <SelectItem value="vlog">Vlog</SelectItem>
-                                            <SelectItem value="selfie">Selfie</SelectItem>
-                                            <SelectItem value="pov">Ponto de Vista (POV)</SelectItem>
-                                        </SelectContent>
+                                      <FormControl>
+                                        <SelectTrigger>
+                                          <SelectValue placeholder="Selecione..." />
+                                        </SelectTrigger>
+                                      </FormControl>
+                                      <SelectContent>
+                                        <SelectItem value="Masculino">Masculino</SelectItem>
+                                        <SelectItem value="Feminino">Feminino</SelectItem>
+                                        <SelectItem value="Não-binário">Não-binário</SelectItem>
+                                        <SelectItem value="Outro">Outro</SelectItem>
+                                      </SelectContent>
                                     </Select>
                                     <FormMessage />
-                                </FormItem>
-                            )} />
-
-                              <FormField control={form.control} name="duration" render={({ field }) => (
+                                  </FormItem>
+                                )} />
+                                
+                                <FormField control={form.control} name="accent" render={({ field }) => (
                                   <FormItem>
-                                      <FormLabel>Duração</FormLabel>
-                                      <Select onValueChange={(value) => field.onChange(parseInt(value))} defaultValue={String(field.value)}>
+                                    <FormLabel>Sotaque (Português do Brasil)</FormLabel>
+                                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                      <FormControl>
+                                        <SelectTrigger>
+                                          <SelectValue placeholder="Selecione o sotaque..." />
+                                        </SelectTrigger>
+                                      </FormControl>
+                                      <SelectContent>
+                                        <SelectItem value="Padrão">Padrão</SelectItem>
+                                        <SelectItem value="Paulistano">Paulistano</SelectItem>
+                                        <SelectItem value="Carioca">Carioca</SelectItem>
+                                        <SelectItem value="Mineiro">Mineiro</SelectItem>
+                                        <SelectItem value="Nordestino">Nordestino</SelectItem>
+                                      </SelectContent>
+                                    </Select>
+                                    <FormMessage />
+                                  </FormItem>
+                                )} />
+                                
+                                <FormField control={form.control} name="negativePrompt" render={({ field }) => (
+                                  <FormItem>
+                                    <FormLabel>Prompt Negativo (o que evitar)</FormLabel>
+                                    <FormControl><Textarea placeholder="Ex: má qualidade, mãos deformadas, texto ilegível..." {...field} rows={2} /></FormControl>
+                                    <FormMessage />
+                                  </FormItem>
+                                )} />
+                              </TabsContent>
+
+                              <TabsContent value="scene" className="space-y-6 pt-4">
+                                <FormField control={form.control} name="name" render={({ field }) => (
+                                  <FormItem>
+                                    <FormLabel>Título da Cena</FormLabel>
+                                    <FormControl><Input placeholder="Um título curto e cativante..." {...field} /></FormControl>
+                                    <FormMessage />
+                                  </FormItem>
+                                )} />
+
+                                <FormField control={form.control} name="scenarioPrompt" render={({ field }) => (
+                                  <FormItem>
+                                    <FormLabel>Cenário</FormLabel>
+                                    <FormControl><Textarea placeholder="Descreva o ambiente em detalhes - iluminação, cores, objetos, atmosfera..." {...field} rows={5} /></FormControl>
+                                    <p className="text-xs text-muted-foreground">Dica: Seja específico sobre iluminação, cores dominantes, materiais, e atmosfera. Quanto mais detalhes, melhor o resultado.</p>
+                                    <FormMessage />
+                                  </FormItem>
+                                )} />
+                                
+                                <FormField control={form.control} name="sceneImage" render={({ field }) => (
+                                  <FormItem>
+                                    <FormLabel>Gerar a partir de uma imagem de referência</FormLabel>
+                                    <FormControl>
+                                      <div>
+                                        <input type="file" accept="image/*" ref={fileInputRef} onChange={handleSceneFileChange} className="hidden" />
+                                        <Button type="button" onClick={() => fileInputRef.current?.click()} disabled={isAnalyzingImage} className="text-white bg-gradient-to-r from-gradient-purple to-gradient-orange hover:from-gradient-purple/90 hover:to-gradient-orange/90">
+                                          {isAnalyzingImage ? <Loader className="animate-spin mr-2" /> : <FileImage className="mr-2" />}
+                                          {isAnalyzingImage ? 'Analisando...' : 'Escolher ficheiro'}
+                                        </Button>
+                                      </div>
+                                    </FormControl>
+                                    <p className="text-xs text-muted-foreground">Preenche o campo "Cenário" ao carregar a imagem.</p>
+                                    {field.value && !isAnalyzingImage && <p className="text-sm text-muted-foreground">Imagem selecionada.</p>}
+                                    <FormMessage />
+                                  </FormItem>
+                                )} />
+
+                                <FormField control={form.control} name="actionPrompt" render={({ field }) => (
+                                  <FormItem>
+                                    <FormLabel>Ação Principal</FormLabel>
+                                    <FormControl><Textarea placeholder="O que o influenciador está a fazer..." {...field} rows={3} /></FormControl>
+                                    <FormMessage />
+                                  </FormItem>
+                                )} />
+                                
+                                <FormField control={form.control} name="dialogue" render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel className="flex items-center gap-2"><MessageSquare /> Diálogo</FormLabel>
+                                        <FormControl><Textarea placeholder="O que o influenciador diz (em Português do Brasil)..." {...field} rows={3} /></FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )} />
+                                <div className="flex gap-2">
+                                    <Button type="button" variant="outline" size="sm" onClick={handleGenerateSeo} disabled={isGeneratingSeo}>
+                                        {isGeneratingSeo ? <Loader className="animate-spin mr-2"/> : <Briefcase />} Gerar SEO
+                                    </Button>
+                                    <Button type="button" variant="secondary" size="sm" onClick={handleSaveScene}>
+                                        <Save className="mr-2 h-4 w-4" />
+                                        Salvar Cena
+                                    </Button>
+                                </div>
+
+                                <FormField control={form.control} name="cameraAngle" render={({ field }) => (
+                                  <FormItem>
+                                      <FormLabel>Ângulo da Câmera</FormLabel>
+                                      <Select onValueChange={field.onChange} defaultValue={field.value}>
                                           <FormControl><SelectTrigger><SelectValue placeholder="Selecione..." /></SelectTrigger></FormControl>
                                           <SelectContent>
-                                              <SelectItem value="5">5 seg</SelectItem>
-                                              <SelectItem value="8">8 seg</SelectItem>
+                                              <SelectItem value="dynamic">Câmera Dinâmica (Criatividade da IA)</SelectItem>
+                                              <SelectItem value="medium">Médio</SelectItem>
+                                              <SelectItem value="wide">Plano Geral</SelectItem>
+                                              <SelectItem value="vlog">Vlog</SelectItem>
+                                              <SelectItem value="selfie">Selfie</SelectItem>
+                                              <SelectItem value="pov">Ponto de Vista (POV)</SelectItem>
                                           </SelectContent>
                                       </Select>
                                       <FormMessage />
                                   </FormItem>
                               )} />
 
-                              <FormField control={form.control} name="videoFormat" render={({ field }) => (
-                                <FormItem>
-                                  <FormLabel>Formato do Vídeo</FormLabel>
-                                  <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                    <FormControl>
-                                      <SelectTrigger>
-                                        <SelectValue placeholder="Selecione..." />
-                                      </SelectTrigger>
-                                    </FormControl>
-                                    <SelectContent>
-                                      <SelectItem value="9:16"><div className="flex items-center gap-2"><RectangleVertical /> Vertical (9:16)</div></SelectItem>
-                                      <SelectItem value="16:9"><div className="flex items-center gap-2"><RectangleHorizontal/> Horizontal (16:9)</div></SelectItem>
-                                      <SelectItem value="1:1"><div className="flex items-center gap-2"><Square /> Quadrado (1:1)</div></SelectItem>
-                                    </SelectContent>
-                                  </Select>
-                                  <FormMessage />
-                                </FormItem>
-                              )} />
+                                <FormField control={form.control} name="duration" render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Duração</FormLabel>
+                                        <Select onValueChange={(value) => field.onChange(parseInt(value))} defaultValue={String(field.value)}>
+                                            <FormControl><SelectTrigger><SelectValue placeholder="Selecione..." /></SelectTrigger></FormControl>
+                                            <SelectContent>
+                                                <SelectItem value="5">5 seg</SelectItem>
+                                                <SelectItem value="8">8 seg</SelectItem>
+                                            </SelectContent>
+                                        </Select>
+                                        <FormMessage />
+                                    </FormItem>
+                                )} />
 
-                              <Card className="p-4 bg-blue-900/10 border border-blue-700">
-                                  <CardTitle className="flex items-center text-base mb-4 gap-2 text-blue-400">
-                                      <Sparkles className="text-blue-400" />
-                                      Melhorias de Qualidade
-                                  </CardTitle>
-                                  <div className="space-y-4 text-foreground">
-                                    <FormField control={form.control} name="hyperrealism" render={({ field }) => (
-                                        <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm bg-card/80">
-                                            <div className="space-y-0.5">
-                                                <FormLabel>Hiper-realismo</FormLabel>
-                                                <FormMessage />
-                                            </div>
-                                            <FormControl>
-                                                <Switch checked={field.value} onCheckedChange={field.onChange} />
-                                            </FormControl>
-                                        </FormItem>
-                                    )} />
-                                    <FormField control={form.control} name="fourK" render={({ field }) => (
-                                        <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm bg-card/80">
-                                            <div className="space-y-0.5">
-                                                <FormLabel>4K</FormLabel>
-                                                <FormMessage />
-                                            </div>
-                                            <FormControl>
-                                                <Switch checked={field.value} onCheckedChange={field.onChange} />
-                                            </FormControl>
-                                        </FormItem>
-                                    )} />
-                                    <FormField control={form.control} name="professionalCamera" render={({ field }) => (
-                                        <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm bg-card/80">
-                                            <div className="space-y-0.5">
-                                                <FormLabel>Câmera Profissional</FormLabel>
-                                                <FormMessage />
-                                            </div>
-                                            <FormControl>
-                                                <Switch checked={field.value} onCheckedChange={field.onChange} />
-                                            </FormControl>
-                                        </FormItem>
-                                    )} />
-                                  </div>
-                              </Card>
+                                <FormField control={form.control} name="videoFormat" render={({ field }) => (
+                                  <FormItem>
+                                    <FormLabel>Formato do Vídeo</FormLabel>
+                                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                      <FormControl>
+                                        <SelectTrigger>
+                                          <SelectValue placeholder="Selecione..." />
+                                        </SelectTrigger>
+                                      </FormControl>
+                                      <SelectContent>
+                                        <SelectItem value="9:16"><div className="flex items-center gap-2"><RectangleVertical /> Vertical (9:16)</div></SelectItem>
+                                        <SelectItem value="16:9"><div className="flex items-center gap-2"><RectangleHorizontal/> Horizontal (16:9)</div></SelectItem>
+                                        <SelectItem value="1:1"><div className="flex items-center gap-2"><Square /> Quadrado (1:1)</div></SelectItem>
+                                      </SelectContent>
+                                    </Select>
+                                    <FormMessage />
+                                  </FormItem>
+                                )} />
 
-                              <Card className="p-4 bg-destructive/10 border border-destructive/50">
-                                  <CardTitle className="flex items-center text-base mb-2 gap-2 text-red-400">
-                                      <FileText className="text-red-400" />
-                                      Controle de Texto no Ecrã
-                                  </CardTitle>
-                                  <div className="space-y-4 text-foreground">
-                                      <FormField control={form.control} name="allowDigitalText" render={({ field }) => (
-                                          <FormItem className="space-y-2 flex justify-between items-center">
-                                              <FormLabel>Permite textos digitais na tela?</FormLabel>
-                                              <FormControl>
-                                                  <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="flex gap-4">
-                                                      <FormItem className="flex items-center space-x-2"><FormControl><RadioGroupItem value="true" /></FormControl><FormLabel className="font-normal">Sim</FormLabel></FormItem>
-                                                      <FormItem className="flex items-center space-x-2"><FormControl><RadioGroupItem value="false" /></FormControl><FormLabel className="font-normal">Não</FormLabel></FormItem>
-                                                  </RadioGroup>
-                                              </FormControl>
+                                <Card className="p-4 bg-destructive/10 border border-destructive/50">
+                                    <CardTitle className="flex items-center text-base mb-2 gap-2 text-red-400">
+                                        <FileText className="text-red-400" />
+                                        Controle de Texto no Ecrã
+                                    </CardTitle>
+                                    <div className="space-y-4 text-foreground">
+                                        <FormField control={form.control} name="allowDigitalText" render={({ field }) => (
+                                            <FormItem className="space-y-2 flex justify-between items-center">
+                                                <FormLabel>Permite textos digitais na tela?</FormLabel>
+                                                <FormControl>
+                                                    <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="flex gap-4">
+                                                        <FormItem className="flex items-center space-x-2"><FormControl><RadioGroupItem value="true" /></FormControl><FormLabel className="font-normal">Sim</FormLabel></FormItem>
+                                                        <FormItem className="flex items-center space-x-2"><FormControl><RadioGroupItem value="false" /></FormControl><FormLabel className="font-normal">Não</FormLabel></FormItem>
+                                                    </RadioGroup>
+                                                </FormControl>
+                                            </FormItem>
+                                        )} />
+                                        <FormField control={form.control} name="allowPhysicalText" render={({ field }) => (
+                                            <FormItem className="space-y-2 flex justify-between items-center">
+                                                <FormLabel>Apenas textos físicos como rótulos e placas reais?</FormLabel>
+                                                <FormControl>
+                                                    <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="flex gap-4">
+                                                        <FormItem className="flex items-center space-x-2"><FormControl><RadioGroupItem value="true" /></FormControl><FormLabel className="font-normal">Sim</FormLabel></FormItem>
+                                                        <FormItem className="flex items-center space-x-2"><FormControl><RadioGroupItem value="false" /></FormControl><FormLabel className="font-normal">Não</FormLabel></FormItem>
+                                                    </RadioGroup>
+                                                </FormControl>
+                                            </FormItem>
+                                        )} />
+                                    </div>
+                                </Card>
+                                
+                                <Card className="p-4 bg-accent/10 border border-accent">
+                                  <CardHeader className="p-0 pb-4 flex flex-row items-center justify-between">
+                                    <CardTitle className="flex items-center gap-2 font-headline text-base text-accent">
+                                        <Package className="text-accent"/>
+                                        Integração de Produto (Opcional)
+                                    </CardTitle>
+                                     <Button type="button" variant="secondary" size="sm" onClick={handleSaveProduct}>
+                                        <Save className="mr-2 h-4 w-4" />
+                                        Salvar Produto
+                                    </Button>
+                                  </CardHeader>
+                                  <CardContent className="p-0 space-y-4">
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                      <FormField control={form.control} name="productName" render={({ field }) => (
+                                          <FormItem>
+                                              <FormLabel>Nome do Produto</FormLabel>
+                                              <FormControl><Input placeholder="Nome do produto..." {...field} disabled={isAnalyzingProduct} /></FormControl>
+                                              <FormMessage />
                                           </FormItem>
                                       )} />
-                                      <FormField control={form.control} name="allowPhysicalText" render={({ field }) => (
-                                          <FormItem className="space-y-2 flex justify-between items-center">
-                                              <FormLabel>Apenas textos físicos como rótulos e placas reais?</FormLabel>
-                                              <FormControl>
-                                                  <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="flex gap-4">
-                                                      <FormItem className="flex items-center space-x-2"><FormControl><RadioGroupItem value="true" /></FormControl><FormLabel className="font-normal">Sim</FormLabel></FormItem>
-                                                      <FormItem className="flex items-center space-x-2"><FormControl><RadioGroupItem value="false" /></FormControl><FormLabel className="font-normal">Não</FormLabel></FormItem>
-                                                  </RadioGroup>
-                                              </FormControl>
+                                      <FormField control={form.control} name="partnerBrand" render={({ field }) => (
+                                          <FormItem>
+                                              <FormLabel>Marca Parceira</FormLabel>
+                                              <FormControl><Input placeholder="Marca parceira..." {...field} disabled={isAnalyzingProduct} /></FormControl>
+                                              <FormMessage />
                                           </FormItem>
                                       )} />
-                                  </div>
-                              </Card>
-                              
-                              <Card className="p-4 bg-accent/10 border border-accent">
-                                <CardHeader className="p-0 pb-4 flex flex-row items-center justify-between">
-                                  <CardTitle className="flex items-center gap-2 font-headline text-base text-accent">
-                                      <Package className="text-accent"/>
-                                      Integração de Produto (Opcional)
-                                  </CardTitle>
-                                   <Button type="button" variant="secondary" size="sm" onClick={handleSaveProduct}>
-                                      <Save className="mr-2 h-4 w-4" />
-                                      Salvar Produto
-                                  </Button>
-                                </CardHeader>
-                                <CardContent className="p-0 space-y-4">
-                                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                    <FormField control={form.control} name="productName" render={({ field }) => (
+                                    </div>
+                                     <FormField control={form.control} name="productImage" render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Nome do Produto</FormLabel>
-                                            <FormControl><Input placeholder="Nome do produto..." {...field} disabled={isAnalyzingProduct} /></FormControl>
+                                            <FormLabel>Carregue a imagem do produto</FormLabel>
+                                            <FormControl>
+                                            <div>
+                                                <input type="file" accept="image/*" ref={productFileInputRef} onChange={handleProductFileChange} className="hidden" />
+                                                <Button type="button" onClick={() => productFileInputRef.current?.click()} disabled={isAnalyzingProduct} className="text-white bg-gradient-to-r from-gradient-purple to-gradient-orange hover:from-gradient-purple/90 hover:to-gradient-orange/90">
+                                                    {isAnalyzingProduct ? <Loader className="animate-spin mr-2" /> : <FileImage className="mr-2" />}
+                                                    {isAnalyzingProduct ? 'Analisando...' : 'Escolher ficheiro'}
+                                                </Button>
+                                            </div>
+                                            </FormControl>
+                                            <p className="text-xs text-muted-foreground">Preenche as informações do produto ao carregar a imagem.</p>
+                                            {field.value && !isAnalyzingProduct && <p className="text-sm text-muted-foreground">Ficheiro selecionado.</p>}
                                             <FormMessage />
                                         </FormItem>
                                     )} />
-                                    <FormField control={form.control} name="partnerBrand" render={({ field }) => (
+                                    <FormField control={form.control} name="productDescription" render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Marca Parceira</FormLabel>
-                                            <FormControl><Input placeholder="Marca parceira..." {...field} disabled={isAnalyzingProduct} /></FormControl>
+                                            <FormLabel>Descrição do Produto</FormLabel>
+                                            <FormControl><Textarea placeholder="Descrição detalhada do produto..." {...field} rows={3} disabled={isAnalyzingProduct} /></FormControl>
                                             <FormMessage />
                                         </FormItem>
                                     )} />
-                                  </div>
-                                   <FormField control={form.control} name="productImage" render={({ field }) => (
-                                      <FormItem>
-                                          <FormLabel>Carregue a imagem do produto</FormLabel>
-                                          <FormControl>
-                                          <div>
-                                              <input type="file" accept="image/*" ref={productFileInputRef} onChange={handleProductFileChange} className="hidden" />
-                                              <Button type="button" onClick={() => productFileInputRef.current?.click()} disabled={isAnalyzingProduct} className="text-white bg-gradient-to-r from-gradient-purple to-gradient-orange hover:from-gradient-purple/90 hover:to-gradient-orange/90">
-                                                  {isAnalyzingProduct ? <Loader className="animate-spin mr-2" /> : <FileImage className="mr-2" />}
-                                                  {isAnalyzingProduct ? 'Analisando...' : 'Escolher ficheiro'}
-                                              </Button>
-                                          </div>
-                                          </FormControl>
-                                          <p className="text-xs text-muted-foreground">Preenche as informações do produto ao carregar a imagem.</p>
-                                          {field.value && !isAnalyzingProduct && <p className="text-sm text-muted-foreground">Ficheiro selecionado.</p>}
-                                          <FormMessage />
-                                      </FormItem>
-                                  )} />
-                                  <FormField control={form.control} name="productDescription" render={({ field }) => (
-                                      <FormItem>
-                                          <FormLabel>Descrição do Produto</FormLabel>
-                                          <FormControl><Textarea placeholder="Descrição detalhada do produto..." {...field} rows={3} disabled={isAnalyzingProduct} /></FormControl>
-                                          <FormMessage />
-                                      </FormItem>
-                                  )} />
-                                  <FormField control={form.control} name="isPartnership" render={({ field }) => (
-                                      <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
-                                          <FormControl>
-                                              <Checkbox checked={field.value} onCheckedChange={field.onChange} />
-                                          </FormControl>
-                                          <div className="space-y-1 leading-none">
-                                              <FormLabel>É uma parceria / conteúdo patrocinado.</FormLabel>
-                                          </div>
-                                      </FormItem>
-                                  )} />
-                                </CardContent>
-                              </Card>
+                                    <FormField control={form.control} name="isPartnership" render={({ field }) => (
+                                        <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+                                            <FormControl>
+                                                <Checkbox checked={field.value} onCheckedChange={field.onChange} />
+                                            </FormControl>
+                                            <div className="space-y-1 leading-none">
+                                                <FormLabel>É uma parceria / conteúdo patrocinado.</FormLabel>
+                                            </div>
+                                        </FormItem>
+                                    )} />
+                                  </CardContent>
+                                </Card>
 
-                            </TabsContent>
-                          </Tabs>
-                        </form>
-                      </Form>
-                    </CardContent>
-                  </Card>
-                </div>
-
-                <div className="lg:col-span-3 flex flex-col gap-8">
-                  <Card className="bg-card/80">
-                      <CardHeader>
-                          <CardTitle className="flex items-center gap-2 font-headline text-xl">
-                              <Edit className="text-accent" />
-                              Gere o Roteiro Detalhado
-                          </CardTitle>
-                          <CardDescription>Use o influenciador e a cena definidos para gerar um roteiro detalhado para um vídeo.</CardDescription>
-                      </CardHeader>
-                      <CardContent className="space-y-4">
-                          <div className="flex flex-col gap-2">
-                              <Button
-                                  type="button"
-                                  onClick={() => handleGenerateScript('markdown')}
-                                  disabled={isGeneratingScript || !getInfluencerDescription(form.getValues()) || !form.getValues("scenarioPrompt")}
-                                  className="text-white bg-gradient-to-r from-gradient-purple to-gradient-orange hover:from-gradient-purple/90 hover:to-gradient-orange/90"
-                              >
-                                  {isGeneratingScript ? <Loader className="animate-spin mr-2" /> : <Bot />}
-                                  Gerar Roteiro (Markdown)
-                              </Button>
-                              <Button
-                                  type="button"
-                                  variant="secondary"
-                                  onClick={() => handleGenerateScript('json')}
-                                  disabled={isGeneratingScript || !getInfluencerDescription(form.getValues()) || !form.getValues("scenarioPrompt")}
-                              >
-                                 {isGeneratingScript ? <Loader className="animate-spin mr-2" /> : <Code />}
-                                  Gerar Roteiro (JSON)
-                              </Button>
-                          </div>
-                           <p className="text-xs text-muted-foreground text-center">Para gerar, preencha a descrição do influenciador e o cenário.</p>
-                          {isGeneratingScript && (
-                               <div className="space-y-2">
-                                  <Skeleton className="h-4 w-1/4" />
-                                  <Skeleton className="h-20 w-full" />
-                              </div>
-                          )}
-                          {scriptContent && !isGeneratingScript ? (
-                              <ScrollArea className="h-60 w-full rounded-md border p-4 bg-muted/20">
-                                  <pre className="whitespace-pre-wrap text-sm">{scriptContent}</pre>
-                              </ScrollArea>
-                          ) : (
-                            <div className="h-60 w-full rounded-md border-dashed border-2 flex items-center justify-center bg-muted/20">
-                              <p className="text-muted-foreground text-center">O ROTEIRO GERADO APARECE AQUI</p>
-                            </div>
-                          )}
+                              </TabsContent>
+                            </Tabs>
+                          </form>
                       </CardContent>
-                  </Card>
+                    </Card>
+                  </div>
+
+                  <div className="lg:col-span-3 flex flex-col gap-8">
+                    <Card className="p-4 bg-blue-900/10 border border-blue-700">
+                        <CardHeader className="p-0 mb-4">
+                            <CardTitle className="flex items-center text-base gap-2 text-blue-400">
+                                <Sparkles className="text-blue-400" />
+                                Melhorias de Qualidade
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent className="p-0">
+                            <div className="space-y-4 text-foreground">
+                              <FormField control={form.control} name="hyperrealism" render={({ field }) => (
+                                  <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm bg-card/80">
+                                      <div className="space-y-0.5">
+                                          <FormLabel>Hiper-realismo</FormLabel>
+                                          <FormMessage />
+                                      </div>
+                                      <FormControl>
+                                          <Switch checked={field.value} onCheckedChange={field.onChange} />
+                                      </FormControl>
+                                  </FormItem>
+                              )} />
+                              <FormField control={form.control} name="fourK" render={({ field }) => (
+                                  <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm bg-card/80">
+                                      <div className="space-y-0.5">
+                                          <FormLabel>4K</FormLabel>
+                                          <FormMessage />
+                                      </div>
+                                      <FormControl>
+                                          <Switch checked={field.value} onCheckedChange={field.onChange} />
+                                      </FormControl>
+                                  </FormItem>
+                              )} />
+                              <FormField control={form.control} name="professionalCamera" render={({ field }) => (
+                                  <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm bg-card/80">
+                                      <div className="space-y-0.5">
+                                          <FormLabel>Câmera Profissional</FormLabel>
+                                          <FormMessage />
+                                      </div>
+                                      <FormControl>
+                                          <Switch checked={field.value} onCheckedChange={field.onChange} />
+                                      </FormControl>
+                                  </FormItem>
+                              )} />
+                            </div>
+                        </CardContent>
+                    </Card>
+                    <Card className="bg-card/80">
+                        <CardHeader>
+                            <CardTitle className="flex items-center gap-2 font-headline text-xl">
+                                <Edit className="text-accent" />
+                                Gere o Roteiro Detalhado
+                            </CardTitle>
+                            <CardDescription>Use o influenciador e a cena definidos para gerar um roteiro detalhado para um vídeo.</CardDescription>
+                        </CardHeader>
+                        <CardContent className="space-y-4">
+                            <div className="flex flex-col gap-2">
+                                <Button
+                                    type="button"
+                                    onClick={() => handleGenerateScript('markdown')}
+                                    disabled={isGeneratingScript || !getInfluencerDescription(form.getValues()) || !form.getValues("scenarioPrompt")}
+                                    className="text-white bg-gradient-to-r from-gradient-purple to-gradient-orange hover:from-gradient-purple/90 hover:to-gradient-orange/90"
+                                >
+                                    {isGeneratingScript ? <Loader className="animate-spin mr-2" /> : <Bot />}
+                                    Gerar Roteiro (Markdown)
+                                </Button>
+                                <Button
+                                    type="button"
+                                    variant="secondary"
+                                    onClick={() => handleGenerateScript('json')}
+                                    disabled={isGeneratingScript || !getInfluencerDescription(form.getValues()) || !form.getValues("scenarioPrompt")}
+                                >
+                                  {isGeneratingScript ? <Loader className="animate-spin mr-2" /> : <Code />}
+                                    Gerar Roteiro (JSON)
+                                </Button>
+                            </div>
+                            <p className="text-xs text-muted-foreground text-center">Para gerar, preencha a descrição do influenciador e o cenário.</p>
+                            {isGeneratingScript && (
+                                <div className="space-y-2">
+                                    <Skeleton className="h-4 w-1/4" />
+                                    <Skeleton className="h-20 w-full" />
+                                </div>
+                            )}
+                            {scriptContent && !isGeneratingScript ? (
+                                <ScrollArea className="h-60 w-full rounded-md border p-4 bg-muted/20">
+                                    <pre className="whitespace-pre-wrap text-sm">{scriptContent}</pre>
+                                </ScrollArea>
+                            ) : (
+                              <div className="h-60 w-full rounded-md border-dashed border-2 flex items-center justify-center bg-muted/20">
+                                <p className="text-muted-foreground text-center">O ROTEIRO GERADO APARECE AQUI</p>
+                              </div>
+                            )}
+                        </CardContent>
+                    </Card>
+                  </div>
                 </div>
-              </div>
+              </Form>
             </TabsContent>
 
             <TabsContent value="influencer-gallery">
