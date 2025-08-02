@@ -38,6 +38,7 @@ const generateScriptFlow = ai.defineFlow(
     const prompt = `
       You are a professional screenwriter. Create a detailed video script based on the influencer and scene provided.
       The script should include scene descriptions, camera directions, dialogues, and actions.
+      The dialogue must always be in Brazilian Portuguese.
       
       Influencer Details:
       ${input.influencerDetails}
