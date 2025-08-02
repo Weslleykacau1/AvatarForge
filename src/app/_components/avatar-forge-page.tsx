@@ -472,14 +472,14 @@ export default function AvatarForgePage() {
         <div className="container mx-auto flex items-center justify-between">
           <div className="flex items-center gap-3">
             <Clapperboard className="h-8 w-8 text-accent" />
-            <h1 className="text-2xl font-bold font-headline text-primary-foreground">AvatarForge</h1>
+            <h1 className="text-2xl font-bold font-headline text-foreground">AvatarForge</h1>
           </div>
         </div>
       </header>
 
       <main className="container mx-auto p-4 md:p-8">
        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="grid w-full grid-cols-2 sm:grid-cols-4 mx-auto max-w-2xl">
+            <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 mx-auto max-w-2xl">
               <TabsTrigger value="creator"><Film className="mr-2" />Criador</TabsTrigger>
               <TabsTrigger value="influencer-gallery"><Users className="mr-2" />Galeria de Personagens</TabsTrigger>
               <TabsTrigger value="scene-gallery"><LayoutGrid className="mr-2" />Galeria de Cenas</TabsTrigger>
