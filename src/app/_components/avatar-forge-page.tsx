@@ -805,9 +805,9 @@ export default function AvatarForgePage() {
                                   </FormItem>
                               )} />
 
-                              <Card className="p-4 bg-card border-destructive/50">
-                                  <CardTitle className="flex items-center text-base mb-2 gap-2 text-red-200">
-                                      <FileText className="text-red-200" />
+                              <Card className="p-4 bg-background border border-destructive/50">
+                                  <CardTitle className="flex items-center text-base mb-2 gap-2 text-red-400">
+                                      <FileText className="text-red-400" />
                                       Controle de Texto no Ecrã
                                   </CardTitle>
                                   <div className="space-y-4 text-foreground">
@@ -836,7 +836,7 @@ export default function AvatarForgePage() {
                                   </div>
                               </Card>
                               
-                              <Card className="p-4 bg-card border-accent/50">
+                              <Card className="p-4 bg-background border border-accent">
                                 <CardHeader className="p-0 pb-4 flex flex-row items-center justify-between">
                                   <CardTitle className="flex items-center gap-2 font-headline text-base text-accent">
                                       <Package className="text-accent"/>

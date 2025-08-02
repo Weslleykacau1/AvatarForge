@@ -16,13 +16,13 @@
     --secondary-foreground: 0 0% 98%;
     --muted: 0 0% 20%;
     --muted-foreground: 0 0% 63.9%;
-    --accent: 273 74% 53%; /* Kept for accent */
+    --accent: 140 70% 50%; /* Green for accent */
     --accent-foreground: 0 0% 98%;
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 98%;
     --border: 0 0% 25%; /* Gray for borders */
     --input: 0 0% 25%;
-    --ring: 273 74% 53%; /* Kept for accent */
+    --ring: 140 70% 50%; /* Green for ring */
     --chart-1: 12 76% 61%;
     --chart-2: 173 58% 39%;
     --chart-3: 197 37% 24%;
