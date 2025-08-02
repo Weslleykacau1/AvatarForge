@@ -30,7 +30,7 @@ const formSchema = z.object({
   name: z.string().min(1, "Nome é obrigatório.").max(100, "Nome muito longo."),
   niche: z.string().min(1, "Nicho é obrigatório.").max(100, "Nicho muito longo."),
   scenarioPrompt: z.string().min(1, "Descrição do cenário é obrigatória.").max(1000, "Descrição muito longa."),
-  actionPrompt: z.string().min(1, "Ação principal é obrigatória.").max(1000, "Descrição muito longa."),
+  actionPrompt: z.string().optional(),
   negativePrompt: z.string().optional(),
   sceneImage: z.string().optional(),
   referenceImage: z.string().optional(),
@@ -481,7 +481,7 @@ export default function AvatarForgePage() {
        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
             <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 mx-auto max-w-2xl">
               <TabsTrigger value="creator"><Film className="mr-2" />Criador</TabsTrigger>
-              <TabsTrigger value="influencer-gallery"><Users className="mr-2" />Galeria de Personagens</TabsTrigger>
+              <TabsTrigger value="influencer-gallery"><Users className="mr-2" />Personagens</TabsTrigger>
               <TabsTrigger value="scene-gallery"><LayoutGrid className="mr-2" />Galeria de Cenas</TabsTrigger>
               <TabsTrigger value="product-gallery"><Package className="mr-2" />Galeria de Produtos</TabsTrigger>
             </TabsList>
@@ -753,6 +753,9 @@ export default function AvatarForgePage() {
                                             <SelectItem value="dynamic">Câmera Dinâmica (Criatividade da IA)</SelectItem>
                                             <SelectItem value="medium">Médio</SelectItem>
                                             <SelectItem value="wide">Plano Geral</SelectItem>
+                                            <SelectItem value="vlog">Vlog</SelectItem>
+                                            <SelectItem value="selfie">Selfie</SelectItem>
+                                            <SelectItem value="pov">Ponto de Vista (POV)</SelectItem>
                                         </SelectContent>
                                     </Select>
                                     <FormMessage />
@@ -783,9 +786,9 @@ export default function AvatarForgePage() {
                                       </SelectTrigger>
                                     </FormControl>
                                     <SelectContent>
-                                      <SelectItem value="9:16">Vertical (9:16)</SelectItem>
-                                      <SelectItem value="16:9">Horizontal (16:9)</SelectItem>
-                                      <SelectItem value="1:1">Quadrado (1:1)</SelectItem>
+                                      <SelectItem value="9:16"><div className="flex items-center gap-2"><RectangleVertical /> Vertical (9:16)</div></SelectItem>
+                                      <SelectItem value="16:9"><div className="flex items-center gap-2"><RectangleHorizontal/> Horizontal (16:9)</div></SelectItem>
+                                      <SelectItem value="1:1"><div className="flex items-center gap-2"><Square /> Quadrado (1:1)</div></SelectItem>
                                     </SelectContent>
                                   </Select>
                                   <FormMessage />
@@ -986,7 +989,7 @@ export default function AvatarForgePage() {
                           <div>
                               <CardTitle className="flex items-center gap-2 font-headline text-xl">
                                   <Palette className="text-accent" />
-                                  Galeria de Personagens
+                                  Personagens
                               </CardTitle>
                               <CardDescription>Personagens que você criou. Carregue um para editar ou gerar roteiros.</CardDescription>
                           </div>
