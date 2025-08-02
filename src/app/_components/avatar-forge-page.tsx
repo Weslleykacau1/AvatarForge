@@ -4,7 +4,7 @@ import { useEffect, useState, useTransition, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Bot, Save, Trash2, Plus, Loader, Clapperboard, Edit, User, Shirt, Sparkles, Film, Wand2, FileImage, UploadCloud, FileText, Search, MessageSquare, Briefcase, Users, Camera, Package } from "lucide-react";
+import { Bot, Save, Trash2, Plus, Loader, Clapperboard, Edit, User, Shirt, Sparkles, Film, Wand2, FileImage, UploadCloud, FileText, Search, MessageSquare, Briefcase, Users, Camera, Package, Code } from "lucide-react";
 import Image from "next/image";
 
 import { Button } from "@/components/ui/button";
@@ -17,7 +17,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useGallery } from "@/hooks/use-gallery";
 import { useAvatars } from "@/hooks/use-avatars";
 import { useProducts } from "@/hooks/use-products";
-import { generateVideoAction, generateTitleAction, generateActionAction, analyzeImageAction, analyzeTextAction, generateDialogueAction, generateSeoAction, analyzeAvatarDetailsAction } from "@/app/actions";
+import { generateVideoAction, generateTitleAction, generateActionAction, analyzeImageAction, analyzeTextAction, generateDialogueAction, generateSeoAction, analyzeAvatarDetailsAction, generateScriptAction } from "@/app/actions";
 import type { Scene, Avatar, Product } from "@/app/types";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -60,6 +60,7 @@ export default function AvatarForgePage() {
   const [currentAvatarId, setCurrentAvatarId] = useState<string | null>(null);
   const [currentProductId, setCurrentProductId] = useState<string | null>(null);
   const [videoUrl, setVideoUrl] = useState<string | null>(null);
+  const [scriptContent, setScriptContent] = useState<string | null>(null);
   const { toast } = useToast();
   const { gallery: sceneGallery, addOrUpdateScene, removeScene, isLoaded: isSceneGalleryLoaded } = useGallery();
   const { avatars, addOrUpdateAvatar, removeAvatar, isLoaded: isAvatarGalleryLoaded } = useAvatars();
@@ -72,6 +73,7 @@ export default function AvatarForgePage() {
   const [isGeneratingDialogue, startDialogueTransition] = useTransition();
   const [isGeneratingSeo, startSeoTransition] = useTransition();
   const [isAnalyzingAvatar, startAvatarAnalysisTransition] = useTransition();
+  const [isGeneratingScript, startScriptTransition] = useTransition();
   const [referenceImagePreview, setReferenceImagePreview] = useState<string | null>(null);
 
 
@@ -110,6 +112,19 @@ export default function AvatarForgePage() {
       isPartnership: false,
     },
   });
+  
+  const getInfluencerDescription = (data: FormData) => `
+    **Nome:** ${data.name}
+    **Nicho:** ${data.niche}
+    **Idade:** ${data.age}
+    **Gênero:** ${data.gender}
+    **Biografia:** ${data.shortBio}
+    **Traço Único:** ${data.uniqueTrait}
+    **Traços de Personalidade:** ${data.personalityTraits}
+    **Detalhes de Aparência:** ${data.appearanceDetails}
+    **Vestuário:** ${data.clothing}
+    **Características Adicionais:** ${data.characteristics}
+  `;
 
   const onGenerateSubmit = form.handleSubmit((data) => {
     setVideoUrl(null);
@@ -120,18 +135,7 @@ export default function AvatarForgePage() {
         scenarioPrompt += `\n\n**Integração de Produto:**\n- Produto: ${data.productName}\n- Marca: ${data.partnerBrand || 'N/A'}\n- Descrição: ${data.productDescription}\n- Parceria: ${data.isPartnership ? 'Sim' : 'Não'}`;
       }
 
-      const influencerDescription = `
-        **Nome:** ${data.name}
-        **Nicho:** ${data.niche}
-        **Idade:** ${data.age}
-        **Gênero:** ${data.gender}
-        **Biografia:** ${data.shortBio}
-        **Traço Único:** ${data.uniqueTrait}
-        **Traços de Personalidade:** ${data.personalityTraits}
-        **Detalhes de Aparência:** ${data.appearanceDetails}
-        **Vestuário:** ${data.clothing}
-        **Características Adicionais:** ${data.characteristics}
-      `;
+      const influencerDescription = getInfluencerDescription(data);
 
       const result = await generateVideoAction({
         sceneTitle: data.name,
@@ -324,6 +328,31 @@ export default function AvatarForgePage() {
     });
   };
 
+  const handleGenerateScript = (outputFormat: 'markdown' | 'json') => {
+      const formData = form.getValues();
+      const influencerDetails = getInfluencerDescription(formData);
+      const sceneDetails = formData.scenarioPrompt;
+
+      if (!formData.name || !sceneDetails) {
+          toast({ variant: "destructive", title: "Faltando Contexto", description: "Para gerar, é preciso carregar ou guardar um influenciador e preencher o campo 'Cenário' na cena." });
+          return;
+      }
+      
+      startScriptTransition(async () => {
+          const result = await generateScriptAction({
+              influencerDetails,
+              sceneDetails,
+              outputFormat,
+          });
+          if (result.success && result.script) {
+              setScriptContent(result.script);
+              toast({ title: "Roteiro Gerado!", description: `Seu roteiro em ${outputFormat} está pronto.` });
+          } else {
+              toast({ variant: "destructive", title: "Falha ao Gerar Roteiro", description: result.error });
+          }
+      });
+  };
+
 
   const handleSaveScene = (data: FormData) => {
     const id = currentSceneId || crypto.randomUUID();
@@ -474,8 +503,8 @@ export default function AvatarForgePage() {
                   <form onSubmit={onGenerateSubmit} className="space-y-6">
                     <Tabs defaultValue="scene" className="w-full">
                       <TabsList className="grid w-full grid-cols-2">
+                         <TabsTrigger value="scene"><Camera className="mr-2" />Cena</TabsTrigger>
                         <TabsTrigger value="avatar"><Users className="mr-2" />Avatar</TabsTrigger>
-                        <TabsTrigger value="scene"><Camera className="mr-2" />Cena</TabsTrigger>
                       </TabsList>
                       <TabsContent value="avatar" className="space-y-6 pt-4">
                         <Card className="bg-muted/30">
@@ -830,6 +859,49 @@ export default function AvatarForgePage() {
                   </form>
                 </Form>
               </CardContent>
+            </Card>
+
+             <Card className="bg-card/80">
+                <CardHeader>
+                    <CardTitle className="flex items-center gap-2 font-headline text-xl">
+                        <Edit className="text-accent" />
+                        3. Gere o Roteiro Detalhado
+                    </CardTitle>
+                    <CardDescription>Use o influenciador e a cena definidos para gerar um roteiro detalhado para um vídeo.</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                    <div className="flex flex-col gap-2">
+                        <Button
+                            type="button"
+                            onClick={() => handleGenerateScript('markdown')}
+                            disabled={isGeneratingScript || !form.getValues("name") || !form.getValues("scenarioPrompt")}
+                        >
+                            {isGeneratingScript ? <Loader className="animate-spin mr-2" /> : <Bot />}
+                            Gerar Roteiro (Markdown)
+                        </Button>
+                        <Button
+                            type="button"
+                            variant="secondary"
+                            onClick={() => handleGenerateScript('json')}
+                            disabled={isGeneratingScript || !form.getValues("name") || !form.getValues("scenarioPrompt")}
+                        >
+                           {isGeneratingScript ? <Loader className="animate-spin mr-2" /> : <Code />}
+                            Gerar Roteiro (JSON)
+                        </Button>
+                    </div>
+                     <p className="text-xs text-muted-foreground text-center">Para gerar, é preciso carregar ou guardar um influenciador e preencher o campo 'Cenário' na cena.</p>
+                    {isGeneratingScript && (
+                         <div className="space-y-2">
+                            <Skeleton className="h-4 w-1/4" />
+                            <Skeleton className="h-20 w-full" />
+                        </div>
+                    )}
+                    {scriptContent && (
+                        <ScrollArea className="h-60 w-full rounded-md border p-4 bg-muted/20">
+                            <pre className="whitespace-pre-wrap text-sm">{scriptContent}</pre>
+                        </ScrollArea>
+                    )}
+                </CardContent>
             </Card>
             
             <Card className="bg-card/80">

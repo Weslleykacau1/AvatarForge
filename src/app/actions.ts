@@ -9,6 +9,7 @@ import { analyzeText } from "@/ai/flows/analyze-text-flow";
 import { generateDialogue } from "@/ai/flows/generate-dialogue-flow";
 import { generateSeo } from "@/ai/flows/generate-seo-flow";
 import { analyzeAvatarDetails, type AnalyzeAvatarDetailsOutput } from "@/ai/flows/analyze-avatar-details-flow";
+import { generateScript } from "@/ai/flows/generate-script-flow";
 
 const generateVideoSchema = z.object({
   sceneTitle: z.string().min(1, "Título da cena é obrigatório."),
@@ -235,5 +236,34 @@ export async function analyzeAvatarDetailsAction(
     } catch (error) {
         const errorMessage = error instanceof Error ? error.message : "An unknown error occurred.";
         return { success: false, error: `Avatar details analysis failed: ${errorMessage}` };
+    }
+}
+
+
+const generateScriptSchema = z.object({
+  influencerDetails: z.string(),
+  sceneDetails: z.string(),
+  outputFormat: z.enum(['markdown', 'json']),
+});
+
+type ScriptState = {
+    success: boolean;
+    script?: string;
+    error?: string;
+};
+
+export async function generateScriptAction(
+    data: z.infer<typeof generateScriptSchema>
+): Promise<ScriptState> {
+    const validatedFields = generateScriptSchema.safeParse(data);
+    if (!validatedFields.success) {
+        return { success: false, error: 'Invalid input' };
+    }
+    try {
+        const result = await generateScript(validatedFields.data);
+        return { success: true, script: result.script };
+    } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : "An unknown error occurred.";
+        return { success: false, error: `Script generation failed: ${errorMessage}` };
     }
 }
