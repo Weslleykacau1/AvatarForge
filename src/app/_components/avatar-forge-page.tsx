@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useEffect, useState, useTransition, useRef } from "react";
@@ -917,9 +918,9 @@ export default function AvatarForgePage() {
                                   </FormItem>
                                 )} />
 
-                                <Card className="p-4 bg-destructive/10 border border-destructive/50">
-                                    <CardTitle className="flex items-center text-base mb-2 gap-2 text-red-400">
-                                        <FileText className="text-red-400" />
+                                <Card className="p-4 bg-accent/10 border-accent/50">
+                                    <CardTitle className="flex items-center text-base mb-2 gap-2 text-accent">
+                                        <FileText className="text-accent" />
                                         Controle de Texto no Ecrã
                                     </CardTitle>
                                     <div className="space-y-4 text-foreground">
