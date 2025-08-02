@@ -136,7 +136,7 @@ export default function AvatarForgePage() {
         sceneTitle: data.name,
         scenarioPrompt: `${influencerDescription}\n\n**Cenário:** ${scenarioPrompt}`,
         actionPrompt: data.actionPrompt,
-        sceneImageDataUri: data.productImage || data.sceneImage, // Prioritize product image if available
+        sceneImageDataUri: data.sceneImage || data.productImage,
         dialogue: data.dialogue,
         cameraAngle: data.cameraAngle,
         duration: data.duration,
@@ -789,7 +789,7 @@ export default function AvatarForgePage() {
 
                         <FormField control={form.control} name="sceneImage" render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Referência de Cenário (Opcional)</FormLabel>
+                            <FormLabel>Gerar a partir de uma imagem de referência</FormLabel>
                             <FormControl>
                               <>
                                 <input type="file" accept="image/*" ref={fileInputRef} onChange={handleSceneFileChange} className="hidden" />
