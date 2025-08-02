@@ -981,10 +981,14 @@ export default function AvatarForgePage() {
                                   <Skeleton className="h-20 w-full" />
                               </div>
                           )}
-                          {scriptContent && (
+                          {scriptContent ? (
                               <ScrollArea className="h-60 w-full rounded-md border p-4 bg-muted/20">
                                   <pre className="whitespace-pre-wrap text-sm">{scriptContent}</pre>
                               </ScrollArea>
+                          ) : (
+                            <div className="h-60 w-full rounded-md border-dashed border-2 flex items-center justify-center bg-muted/20">
+                              <p className="text-muted-foreground text-center">O roteiro gerado aparece aqui.</p>
+                            </div>
                           )}
                       </CardContent>
                   </Card>
