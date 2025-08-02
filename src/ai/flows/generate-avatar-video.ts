@@ -14,7 +14,7 @@ import {googleAI} from '@genkit-ai/googleai';
 
 const GenerateAvatarVideoInputSchema = z.object({
   sceneTitle: z.string().describe('Title of the scene.'),
-  scenarioPrompt: z.string().describe('Detailed description of the environment, including lighting, colors, objects, and atmosphere.'),
+  scenarioPrompt: z.string().describe('Detailed description of the environment and the influencer, including lighting, colors, objects, and atmosphere.'),
   actionPrompt: z.string().describe('The main action the influencer is performing.'),
   sceneImageDataUri: z.string().optional().describe("An optional reference photo for the scene, as a data URI that must include a MIME type and use Base64 encoding. Expected format: 'data:<mimetype>;base64,<encoded_data>'."),
 });
@@ -42,9 +42,9 @@ const generateAvatarVideoFlow = ai.defineFlow(
     
     const promptText = `
       Scene Title: ${input.sceneTitle}
-      Scenario: ${input.scenarioPrompt}
+      Scenario and Influencer Details: ${input.scenarioPrompt}
       Main Action: ${input.actionPrompt}
-      Generate a video of an avatar based on these details.
+      Generate a video of the described influencer in the specified scenario, performing the main action.
     `;
 
     const prompt: (string | {media: {url: string}})[] = [{text: promptText}];

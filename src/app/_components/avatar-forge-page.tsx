@@ -18,6 +18,7 @@ import { useGallery } from "@/hooks/use-gallery";
 import { generateVideoAction, generateTitleAction, generateActionAction, analyzeImageAction, analyzeTextAction } from "@/app/actions";
 import type { Influencer } from "@/app/types";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const influencerSchema = z.object({
   name: z.string().min(1, "Nome é obrigatório.").max(100, "Nome muito longo."),
@@ -27,6 +28,13 @@ const influencerSchema = z.object({
   sceneImage: z.string().optional(),
   referenceImage: z.string().optional(),
   characteristics: z.string().optional(),
+  personalityTraits: z.string().optional(),
+  appearanceDetails: z.string().optional(),
+  clothing: z.string().optional(),
+  shortBio: z.string().optional(),
+  uniqueTrait: z.string().optional(),
+  age: z.string().optional(),
+  gender: z.string().optional(),
 });
 
 type InfluencerFormData = z.infer<typeof influencerSchema>;
@@ -58,18 +66,39 @@ export default function AvatarForgePage() {
       sceneImage: "",
       referenceImage: "",
       characteristics: "",
+      personalityTraits: "",
+      appearanceDetails: "",
+      clothing: "",
+      shortBio: "",
+      uniqueTrait: "",
+      age: "",
+      gender: "",
     },
   });
 
   const onGenerateSubmit = form.handleSubmit((data) => {
     setVideoUrl(null);
     startTransition(async () => {
+      const influencerDescription = `
+        **Nome:** ${data.name}
+        **Nicho:** ${data.niche}
+        **Idade:** ${data.age}
+        **Gênero:** ${data.gender}
+        **Biografia:** ${data.shortBio}
+        **Traço Único:** ${data.uniqueTrait}
+        **Traços de Personalidade:** ${data.personalityTraits}
+        **Detalhes de Aparência:** ${data.appearanceDetails}
+        **Vestuário:** ${data.clothing}
+        **Características Adicionais:** ${data.characteristics}
+      `;
+
       const result = await generateVideoAction({
         sceneTitle: data.name,
-        scenarioPrompt: data.scenarioPrompt,
+        scenarioPrompt: `${influencerDescription}\n\n**Cenário:** ${data.scenarioPrompt}`,
         actionPrompt: data.actionPrompt,
         sceneImageDataUri: data.sceneImage,
       });
+
       if (result.success && result.videoDataUri) {
         setVideoUrl(result.videoDataUri);
         toast({
@@ -212,7 +241,7 @@ export default function AvatarForgePage() {
   };
 
   const handleNewInfluencer = () => {
-    form.reset({ name: "", niche: "", scenarioPrompt: "", actionPrompt: "", sceneImage: "", referenceImage: "", characteristics: "" });
+    form.reset({ name: "", niche: "", scenarioPrompt: "", actionPrompt: "", sceneImage: "", referenceImage: "", characteristics: "", personalityTraits: "", appearanceDetails: "", clothing: "", shortBio: "", uniqueTrait: "", age: "", gender: "" });
     setCurrentId(null);
     setVideoUrl(null);
     setReferenceImagePreview(null);
@@ -311,6 +340,76 @@ export default function AvatarForgePage() {
                         <FormMessage />
                       </FormItem>
                     )} />
+                    
+                    <FormField control={form.control} name="personalityTraits" render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Traços de Personalidade</FormLabel>
+                        <FormControl><Textarea placeholder="Descreva os traços de personalidade..." {...field} rows={3} /></FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )} />
+                    
+                    <FormField control={form.control} name="appearanceDetails" render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Detalhes de Aparência</FormLabel>
+                        <FormControl><Textarea placeholder="Descreva a aparência física em detalhe extremo..." {...field} rows={4} /></FormControl>
+                        <p className="text-xs text-muted-foreground">Dica: Seja detalhado - formato do rosto, cor dos olhos, textura do cabelo, etc. para melhor geração de vídeo.</p>
+                        <FormMessage />
+                      </FormItem>
+                    )} />
+                    
+                    <FormField control={form.control} name="clothing" render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Vestuário</FormLabel>
+                        <FormControl><Textarea placeholder="Descreva as roupas, sapatos e acessórios que o personagem está a usar..." {...field} rows={3} /></FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )} />
+                    
+                    <FormField control={form.control} name="shortBio" render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Biografia Curta</FormLabel>
+                        <FormControl><Input placeholder="Uma breve biografia..." {...field} /></FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )} />
+                    
+                    <FormField control={form.control} name="uniqueTrait" render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Traço Único/Peculiar</FormLabel>
+                        <FormControl><Input placeholder="Um traço que torna o influenciador único..." {...field} /></FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )} />
+                    
+                    <FormField control={form.control} name="age" render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Idade</FormLabel>
+                        <FormControl><Input placeholder="Idade do influenciador..." {...field} /></FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )} />
+
+                    <FormField control={form.control} name="gender" render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Gênero</FormLabel>
+                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Selecione..." />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            <SelectItem value="Masculino">Masculino</SelectItem>
+                            <SelectItem value="Feminino">Feminino</SelectItem>
+                            <SelectItem value="Não-binário">Não-binário</SelectItem>
+                            <SelectItem value="Outro">Outro</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )} />
+
 
                     <FormField control={form.control} name="scenarioPrompt" render={({ field }) => (
                       <FormItem>

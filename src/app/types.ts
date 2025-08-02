@@ -7,4 +7,11 @@ export type Influencer = {
   actionPrompt: string;
   referenceImage?: string;
   characteristics?: string;
+  personalityTraits?: string;
+  appearanceDetails?: string;
+  clothing?: string;
+  shortBio?: string;
+  uniqueTrait?: string;
+  age?: string;
+  gender?: string;
 };
