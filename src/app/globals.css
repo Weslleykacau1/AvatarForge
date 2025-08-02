@@ -40,3 +40,12 @@
     @apply bg-background text-foreground;
   }
 }
+
+@layer components {
+  .main-tabs-list {
+    @apply bg-transparent p-0 justify-start;
+  }
+  .main-tabs-trigger {
+    @apply data-[state=active]:bg-primary/10 data-[state=active]:text-primary-foreground data-[state=active]:shadow-none text-muted-foreground transition-all duration-300;
+  }
+}
