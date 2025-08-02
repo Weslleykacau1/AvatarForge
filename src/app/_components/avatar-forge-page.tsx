@@ -829,6 +829,10 @@ export default function AvatarForgePage() {
                                   <Button type="button" variant="outline" size="sm" onClick={handleGenerateSeo} disabled={isGeneratingSeo}>
                                       {isGeneratingSeo ? <Loader className="animate-spin mr-2"/> : <Briefcase />} Gerar SEO
                                   </Button>
+                                  <Button type="button" variant="secondary" size="sm" onClick={handleSaveScene}>
+                                      <Save className="mr-2 h-4 w-4" />
+                                      Salvar Cena
+                                  </Button>
                               </div>
 
                               <FormField control={form.control} name="cameraAngle" render={({ field }) => (
