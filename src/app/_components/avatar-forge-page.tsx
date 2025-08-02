@@ -117,15 +117,16 @@ const exampleScript = `{
   }
 }`;
 
-const GradientClapperboard = () => (
-    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="h-8 w-8">
+const GradientPlayIcon = () => (
+    <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" className="h-8 w-8">
         <defs>
             <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
                 <stop offset="0%" stopColor="#8E2DE2" />
                 <stop offset="100%" stopColor="#F27121" />
             </linearGradient>
         </defs>
-        <path d="m2.1 14.9 1.5 1.5M5.1 11.9 6.6 13.4M10.1 2.9 8.6 4.4m-6.5 1.5 1.5-1.5m12 0 1.5 1.5m3 8.5 1.5 1.5m3-8.5-1.5-1.5m-9 12 1.5 1.5M22 7 2 7m13-5-6 0m13 10-20 0m13 5-6 0m13 5-20 0m13-15-6 0m13 15-20 0m13 5-6 0m-3-20v20m10-20v20" stroke="url(#grad1)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+        <circle cx="16" cy="16" r="15" stroke="url(#grad1)" strokeWidth="2"/>
+        <path d="M13 10L21 16L13 22V10Z" stroke="url(#grad1)" strokeWidth="2" strokeLinejoin="round"/>
     </svg>
 );
 
@@ -595,7 +596,7 @@ export default function AvatarForgePage() {
       <header className="p-4 border-b border-border/50 bg-background/50 backdrop-blur-sm sticky top-0 z-10">
         <div className="container mx-auto flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <GradientClapperboard />
+            <GradientPlayIcon />
             <h1 className="text-2xl font-bold font-headline text-white">AvatarForge</h1>
           </div>
         </div>
