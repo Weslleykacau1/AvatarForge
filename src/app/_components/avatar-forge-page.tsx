@@ -1109,7 +1109,7 @@ export default function AvatarForgePage() {
             <TabsContent value="influencer-gallery">
                <Card className="mt-6">
                   <CardHeader>
-                      <div className="flex items-center justify-between">
+                      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
                           <div>
                               <CardTitle className="flex items-center gap-2 font-headline text-xl">
                                   <Palette className="text-accent" />
@@ -1117,11 +1117,11 @@ export default function AvatarForgePage() {
                               </CardTitle>
                               <CardDescription>Personagens que você criou. Carregue um para editar ou gerar roteiros.</CardDescription>
                           </div>
-                          <div className="flex gap-2">
-                              <Button variant="outline" onClick={() => { setActiveTab("creator"); handleNewScene(); }}>
+                          <div className="flex gap-2 w-full md:w-auto">
+                              <Button variant="outline" onClick={() => { setActiveTab("creator"); handleNewScene(); }} className="flex-1 md:flex-none">
                                 <Plus className="mr-2" /> Novo Personagem
                               </Button>
-                               <Button variant="outline" onClick={showNotImplementedToast}>
+                               <Button variant="outline" onClick={showNotImplementedToast} className="flex-1 md:flex-none">
                                 <Download className="mr-2" /> Exportar para CSV
                               </Button>
                           </div>
@@ -1173,7 +1173,7 @@ export default function AvatarForgePage() {
             <TabsContent value="scene-gallery">
                 <Card className="mt-6">
                     <CardHeader>
-                        <div className="flex items-center justify-between">
+                        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
                             <div>
                                 <CardTitle className="flex items-center gap-2 font-headline text-xl">
                                     <LayoutGrid className="text-accent" />
@@ -1181,11 +1181,11 @@ export default function AvatarForgePage() {
                                 </CardTitle>
                                 <CardDescription>Cenas que você salvou. Carregue uma para editar ou use-a com um influenciador para gerar um roteiro.</CardDescription>
                             </div>
-                            <div className="flex gap-2">
-                                <Button onClick={() => { setActiveTab("creator"); handleNewScene(); }}>
+                            <div className="flex gap-2 w-full md:w-auto">
+                                <Button onClick={() => { setActiveTab("creator"); handleNewScene(); }} className="flex-1 md:flex-none">
                                   <Plus className="mr-2" /> Nova Cena
                                 </Button>
-                                 <Button variant="secondary" onClick={handleSaveScene}>
+                                 <Button variant="secondary" onClick={handleSaveScene} className="flex-1 md:flex-none">
                                     <Save className="mr-2 h-4 w-4" />
                                     Salvar Cena Atual
                                 </Button>
@@ -1228,7 +1228,7 @@ export default function AvatarForgePage() {
             <TabsContent value="product-gallery">
                 <Card className="mt-6">
                     <CardHeader>
-                       <div className="flex items-center justify-between">
+                       <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
                           <div>
                               <CardTitle className="flex items-center gap-2 font-headline text-xl">
                                   <Package className="text-accent" />
@@ -1236,11 +1236,11 @@ export default function AvatarForgePage() {
                               </CardTitle>
                               <CardDescription>Produtos que você salvou. Carregue um para usar em uma cena.</CardDescription>
                           </div>
-                          <div className="flex gap-2">
-                               <Button variant="outline" onClick={() => { setActiveTab("creator"); handleNewScene(); }}>
+                          <div className="flex gap-2 w-full md:w-auto">
+                               <Button variant="outline" onClick={() => { setActiveTab("creator"); handleNewScene(); }} className="flex-1 md:flex-none">
                                 <Plus className="mr-2" /> Novo Produto
                               </Button>
-                               <Button variant="outline" onClick={showNotImplementedToast}>
+                               <Button variant="outline" onClick={showNotImplementedToast} className="flex-1 md:flex-none">
                                 <Download className="mr-2" /> Exportar para CSV
                               </Button>
                           </div>
