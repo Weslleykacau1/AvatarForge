@@ -45,17 +45,17 @@ const ScriptSchema = z.object({
   }).optional(),
 });
 
-export const GenerateVideoFromScriptInputSchema = z.object({
+const GenerateVideoFromScriptInputSchema = z.object({
     script: ScriptSchema
 });
 
-export type GenerateVideoFromScriptInput = z.infer<typeof GenerateVideoFromScriptInputSchema>;
+type GenerateVideoFromScriptInput = z.infer<typeof GenerateVideoFromScriptInputSchema>;
 
-export const GenerateVideoFromScriptOutputSchema = z.object({
+const GenerateVideoFromScriptOutputSchema = z.object({
   videoDataUri: z.string().describe('The generated avatar video for the first scene as a data URI (video/mp4).'),
 });
 
-export type GenerateVideoFromScriptOutput = z.infer<typeof GenerateVideoFromScriptOutputSchema>;
+type GenerateVideoFromScriptOutput = z.infer<typeof GenerateVideoFromScriptOutputSchema>;
 
 export async function generateVideoFromScript(input: GenerateVideoFromScriptInput): Promise<GenerateVideoFromScriptOutput> {
   return generateVideoFromScriptFlow(input);
