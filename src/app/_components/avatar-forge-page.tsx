@@ -615,7 +615,7 @@ export default function AvatarForgePage() {
 
             <TabsContent value="creator">
               <Form {...form}>
-                <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 pt-6">
+                <form onSubmit={onGenerateSubmit} className="grid grid-cols-1 lg:grid-cols-5 gap-8 pt-6">
                   <div className="lg:col-span-2 flex flex-col gap-8">
                     <Card className="bg-card/80">
                       <CardHeader>
@@ -626,7 +626,7 @@ export default function AvatarForgePage() {
                         <CardDescription>Crie seu avatar, defina a cena e gere o vídeo.</CardDescription>
                       </CardHeader>
                       <CardContent>
-                          <form onSubmit={onGenerateSubmit} className="space-y-6">
+                          <div className="space-y-6">
                             <Tabs defaultValue="scene" className="w-full">
                               <TabsList className="grid w-full grid-cols-2">
                                 <TabsTrigger value="scene"><Camera className="mr-2" />Cena</TabsTrigger>
@@ -950,16 +950,16 @@ export default function AvatarForgePage() {
                                 </Card>
                               </TabsContent>
                             </Tabs>
-                          </form>
+                          </div>
                       </CardContent>
                     </Card>
                   </div>
 
                   <div className="lg:col-span-3 flex flex-col gap-8">
-                     <Card className="p-4 bg-gradient-orange/10 border border-gradient-orange">
+                     <Card className="p-4 bg-card/80 border border-border">
                         <CardHeader className="p-0 mb-4">
-                            <CardTitle className="flex items-center text-base gap-2 text-gradient-orange">
-                                <Sparkles className="text-gradient-orange" />
+                            <CardTitle className="flex items-center text-base gap-2">
+                                <Sparkles />
                                 Melhorias de Qualidade
                             </CardTitle>
                         </CardHeader>
@@ -1104,7 +1104,7 @@ export default function AvatarForgePage() {
                         </CardContent>
                     </Card>
                   </div>
-                </div>
+                </form>
               </Form>
             </TabsContent>
 
