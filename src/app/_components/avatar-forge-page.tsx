@@ -450,6 +450,7 @@ export default function AvatarForgePage() {
       age: data.age,
       gender: data.gender,
       accent: data.accent,
+      negativePrompt: data.negativePrompt,
     };
     addOrUpdateAvatar(avatarData);
     if(!currentAvatarId) setCurrentAvatarId(id);
@@ -469,6 +470,7 @@ export default function AvatarForgePage() {
     form.setValue("age", avatar.age);
     form.setValue("gender", avatar.gender);
     form.setValue("accent", avatar.accent);
+    form.setValue("negativePrompt", avatar.negativePrompt);
     setReferenceImagePreview(avatar.referenceImage || null);
     setCurrentAvatarId(avatar.id);
     setActiveTab("creator");
@@ -728,6 +730,14 @@ export default function AvatarForgePage() {
                                   <FormMessage />
                                 </FormItem>
                               )} />
+                              
+                               <FormField control={form.control} name="negativePrompt" render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel>Prompt Negativo (o que evitar)</FormLabel>
+                                  <FormControl><Textarea placeholder="Ex: má qualidade, mãos deformadas, texto ilegível..." {...field} rows={2} /></FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )} />
                             </TabsContent>
 
                             <TabsContent value="scene" className="space-y-6 pt-4">
@@ -778,14 +788,6 @@ export default function AvatarForgePage() {
                               <Button type="button" variant="outline" size="sm" onClick={handleGenerateAction} disabled={isGeneratingAction}>
                                 {isGeneratingAction ? <Loader className="animate-spin mr-2" /> : <Wand2 />} Gerar Ação com IA
                               </Button>
-
-                               <FormField control={form.control} name="negativePrompt" render={({ field }) => (
-                                <FormItem>
-                                  <FormLabel>Prompt Negativo (o que evitar)</FormLabel>
-                                  <FormControl><Textarea placeholder="Ex: má qualidade, mãos deformadas, texto ilegível..." {...field} rows={2} /></FormControl>
-                                  <FormMessage />
-                                </FormItem>
-                              )} />
 
                               <FormField control={form.control} name="dialogue" render={({ field }) => (
                                   <FormItem>

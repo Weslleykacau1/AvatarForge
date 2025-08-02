@@ -43,6 +43,7 @@ export type Avatar = {
   age?: string;
   gender?: string;
   accent?: string;
+  negativePrompt?: string;
 };
 
 export type Product = {
