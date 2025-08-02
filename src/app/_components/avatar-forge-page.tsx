@@ -4,7 +4,7 @@ import { useEffect, useState, useTransition, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Bot, Save, Trash2, Plus, Loader, Clapperboard, Edit, User, Shirt, Sparkles, Film, Wand2, FileImage, UploadCloud, FileText, Search, MessageSquare, Briefcase, Users, Camera, Package, Code, Palette, LayoutGrid, Zap, Upload, Download, FileJson, RectangleVertical, RectangleHorizontal, Square } from "lucide-react";
+import { Bot, Save, Trash2, Plus, Loader, Clapperboard, Edit, User, Shirt, Sparkles, Film, Wand2, FileImage, UploadCloud, FileText, Search, MessageSquare, Briefcase, Users, Camera, Package, Code, Palette, LayoutGrid, Zap, Upload, Download, FileJson, RectangleVertical, RectangleHorizontal, Square, BookText } from "lucide-react";
 import Image from "next/image";
 
 import { Button } from "@/components/ui/button";
@@ -17,7 +17,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useGallery } from "@/hooks/use-gallery";
 import { useAvatars } from "@/hooks/use-avatars";
 import { useProducts } from "@/hooks/use-products";
-import { generateFullSceneAction, analyzeImageAction, analyzeTextAction, generateSeoAction, analyzeAvatarDetailsAction, generateScriptAction, analyzeProductImageAction } from "@/app/actions";
+import { generateFullSceneAction, analyzeImageAction, analyzeTextAction, generateSeoAction, analyzeAvatarDetailsAction, generateScriptAction, analyzeProductImageAction, generateVideoFromScriptAction } from "@/app/actions";
 import type { Scene, Avatar, Product } from "@/app/types";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -58,6 +58,61 @@ const formSchema = z.object({
 
 type FormData = z.infer<typeof formSchema>;
 
+const exampleScript = `{
+  "character": {
+    "appearance": "Rosto arredondado com algumas rugas, olhos castanhos amendoados de tamanho médio, cabelo grisalho ralo e penteado para trás, tom de pele claro com algumas manchas da idade, nariz largo e arredondado, lábios finos. Não possui sardas ou pintas visíveis.",
+    "name": "Dr. Roberto",
+    "style": "Jaleco branco de médico com um estetoscópio pendurado no pescoço. Por baixo do jaleco, veste uma camisa azul clara com o colarinho abotoado."
+  },
+  "duration_seconds": 8,
+  "format": "9:16",
+  "language": "pt-BR",
+  "scenes": [
+    {
+      "camera_direction": "Dynamic camera focusing on Dr. Roberto as he begins to speak, slight zoom in.",
+      "end_time": 2,
+      "expression": "Serious and concerned",
+      "id": 1,
+      "start_time": 0,
+      "visual_prompt": "Dr. Roberto in a professional studio setting with blue lighting and a brick wall background. He is looking directly at the camera with a concerned expression.",
+      "dialogue": "Você sabia que a indústria farmacêutica esconde um segredo sobre o seu sono?"
+    },
+    {
+      "camera_direction": "Camera zooms in slightly as Dr. Roberto leans forward.",
+      "end_time": 4,
+      "expression": "Intrigued and conspiratorial",
+      "id": 2,
+      "start_time": 2,
+      "visual_prompt": "Close-up of Dr. Roberto's face, emphasizing his eyes and facial expression. Blue studio lighting.",
+      "dialogue": "E se eu te dissesse que existe uma solução natural e eficaz para noites tranquilas, sem os efeitos colaterais dos remédios?"
+    },
+    {
+      "camera_direction": "Camera shows Dr. Roberto holding a bottle of Night Melatonina.",
+      "end_time": 6,
+      "expression": "Confident and reassuring",
+      "id": 3,
+      "start_time": 4,
+      "visual_prompt": "Dr. Roberto holding a bottle of 'Night Melatonina' in his hand, showcasing the blue bottle and label. Studio setting with soft blue lighting.",
+      "dialogue": "Apresento a 'Night Melatonina', um suplemento alimentar em pastilha de goma que vai te ajudar a ter noites de sono revigorantes."
+    },
+    {
+      "camera_direction": "Close-up of the Night Melatonina bottle, then back to Dr. Roberto.",
+      "end_time": 8,
+      "expression": "Smiling and encouraging",
+      "id": 4,
+      "start_time": 6,
+      "visual_prompt": "Visual of 'Night Melatonina' bottle and blue gummies. Dr. Roberto smiling and looking directly at the camera, gesturing towards the product.",
+      "dialogue": "Experimente 'Night Melatonina' e acorde se sentindo renovado! Seu sono de qualidade ao seu alcance."
+    }
+  ],
+  "title": "Médico REVELA segredo que a indústria farmacêutica ESCONDE!",
+  "product_integration": {
+    "is_present": true,
+    "integration_description": "The product 'Night Melatonina' is integrated by having the influencer directly present the product and mentioning it in the dialogue while visually showing the product.",
+    "product_name": "Night Melatonina"
+  }
+}`;
+
 export default function AvatarForgePage() {
   const [currentSceneId, setCurrentSceneId] = useState<string | null>(null);
   const [currentAvatarId, setCurrentAvatarId] = useState<string | null>(null);
@@ -65,6 +120,7 @@ export default function AvatarForgePage() {
   const [activeTab, setActiveTab] = useState("creator");
   const [videoUrl, setVideoUrl] = useState<string | null>(null);
   const [scriptContent, setScriptContent] = useState<string | null>(null);
+  const [jsonScript, setJsonScript] = useState<string>(exampleScript);
   const { toast } = useToast();
   const { gallery: sceneGallery, addOrUpdateScene, removeScene, isLoaded: isSceneGalleryLoaded } = useGallery();
   const { avatars, addOrUpdateAvatar, removeAvatar, isLoaded: isAvatarGalleryLoaded } = useAvatars();
@@ -76,6 +132,7 @@ export default function AvatarForgePage() {
   const [isAnalyzingAvatar, startAvatarAnalysisTransition] = useTransition();
   const [isGeneratingScript, startScriptTransition] = useTransition();
   const [isAnalyzingProduct, startProductAnalysisTransition] = useTransition();
+  const [isGeneratingFromScript, startScriptVideoTransition] = useTransition();
   const [referenceImagePreview, setReferenceImagePreview] = useState<string | null>(null);
 
 
@@ -324,11 +381,44 @@ export default function AvatarForgePage() {
           });
           if (result.success && result.script) {
               setScriptContent(result.script);
+              if (outputFormat === 'json') {
+                setJsonScript(result.script);
+                setActiveTab('script-video');
+              }
               toast({ title: "Roteiro Gerado!", description: `Seu roteiro em ${outputFormat} está pronto.` });
           } else {
               toast({ variant: "destructive", title: "Falha ao Gerar Roteiro", description: result.error });
           }
       });
+  };
+  
+  const handleGenerateFromScript = () => {
+    try {
+      const parsedScript = JSON.parse(jsonScript);
+      setVideoUrl(null);
+      startScriptVideoTransition(async () => {
+        const result = await generateVideoFromScriptAction({ script: parsedScript });
+        if (result.success && result.videoDataUri) {
+          setVideoUrl(result.videoDataUri);
+          toast({
+            title: "Vídeo Gerado a partir do Roteiro!",
+            description: "O vídeo para a primeira cena do seu roteiro está pronto.",
+          });
+        } else if (result.error) {
+          toast({
+            variant: "destructive",
+            title: "Falha na Geração a partir do Roteiro",
+            description: result.error,
+          });
+        }
+      });
+    } catch(e) {
+      toast({
+        variant: "destructive",
+        title: "Erro no JSON",
+        description: "O roteiro JSON fornecido é inválido.",
+      });
+    }
   };
 
 
@@ -482,11 +572,12 @@ export default function AvatarForgePage() {
 
       <main className="container mx-auto p-4 md:p-8">
        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 gap-2 mx-auto max-w-2xl">
+            <TabsList className="grid w-full grid-cols-2 md:grid-cols-5 gap-2 mx-auto max-w-4xl">
               <TabsTrigger value="creator"><Film className="mr-2" />Criador</TabsTrigger>
               <TabsTrigger value="influencer-gallery"><Users className="mr-2" />Personagens</TabsTrigger>
               <TabsTrigger value="scene-gallery"><LayoutGrid className="mr-2" />Cenas</TabsTrigger>
               <TabsTrigger value="product-gallery"><Package className="mr-2" />Produtos</TabsTrigger>
+              <TabsTrigger value="script-video"><BookText className="mr-2" />Roteiro</TabsTrigger>
             </TabsList>
 
             <TabsContent value="creator">
@@ -916,7 +1007,7 @@ export default function AvatarForgePage() {
                     </CardHeader>
                     <CardContent>
                       <div className="aspect-video w-full rounded-lg bg-black flex items-center justify-center overflow-hidden">
-                        {isPending ? (
+                        {isPending || isGeneratingFromScript ? (
                           <div className="text-center space-y-4 text-muted-foreground p-4">
                             <Loader className="h-12 w-12 animate-spin mx-auto text-accent" />
                             <p className="font-headline text-lg">Gerando seu avatar...</p>
@@ -970,7 +1061,7 @@ export default function AvatarForgePage() {
                                   <Skeleton className="h-20 w-full" />
                               </div>
                           )}
-                          {scriptContent ? (
+                          {scriptContent && !isGeneratingScript ? (
                               <ScrollArea className="h-60 w-full rounded-md border p-4 bg-muted/20">
                                   <pre className="whitespace-pre-wrap text-sm">{scriptContent}</pre>
                               </ScrollArea>
@@ -1156,6 +1247,36 @@ export default function AvatarForgePage() {
                                 </Card>
                             ))}
                         </div>
+                    </CardContent>
+                </Card>
+            </TabsContent>
+
+            <TabsContent value="script-video">
+                <Card className="mt-6">
+                    <CardHeader>
+                        <CardTitle className="flex items-center gap-2 font-headline text-xl">
+                            <BookText className="text-accent" />
+                            Gerar Vídeo a partir de Roteiro
+                        </CardTitle>
+                        <CardDescription>Cole um roteiro JSON para gerar um vídeo cena por cena.</CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                        <div className="grid grid-cols-1 gap-4">
+                            <Textarea
+                                value={jsonScript}
+                                onChange={(e) => setJsonScript(e.target.value)}
+                                rows={25}
+                                placeholder="Cole seu roteiro JSON aqui..."
+                                className="font-mono text-sm"
+                            />
+                            <Button onClick={handleGenerateFromScript} disabled={isGeneratingFromScript}>
+                                {isGeneratingFromScript ? <Loader className="animate-spin mr-2" /> : <Bot />}
+                                Gerar Vídeo (Primeira Cena)
+                            </Button>
+                        </div>
+                        <p className="text-xs text-muted-foreground text-center">
+                            Nota: Atualmente, apenas a primeira cena do roteiro será gerada. A funcionalidade completa de combinação de cenas será implementada em breve.
+                        </p>
                     </CardContent>
                 </Card>
             </TabsContent>

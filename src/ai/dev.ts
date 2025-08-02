@@ -13,3 +13,4 @@ import '@/ai/flows/analyze-avatar-details-flow.ts';
 import '@/ai/flows/generate-script-flow.ts';
 import '@/ai/flows/analyze-product-image-flow.ts';
 import '@/ai/flows/generate-full-scene-flow.ts';
+import '@/ai/flows/generate-video-from-script-flow.ts';

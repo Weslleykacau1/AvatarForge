@@ -9,6 +9,7 @@ import { analyzeProductImage, type AnalyzeProductImageOutput } from "@/ai/flows/
 import { analyzeImage } from "@/ai/flows/analyze-image-flow";
 import { analyzeText } from "@/ai/flows/analyze-text-flow";
 import { generateFullScene, type GenerateFullSceneOutput } from "@/ai/flows/generate-full-scene-flow";
+import { generateVideoFromScript, type GenerateVideoFromScriptInput } from "@/ai/flows/generate-video-from-script-flow";
 
 
 const generateFullSceneSchema = z.object({
@@ -222,5 +223,32 @@ export async function analyzeProductImageAction(
     } catch (error) {
         const errorMessage = error instanceof Error ? error.message : "An unknown error occurred.";
         return { success: false, error: `Product image analysis failed: ${errorMessage}` };
+    }
+}
+
+const generateVideoFromScriptSchema = z.object({
+    script: z.any(),
+});
+
+type VideoFromScriptState = {
+    success: boolean;
+    videoDataUri?: string;
+    error?: string;
+};
+
+export async function generateVideoFromScriptAction(
+    data: z.infer<typeof generateVideoFromScriptSchema>
+): Promise<VideoFromScriptState> {
+    const validatedFields = generateVideoFromScriptSchema.safeParse(data);
+    if (!validatedFields.success) {
+        return { success: false, error: 'Invalid input' };
+    }
+
+    try {
+        const result = await generateVideoFromScript({ script: validatedFields.data.script });
+        return { success: true, videoDataUri: result.videoDataUri };
+    } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : "An unknown error occurred.";
+        return { success: false, error: `Video generation from script failed: ${errorMessage}` };
     }
 }
