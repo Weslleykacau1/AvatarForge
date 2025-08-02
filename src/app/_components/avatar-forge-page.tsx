@@ -1121,9 +1121,6 @@ export default function AvatarForgePage() {
                               <Button variant="outline" onClick={() => { setActiveTab("creator"); handleNewScene(); }} className="flex-1 md:flex-none">
                                 <Plus className="mr-2" /> Novo Personagem
                               </Button>
-                               <Button variant="outline" onClick={showNotImplementedToast} className="flex-1 md:flex-none">
-                                <Download className="mr-2" /> Exportar para CSV
-                              </Button>
                           </div>
                       </div>
                   </CardHeader>
@@ -1239,9 +1236,6 @@ export default function AvatarForgePage() {
                           <div className="flex gap-2 w-full md:w-auto">
                                <Button variant="outline" onClick={() => { setActiveTab("creator"); handleNewScene(); }} className="flex-1 md:flex-none">
                                 <Plus className="mr-2" /> Novo Produto
-                              </Button>
-                               <Button variant="outline" onClick={showNotImplementedToast} className="flex-1 md:flex-none">
-                                <Download className="mr-2" /> Exportar para CSV
                               </Button>
                           </div>
                       </div>
