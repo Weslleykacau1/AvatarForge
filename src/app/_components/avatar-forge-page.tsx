@@ -483,7 +483,7 @@ export default function AvatarForgePage() {
               <TabsTrigger value="creator"><Film className="mr-2" />Criador</TabsTrigger>
               <TabsTrigger value="influencer-gallery"><Users className="mr-2" />Personagens</TabsTrigger>
               <TabsTrigger value="scene-gallery"><LayoutGrid className="mr-2" />Cenas</TabsTrigger>
-              <TabsTrigger value="product-gallery"><Package className="mr-2" />Galeria de Produtos</TabsTrigger>
+              <TabsTrigger value="product-gallery"><Package className="mr-2" />Produtos</TabsTrigger>
             </TabsList>
 
             <TabsContent value="creator">
@@ -1107,7 +1107,7 @@ export default function AvatarForgePage() {
                           <div>
                               <CardTitle className="flex items-center gap-2 font-headline text-xl">
                                   <Package className="text-accent" />
-                                  Galeria de Produtos
+                                  Produtos
                               </CardTitle>
                               <CardDescription>Produtos que você salvou. Carregue um para usar em uma cena.</CardDescription>
                           </div>
