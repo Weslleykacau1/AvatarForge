@@ -359,6 +359,7 @@ export default function AvatarForgePage() {
             form.setValue("uniqueTrait", details.uniqueTrait, { shouldValidate: true });
             form.setValue("age", details.age, { shouldValidate: true });
             form.setValue("gender", details.gender, { shouldValidate: true });
+            form.setValue("negativePrompt", details.negativePrompt, { shouldValidate: true });
             toast({ title: "Análise Concluída", description: "Todos os campos do avatar foram preenchidos." });
         } else {
             toast({ variant: "destructive", title: "Falha na Análise", description: result.error });

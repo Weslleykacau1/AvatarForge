@@ -31,6 +31,7 @@ const AnalyzeAvatarDetailsOutputSchema = z.object({
   uniqueTrait: z.string().describe("A unique or peculiar trait that makes the influencer stand out."),
   age: z.string().describe("The estimated age of the influencer."),
   gender: z.string().describe("The gender of the influencer (Masculino, Feminino, Não-binário, Outro)."),
+  negativePrompt: z.string().describe("A comma-separated list of common negative prompts to improve generation quality (e.g., bad hands, blurry, deformed)."),
 });
 
 export type AnalyzeAvatarDetailsOutput = z.infer<typeof AnalyzeAvatarDetailsOutputSchema>;
@@ -51,6 +52,8 @@ const analyzeAvatarDetailsFlow = ai.defineFlow(
         input: { schema: AnalyzeAvatarDetailsInputSchema },
         output: { schema: AnalyzeAvatarDetailsOutputSchema },
         prompt: `Analyze the provided image of a person and generate a detailed profile for them as a digital influencer. Fill in all the fields of the output schema based on the image. Be creative but realistic. The influencer should be relatable and have a clear niche.
+
+Also, provide a set of useful, comma-separated negative prompts to avoid common generation errors (like deformed hands, blurry images, etc.).
 
 Image: {{media url=photoDataUri}}`
     });
