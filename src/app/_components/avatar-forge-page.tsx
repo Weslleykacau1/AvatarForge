@@ -119,28 +119,13 @@ const exampleScript = `{
 
 const GradientClapperboard = () => (
     <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="h-8 w-8">
-      <defs>
-        <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="0%">
-          <stop offset="0%" style={{ stopColor: '#8E2DE2', stopOpacity: 1 }} />
-          <stop offset="100%" style={{ stopColor: '#F27121', stopOpacity: 1 }} />
-        </linearGradient>
-      </defs>
-      <path d="m2.1 14.9 1.5 1.5M5.1 11.9 6.6 13.4" stroke="url(#grad1)" strokeWidth="2" strokeLinecap="round"/>
-      <path d="M10.1 2.9 8.6 4.4" stroke="url(#grad1)" strokeWidth="2" strokeLinecap="round"/>
-      <path d="m2.1 5.9 1.5-1.5" stroke="url(#grad1)" strokeWidth="2" strokeLinecap="round"/>
-      <path d="m14.1 2.9 1.5 1.5M17.1 11.9 18.6 13.4" stroke="url(#grad1)" strokeWidth="2" strokeLinecap="round"/>
-      <path d="m21.1 5.9-1.5-1.5" stroke="url(#grad1)" strokeWidth="2" strokeLinecap="round"/>
-      <path d="M12.1 14.9 13.6 16.4" stroke="url(#grad1)" strokeWidth="2" strokeLinecap="round"/>
-      <path d="M22 7 2 7" stroke="url(#grad1)" strokeWidth="2" strokeLinecap="round"/>
-      <path d="M15 2 9 2" stroke="url(#grad1)" strokeWidth="2" strokeLinecap="round"/>
-      <path d="M22 12 2 12" stroke="url(#grad1)" strokeWidth="2" strokeLinecap="round"/>
-      <path d="M15 17 9 17" stroke="url(#grad1)" strokeWidth="2" strokeLinecap="round"/>
-      <path d="M22 22 2 22" stroke="url(#grad1)" strokeWidth="2" strokeLinecap="round"/>
-      <path d="M15 7 9 7" stroke="url(#grad1)" strokeWidth="2" strokeLinecap="round"/>
-      <path d="M22 17 2 17" stroke="url(#grad1)" strokeWidth="2" strokeLinecap="round"/>
-      <path d="M15 22 9 22" stroke="url(#grad1)" strokeWidth="2" strokeLinecap="round"/>
-      <path d="M17 2 17 22" stroke="url(#grad1)" strokeWidth="2" strokeLinecap="round"/>
-      <path d="M7 2 7 22" stroke="url(#grad1)" strokeWidth="2" strokeLinecap="round"/>
+        <defs>
+            <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor="#8E2DE2" />
+                <stop offset="100%" stopColor="#F27121" />
+            </linearGradient>
+        </defs>
+        <path d="m2.1 14.9 1.5 1.5M5.1 11.9 6.6 13.4M10.1 2.9 8.6 4.4m-6.5 1.5 1.5-1.5m12 0 1.5 1.5m3 8.5 1.5 1.5m3-8.5-1.5-1.5m-9 12 1.5 1.5M22 7 2 7m13-5-6 0m13 10-20 0m13 5-6 0m13 5-20 0m13-15-6 0m13 15-20 0m13 5-6 0m-3-20v20m10-20v20" stroke="url(#grad1)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
     </svg>
 );
 
