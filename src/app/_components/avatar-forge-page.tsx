@@ -764,13 +764,13 @@ export default function AvatarForgePage() {
                                 <FormItem>
                                   <FormLabel>Gerar a partir de uma imagem de referência</FormLabel>
                                   <FormControl>
-                                    <>
+                                    <div>
                                       <input type="file" accept="image/*" ref={fileInputRef} onChange={handleSceneFileChange} className="hidden" />
                                       <Button type="button" variant="outline" onClick={() => fileInputRef.current?.click()} disabled={isAnalyzingImage}>
                                         {isAnalyzingImage ? <Loader className="animate-spin mr-2" /> : <FileImage className="mr-2" />}
                                         {isAnalyzingImage ? 'Analisando...' : 'Escolher ficheiro'}
                                       </Button>
-                                    </>
+                                    </div>
                                   </FormControl>
                                   <p className="text-xs text-muted-foreground">Preenche o campo "Cenário" ao carregar a imagem.</p>
                                   {field.value && !isAnalyzingImage && <p className="text-sm text-muted-foreground">Imagem selecionada.</p>}
