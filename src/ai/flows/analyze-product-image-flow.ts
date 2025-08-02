@@ -23,7 +23,7 @@ export type AnalyzeProductImageInput = z.infer<typeof AnalyzeProductImageInputSc
 const AnalyzeProductImageOutputSchema = z.object({
   productName: z.string().describe("The product's name."),
   partnerBrand: z.string().describe("The product's brand."),
-  productDescription: z.string().describe("A detailed description of the product."),
+  productDescription: z.string().describe("A very detailed description of the product, including all of its visual details."),
 });
 
 export type AnalyzeProductImageOutput = z.infer<typeof AnalyzeProductImageOutputSchema>;
@@ -43,7 +43,7 @@ const analyzeProductImageFlow = ai.defineFlow(
         name: 'analyzeProductImagePrompt',
         input: { schema: AnalyzeProductImageInputSchema },
         output: { schema: AnalyzeProductImageOutputSchema },
-        prompt: `Analyze the provided image of a product and generate details about it. Fill in all the fields of the output schema based on the image.
+        prompt: `Analyze the provided image of a product and generate a very detailed description about it. Fill in all the fields of the output schema based on the image, providing as much detail as possible in the description.
 
 Image: {{media url=photoDataUri}}`
     });
