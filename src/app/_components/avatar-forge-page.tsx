@@ -528,7 +528,7 @@ export default function AvatarForgePage() {
 
       <main className="container mx-auto p-4 md:p-8">
        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="grid w-full grid-cols-4 mx-auto max-w-2xl">
+            <TabsList className="grid w-full grid-cols-2 sm:grid-cols-4 mx-auto max-w-2xl">
               <TabsTrigger value="creator"><Film className="mr-2" />Criador</TabsTrigger>
               <TabsTrigger value="influencer-gallery"><Palette className="mr-2" />Galeria de Personagens</TabsTrigger>
               <TabsTrigger value="scene-gallery"><LayoutGrid className="mr-2" />Galeria de Cenas</TabsTrigger>
@@ -853,7 +853,7 @@ export default function AvatarForgePage() {
                                   </Button>
                                 </CardHeader>
                                 <CardContent className="p-0 space-y-4">
-                                  <div className="grid grid-cols-2 gap-4">
+                                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                     <FormField control={form.control} name="productName" render={({ field }) => (
                                         <FormItem>
                                             <FormLabel>Nome do Produto</FormLabel>
@@ -1176,3 +1176,5 @@ export default function AvatarForgePage() {
     </div>
   );
 }
+
+    
