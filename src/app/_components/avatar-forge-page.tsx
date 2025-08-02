@@ -1020,8 +1020,8 @@ export default function AvatarForgePage() {
                                 <FormControl>
                                 <div>
                                     <input type="file" accept="image/*" ref={productFileInputRef} onChange={handleProductFileChange} className="hidden" />
-                                    <Button type="button" onClick={() => productFileInputRef.current?.click()} disabled={isAnalyzingProduct}>
-                                        {isAnalyzingProduct ? <Loader className="animate-spin mr-2" /> : <FileImage className="mr-2 text-neon-pink" />}
+                                    <Button type="button" onClick={() => productFileInputRef.current?.click()} disabled={isAnalyzingProduct} className="bg-green-700 hover:bg-green-800 text-white">
+                                        {isAnalyzingProduct ? <Loader className="animate-spin mr-2" /> : <FileImage className="mr-2 text-green-200" />}
                                         {isAnalyzingProduct ? 'Analisando...' : 'Escolher ficheiro'}
                                     </Button>
                                 </div>
