@@ -627,7 +627,7 @@ export default function AvatarForgePage() {
                                     </CardTitle>
                                 </CardHeader>
                                 <CardContent className="flex flex-col items-center gap-4">
-                                    <Button type="button" size="lg" onClick={() => referenceFileInputRef.current?.click()} className={cn("text-white bg-gradient-to-r from-gradient-purple to-gradient-orange hover:from-gradient-purple/90 hover:to-gradient-orange/90")}>
+                                    <Button type="button" size="lg" onClick={() => referenceFileInputRef.current?.click()} className="text-white bg-gradient-to-r from-gradient-purple to-gradient-orange hover:from-gradient-purple/90 hover:to-gradient-orange/90">
                                         <FileImage className="mr-2" />
                                         Escolher
                                     </Button>
@@ -816,7 +816,7 @@ export default function AvatarForgePage() {
                                   <FormControl>
                                     <div>
                                       <input type="file" accept="image/*" ref={fileInputRef} onChange={handleSceneFileChange} className="hidden" />
-                                      <Button type="button" onClick={() => fileInputRef.current?.click()} disabled={isAnalyzingImage} className={cn("text-white bg-gradient-to-r from-gradient-purple to-gradient-orange hover:from-gradient-purple/90 hover:to-gradient-orange/90")}>
+                                      <Button type="button" onClick={() => fileInputRef.current?.click()} disabled={isAnalyzingImage} className="text-white bg-gradient-to-r from-gradient-purple to-gradient-orange hover:from-gradient-purple/90 hover:to-gradient-orange/90">
                                         {isAnalyzingImage ? <Loader className="animate-spin mr-2" /> : <FileImage className="mr-2" />}
                                         {isAnalyzingImage ? 'Analisando...' : 'Escolher ficheiro'}
                                       </Button>
@@ -1011,7 +1011,7 @@ export default function AvatarForgePage() {
                                           <FormControl>
                                           <div>
                                               <input type="file" accept="image/*" ref={productFileInputRef} onChange={handleProductFileChange} className="hidden" />
-                                              <Button type="button" onClick={() => productFileInputRef.current?.click()} disabled={isAnalyzingProduct} className={cn("text-white bg-gradient-to-r from-gradient-purple to-gradient-orange hover:from-gradient-purple/90 hover:to-gradient-orange/90")}>
+                                              <Button type="button" onClick={() => productFileInputRef.current?.click()} disabled={isAnalyzingProduct} className="text-white bg-gradient-to-r from-gradient-purple to-gradient-orange hover:from-gradient-purple/90 hover:to-gradient-orange/90">
                                                   {isAnalyzingProduct ? <Loader className="animate-spin mr-2" /> : <FileImage className="mr-2" />}
                                                   {isAnalyzingProduct ? 'Analisando...' : 'Escolher ficheiro'}
                                               </Button>
@@ -1052,34 +1052,10 @@ export default function AvatarForgePage() {
 
                 <div className="lg:col-span-3 flex flex-col gap-8">
                   <Card className="bg-card/80">
-                    <CardHeader>
-                      <CardTitle className="font-headline">Preview</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="aspect-video w-full rounded-lg bg-black flex items-center justify-center overflow-hidden">
-                        {isPending || isGeneratingFromScript ? (
-                          <div className="text-center space-y-4 text-muted-foreground p-4">
-                            <Loader className="h-12 w-12 animate-spin mx-auto text-accent" />
-                            <p className="font-headline text-lg">Gerando seu avatar...</p>
-                            <p className="text-sm">Isso pode levar até um minuto. Por favor, aguarde.</p>
-                          </div>
-                        ) : videoUrl ? (
-                          <video src={videoUrl} controls autoPlay loop className="w-full h-full object-cover" />
-                        ) : (
-                          <div className="text-center space-y-4 text-muted-foreground p-4">
-                            <Clapperboard className="h-16 w-16 mx-auto" />
-                            <p className="font-headline text-lg">Seu vídeo aparecerá aqui</p>
-                          </div>
-                        )}
-                      </div>
-                    </CardContent>
-                  </Card>
-
-                  <Card className="bg-card/80">
                       <CardHeader>
                           <CardTitle className="flex items-center gap-2 font-headline text-xl">
                               <Edit className="text-accent" />
-                              3. Gere o Roteiro Detalhado
+                              Gere o Roteiro Detalhado
                           </CardTitle>
                           <CardDescription>Use o influenciador e a cena definidos para gerar um roteiro detalhado para um vídeo.</CardDescription>
                       </CardHeader>
@@ -1089,7 +1065,7 @@ export default function AvatarForgePage() {
                                   type="button"
                                   onClick={() => handleGenerateScript('markdown')}
                                   disabled={isGeneratingScript || !getInfluencerDescription(form.getValues()) || !form.getValues("scenarioPrompt")}
-                                  className={cn("text-white bg-gradient-to-r from-gradient-purple to-gradient-orange hover:from-gradient-purple/90 hover:to-gradient-orange/90")}
+                                  className="text-white bg-gradient-to-r from-gradient-purple to-gradient-orange hover:from-gradient-purple/90 hover:to-gradient-orange/90"
                               >
                                   {isGeneratingScript ? <Loader className="animate-spin mr-2" /> : <Bot />}
                                   Gerar Roteiro (Markdown)
