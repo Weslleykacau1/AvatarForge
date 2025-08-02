@@ -149,6 +149,7 @@ export default function AvatarForgePage() {
   const [isAnalyzingProduct, startProductAnalysisTransition] = useTransition();
   const [isGeneratingFromScript, startScriptVideoTransition] = useTransition();
   const [referenceImagePreview, setReferenceImagePreview] = useState<string | null>(null);
+  const [sceneImagePreview, setSceneImagePreview] = useState<string | null>(null);
 
 
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -284,6 +285,7 @@ export default function AvatarForgePage() {
       reader.onloadend = () => {
         const dataUri = reader.result as string;
         form.setValue("sceneImage", dataUri, { shouldValidate: true });
+        setSceneImagePreview(dataUri);
         toast({ title: "Imagem da Cena Carregada", description: "Imagem pronta para análise." });
       };
       reader.readAsDataURL(file);
@@ -468,6 +470,7 @@ export default function AvatarForgePage() {
     setCurrentSceneId(scene.id);
     setVideoUrl(null);
     setReferenceImagePreview(scene.referenceImage || null);
+    setSceneImagePreview(scene.sceneImage || null);
     setActiveTab("creator");
     toast({
       title: "Cena Carregada",
@@ -482,6 +485,7 @@ export default function AvatarForgePage() {
     setCurrentProductId(null);
     setVideoUrl(null);
     setReferenceImagePreview(null);
+    setSceneImagePreview(null);
     setActiveTab("creator");
   };
 
@@ -847,6 +851,13 @@ export default function AvatarForgePage() {
                                 <FormField control={form.control} name="sceneImage" render={({ field }) => (
                                   <FormItem>
                                     <FormLabel>Gerar a partir de uma imagem de referência</FormLabel>
+                                     <div className="w-full aspect-square rounded-lg bg-black/20 flex items-center justify-center my-2">
+                                        {sceneImagePreview ? (
+                                          <Image src={sceneImagePreview} alt="Prévia da cena" width={200} height={200} className="object-cover rounded-md" />
+                                        ) : (
+                                          <p className="text-muted-foreground">Prévia da Cena</p>
+                                        )}
+                                      </div>
                                     <FormControl>
                                       <div className="flex items-center gap-2">
                                         <input type="file" accept="image/*" ref={fileInputRef} onChange={handleSceneFileChange} className="hidden" />
@@ -861,7 +872,6 @@ export default function AvatarForgePage() {
                                       </div>
                                     </FormControl>
                                     <p className="text-xs text-muted-foreground">Preenche o campo "Cenário" ao carregar a imagem.</p>
-                                    {field.value && !isAnalyzingImage && <p className="text-sm text-muted-foreground">Imagem selecionada.</p>}
                                     <FormMessage />
                                   </FormItem>
                                 )} />
