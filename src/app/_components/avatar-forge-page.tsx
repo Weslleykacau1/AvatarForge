@@ -952,9 +952,9 @@ export default function AvatarForgePage() {
                                   </FormItem>
                                 )} />
 
-                                <Card className="p-4 bg-destructive/10 border-destructive/50">
-                                    <CardTitle className="flex items-center text-base mb-2 gap-2 text-destructive">
-                                        <FileText className="text-destructive" />
+                                <Card className="p-4 border">
+                                    <CardTitle className="flex items-center text-base mb-2 gap-2">
+                                        <FileText />
                                         Controle de Texto no Ecrã
                                     </CardTitle>
                                     <div className="space-y-4 text-foreground">
@@ -964,7 +964,7 @@ export default function AvatarForgePage() {
                                                 <FormControl>
                                                     <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="flex gap-4">
                                                         <FormItem className="flex items-center space-x-2"><FormControl><RadioGroupItem value="true" /></FormControl><FormLabel className="font-normal">Sim</FormLabel></FormItem>
-                                                        <FormItem className="flex items-center space-x-2"><FormControl><RadioGroupItem value="false" /></FormControl><FormLabel className="font-normal text-destructive">Não</FormLabel></FormItem>
+                                                        <FormItem className="flex items-center space-x-2"><FormControl><RadioGroupItem value="false" /></FormControl><FormLabel className="font-normal">Não</FormLabel></FormItem>
                                                     </RadioGroup>
                                                 </FormControl>
                                             </FormItem>
@@ -975,7 +975,7 @@ export default function AvatarForgePage() {
                                                 <FormControl>
                                                     <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="flex gap-4">
                                                         <FormItem className="flex items-center space-x-2"><FormControl><RadioGroupItem value="true" /></FormControl><FormLabel className="font-normal">Sim</FormLabel></FormItem>
-                                                        <FormItem className="flex items-center space-x-2"><FormControl><RadioGroupItem value="false" /></FormControl><FormLabel className="font-normal text-destructive">Não</FormLabel></FormItem>
+                                                        <FormItem className="flex items-center space-x-2"><FormControl><RadioGroupItem value="false" /></FormControl><FormLabel className="font-normal">Não</FormLabel></FormItem>
                                                     </RadioGroup>
                                                 </FormControl>
                                             </FormItem>
