@@ -836,7 +836,7 @@ export default function AvatarForgePage() {
                                   </div>
                               </Card>
                               
-                              <Card className="p-4 bg-background border border-accent">
+                              <Card className="p-4 bg-accent/20 border border-accent">
                                 <CardHeader className="p-0 pb-4 flex flex-row items-center justify-between">
                                   <CardTitle className="flex items-center gap-2 font-headline text-base text-accent">
                                       <Package className="text-accent"/>
