@@ -824,8 +824,8 @@ export default function AvatarForgePage() {
                                     <FormControl>
                                       <div>
                                         <input type="file" accept="image/*" ref={fileInputRef} onChange={handleSceneFileChange} className="hidden" />
-                                        <Button type="button" onClick={() => fileInputRef.current?.click()} disabled={isAnalyzingImage}>
-                                          {isAnalyzingImage ? <Loader className="animate-spin mr-2" /> : <FileImage className="mr-2 text-neon-pink" />}
+                                        <Button type="button" onClick={() => fileInputRef.current?.click()} disabled={isAnalyzingImage} className="text-white bg-gradient-to-r from-gradient-purple to-gradient-orange hover:from-gradient-purple/90 hover:to-gradient-orange/90">
+                                          {isAnalyzingImage ? <Loader className="animate-spin mr-2" /> : <FileImage className="mr-2" />}
                                           {isAnalyzingImage ? 'Analisando...' : 'Escolher ficheiro'}
                                         </Button>
                                       </div>
@@ -1330,3 +1330,5 @@ export default function AvatarForgePage() {
   );
 }
 
+
+    
