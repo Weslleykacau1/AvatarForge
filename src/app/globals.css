@@ -4,25 +4,25 @@
 
 @layer base {
   :root {
-    --background: 0 0% 0%; /* #000000 */
+    --background: 0 0% 3%; /* #080808 */
     --foreground: 0 0% 100%; /* #FFFFFF */
     --card: 0 0% 10%; /* #1A1A1A */
     --card-foreground: 0 0% 100%;
-    --popover: 0 0% 0%;
+    --popover: 0 0% 3%;
     --popover-foreground: 0 0% 100%;
-    --primary: 355 100% 65%; /* #FF4F5E - Mapeado para primary para ter mais impacto */
-    --primary-foreground: 0 0% 100%;
-    --secondary: 0 0% 10%;
-    --secondary-foreground: 0 0% 100%;
+    --primary: 340 100% 70%; /* Representação do rosa do gradiente */
+    --primary-foreground: 0 0% 0%; /* Preto para texto no botão primário */
+    --secondary: 0 0% 100%; /* Branco para botões secundários */
+    --secondary-foreground: 0 0% 0%; /* Preto para texto em botões secundários */
     --muted: 0 0% 10%;
     --muted-foreground: 0 0% 70%;
-    --accent: 355 100% 65%; /* #FF4F5E */
+    --accent: 340 100% 70%; /* Rosa/Vermelho como destaque */
     --accent-foreground: 0 0% 100%;
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 98%;
     --border: 0 0% 17%; /* #2C2C2C */
     --input: 0 0% 17%;
-    --ring: 355 100% 65%;
+    --ring: 340 100% 70%;
     --chart-1: 12 76% 61%;
     --chart-2: 173 58% 39%;
     --chart-3: 197 37% 24%;

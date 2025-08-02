@@ -24,6 +24,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Checkbox } from "@/components/ui/checkbox";
+import { cn } from "@/lib/utils";
 
 const formSchema = z.object({
   name: z.string().min(1, "Nome é obrigatório.").max(100, "Nome muito longo."),
@@ -700,9 +701,13 @@ export default function AvatarForgePage() {
                             </TabsContent>
 
                             <TabsContent value="scene" className="space-y-6 pt-4">
-                              <div className="space-y-2">
+                                <div className="flex items-center justify-between">
                                 <Button type="button" variant="outline" size="sm" onClick={handleGenerateTitle} disabled={isGeneratingTitle}>
-                                  {isGeneratingTitle ? <Loader className="animate-spin mr-2" /> : <Wand2 />} Gerar Título da Cena com IA
+                                  {isGeneratingTitle ? <Loader className="animate-spin mr-2" /> : <Wand2 />} Gerar Título da Cena
+                                </Button>
+                                <Button type="button" variant="secondary" size="sm" onClick={handleSaveScene}>
+                                      <Save className="mr-2 h-4 w-4" />
+                                      Salvar Cena
                                 </Button>
                               </div>
 
@@ -836,7 +841,7 @@ export default function AvatarForgePage() {
                                   </div>
                               </Card>
                               
-                              <Card className="p-4 bg-accent/20 border border-accent">
+                              <Card className="p-4 bg-accent/10 border border-accent">
                                 <CardHeader className="p-0 pb-4 flex flex-row items-center justify-between">
                                   <CardTitle className="flex items-center gap-2 font-headline text-base text-accent">
                                       <Package className="text-accent"/>
@@ -905,13 +910,9 @@ export default function AvatarForgePage() {
                           </Tabs>
 
                           <div className="flex flex-wrap gap-2 pt-4">
-                            <Button type="submit" disabled={isPending || !form.formState.isValid} className="flex-grow">
+                            <Button type="submit" disabled={isPending || !form.formState.isValid} className={cn("flex-grow", !isPending && "text-primary-foreground bg-gradient-to-r from-pink-500 to-orange-400 hover:from-pink-600 hover:to-orange-500")}>
                               {isPending ? <Loader className="animate-spin mr-2 h-4 w-4" /> : <Bot className="mr-2 h-4 w-4" />}
                               {isPending ? "Gerando..." : "Gerar Vídeo"}
-                            </Button>
-                            <Button type="button" variant="secondary" onClick={handleSaveScene} className="flex-grow">
-                              <Save className="mr-2 h-4 w-4" />
-                              Salvar Cena
                             </Button>
                           </div>
                         </form>
@@ -987,7 +988,7 @@ export default function AvatarForgePage() {
                               </ScrollArea>
                           ) : (
                             <div className="h-60 w-full rounded-md border-dashed border-2 flex items-center justify-center bg-muted/20">
-                              <p className="text-muted-foreground text-center">O roteiro gerado aparece aqui.</p>
+                              <p className="text-muted-foreground text-center">O ROTEIRO GERADO APARECE AQUI</p>
                             </div>
                           )}
                       </CardContent>
