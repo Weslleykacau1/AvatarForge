@@ -17,7 +17,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useGallery } from "@/hooks/use-gallery";
 import { useAvatars } from "@/hooks/use-avatars";
 import { useProducts } from "@/hooks/use-products";
-import { generateVideoAction, generateTitleAction, generateActionAction, analyzeImageAction, analyzeTextAction, generateDialogueAction, generateSeoAction, analyzeAvatarDetailsAction, generateScriptAction, analyzeProductImageAction } from "@/app/actions";
+import { generateFullSceneAction, analyzeImageAction, analyzeTextAction, generateSeoAction, analyzeAvatarDetailsAction, generateScriptAction, analyzeProductImageAction } from "@/app/actions";
 import type { Scene, Avatar, Product } from "@/app/types";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -70,11 +70,8 @@ export default function AvatarForgePage() {
   const { avatars, addOrUpdateAvatar, removeAvatar, isLoaded: isAvatarGalleryLoaded } = useAvatars();
   const { products, addOrUpdateProduct, removeProduct, isLoaded: isProductGalleryLoaded } = useProducts();
   const [isPending, startTransition] = useTransition();
-  const [isGeneratingTitle, startTitleTransition] = useTransition();
-  const [isGeneratingAction, startActionTransition] = useTransition();
   const [isAnalyzingImage, startImageAnalysisTransition] = useTransition();
   const [isAnalyzingText, startTextAnalysisTransition] = useTransition();
-  const [isGeneratingDialogue, startDialogueTransition] = useTransition();
   const [isGeneratingSeo, startSeoTransition] = useTransition();
   const [isAnalyzingAvatar, startAvatarAnalysisTransition] = useTransition();
   const [isGeneratingScript, startScriptTransition] = useTransition();
@@ -145,13 +142,14 @@ export default function AvatarForgePage() {
 
       const influencerDescription = getInfluencerDescription(data);
 
-      const result = await generateVideoAction({
-        sceneTitle: data.name,
-        scenarioPrompt: `${influencerDescription}\n\n**Cenário:** ${scenarioPrompt}`,
+      const result = await generateFullSceneAction({
+        influencerDescription,
+        scenarioPrompt,
+        name: data.name,
         actionPrompt: data.actionPrompt,
+        dialogue: data.dialogue,
         negativePrompt: data.negativePrompt,
         sceneImageDataUri: data.sceneImage || data.productImage,
-        dialogue: data.dialogue,
         accent: data.accent,
         cameraAngle: data.cameraAngle,
         duration: data.duration,
@@ -162,6 +160,9 @@ export default function AvatarForgePage() {
 
       if (result.success && result.videoDataUri) {
         setVideoUrl(result.videoDataUri);
+        form.setValue("name", result.generatedTitle, { shouldValidate: true });
+        form.setValue("actionPrompt", result.generatedAction, { shouldValidate: true });
+        form.setValue("dialogue", result.generatedDialogue, { shouldValidate: true });
         toast({
           title: "Vídeo Gerado!",
           description: "Seu vídeo de avatar está pronto.",
@@ -175,68 +176,7 @@ export default function AvatarForgePage() {
       }
     });
   });
-
-  const handleGenerateTitle = () => {
-    const scenario = form.getValues("scenarioPrompt");
-    const action = form.getValues("actionPrompt");
-    if (!scenario || !action) {
-      toast({
-        variant: "destructive",
-        title: "Faltando contexto",
-        description: "Por favor, preencha o cenário e a ação principal para gerar um título.",
-      });
-      return;
-    }
-    startTitleTransition(async () => {
-      const result = await generateTitleAction({ context: `Cenário: ${scenario}, Ação: ${action}` });
-      if (result.success && result.title) {
-        form.setValue("name", result.title, { shouldValidate: true });
-        toast({ title: "Título Gerado!" });
-      } else {
-        toast({ variant: "destructive", title: "Falha ao gerar título", description: result.error });
-      }
-    });
-  };
-
-  const handleGenerateAction = () => {
-    const scenario = form.getValues("scenarioPrompt");
-    if (!scenario) {
-      toast({
-        variant: "destructive",
-        title: "Faltando contexto",
-        description: "Por favor, preencha o cenário para gerar uma ação.",
-      });
-      return;
-    }
-    startActionTransition(async () => {
-      const result = await generateActionAction({ context: `Cenário: ${scenario}` });
-      if (result.success && result.action) {
-        form.setValue("actionPrompt", result.action, { shouldValidate: true });
-        toast({ title: "Ação Gerada!" });
-      } else {
-        toast({ variant: "destructive", title: "Falha ao gerar ação", description: result.error });
-      }
-    });
-  };
   
-  const handleGenerateDialogue = () => {
-    const scenario = form.getValues("scenarioPrompt");
-    const action = form.getValues("actionPrompt");
-    if (!scenario || !action) {
-      toast({ variant: "destructive", title: "Faltando contexto", description: "Preencha o cenário e a ação." });
-      return;
-    }
-    startDialogueTransition(async () => {
-      const result = await generateDialogueAction({ context: `Cenário: ${scenario}, Ação: ${action}` });
-      if (result.success && result.dialogue) {
-        form.setValue("dialogue", result.dialogue, { shouldValidate: true });
-        toast({ title: "Diálogo Gerado!" });
-      } else {
-        toast({ variant: "destructive", title: "Falha ao gerar diálogo", description: result.error });
-      }
-    });
-  };
-
   const handleGenerateSeo = () => {
     const title = form.getValues("name");
     const scenario = form.getValues("scenarioPrompt");
@@ -741,15 +681,20 @@ export default function AvatarForgePage() {
                             </TabsContent>
 
                             <TabsContent value="scene" className="space-y-6 pt-4">
-                                <div className="flex items-center justify-between">
-                                <Button type="button" variant="outline" size="sm" onClick={handleGenerateTitle} disabled={isGeneratingTitle}>
-                                  {isGeneratingTitle ? <Loader className="animate-spin mr-2" /> : <Wand2 />} Gerar Título da Cena
-                                </Button>
+                              <div className="flex items-center justify-end">
                                 <Button type="button" variant="secondary" size="sm" onClick={handleSaveScene}>
                                       <Save className="mr-2 h-4 w-4" />
                                       Salvar Cena
                                 </Button>
                               </div>
+                              
+                              <FormField control={form.control} name="name" render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel>Título da Cena</FormLabel>
+                                  <FormControl><Input placeholder="Um título curto e cativante..." {...field} /></FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )} />
 
                               <FormField control={form.control} name="scenarioPrompt" render={({ field }) => (
                                 <FormItem>
@@ -785,10 +730,7 @@ export default function AvatarForgePage() {
                                   <FormMessage />
                                 </FormItem>
                               )} />
-                              <Button type="button" variant="outline" size="sm" onClick={handleGenerateAction} disabled={isGeneratingAction}>
-                                {isGeneratingAction ? <Loader className="animate-spin mr-2" /> : <Wand2 />} Gerar Ação com IA
-                              </Button>
-
+                              
                               <FormField control={form.control} name="dialogue" render={({ field }) => (
                                   <FormItem>
                                       <FormLabel className="flex items-center gap-2"><MessageSquare /> Diálogo</FormLabel>
@@ -797,9 +739,6 @@ export default function AvatarForgePage() {
                                   </FormItem>
                               )} />
                               <div className="flex gap-2">
-                                  <Button type="button" variant="outline" size="sm" onClick={handleGenerateDialogue} disabled={isGeneratingDialogue}>
-                                      {isGeneratingDialogue ? <Loader className="animate-spin mr-2"/> : <Bot />} Gerar Diálogo
-                                  </Button>
                                   <Button type="button" variant="outline" size="sm" onClick={handleGenerateSeo} disabled={isGeneratingSeo}>
                                       {isGeneratingSeo ? <Loader className="animate-spin mr-2"/> : <Briefcase />} Gerar SEO
                                   </Button>
@@ -916,13 +855,13 @@ export default function AvatarForgePage() {
                                       <FormItem>
                                           <FormLabel>Carregue a imagem do produto</FormLabel>
                                           <FormControl>
-                                          <>
+                                          <div>
                                               <input type="file" accept="image/*" ref={productFileInputRef} onChange={handleProductFileChange} className="hidden" />
                                               <Button type="button" variant="outline" onClick={() => productFileInputRef.current?.click()} disabled={isAnalyzingProduct}>
                                                   {isAnalyzingProduct ? <Loader className="animate-spin mr-2" /> : <FileImage className="mr-2" />}
                                                   {isAnalyzingProduct ? 'Analisando...' : 'Escolher ficheiro'}
                                               </Button>
-                                          </>
+                                          </div>
                                           </FormControl>
                                           <p className="text-xs text-muted-foreground">Preenche as informações do produto ao carregar a imagem.</p>
                                           {field.value && !isAnalyzingProduct && <p className="text-sm text-muted-foreground">Ficheiro selecionado.</p>}
@@ -1219,5 +1158,3 @@ export default function AvatarForgePage() {
     </div>
   );
 }
-
-    

@@ -2,23 +2,23 @@
 
 import { z } from "zod";
 import { generateAvatarVideo } from "@/ai/flows/generate-avatar-video";
-import { generateTitle } from "@/ai/flows/generate-title-flow";
-import { generateAction } from "@/ai/flows/generate-action-flow";
-import { analyzeImage } from "@/ai/flows/analyze-image-flow";
-import { analyzeText } from "@/ai/flows/analyze-text-flow";
-import { generateDialogue } from "@/ai/flows/generate-dialogue-flow";
 import { generateSeo } from "@/ai/flows/generate-seo-flow";
 import { analyzeAvatarDetails, type AnalyzeAvatarDetailsOutput } from "@/ai/flows/analyze-avatar-details-flow";
 import { generateScript } from "@/ai/flows/generate-script-flow";
 import { analyzeProductImage, type AnalyzeProductImageOutput } from "@/ai/flows/analyze-product-image-flow";
+import { analyzeImage } from "@/ai/flows/analyze-image-flow";
+import { analyzeText } from "@/ai/flows/analyze-text-flow";
+import { generateFullScene, type GenerateFullSceneOutput } from "@/ai/flows/generate-full-scene-flow";
 
-const generateVideoSchema = z.object({
-  sceneTitle: z.string().min(1, "Título da cena é obrigatório."),
-  scenarioPrompt: z.string().min(1, "Descrição do cenário é obrigatória."),
-  actionPrompt: z.string().min(1, "Ação principal é obrigatória."),
+
+const generateFullSceneSchema = z.object({
+  influencerDescription: z.string(),
+  scenarioPrompt: z.string(),
+  name: z.string().optional(),
+  actionPrompt: z.string().optional(),
+  dialogue: z.string().optional(),
   negativePrompt: z.string().optional(),
   sceneImageDataUri: z.string().optional(),
-  dialogue: z.string().optional(),
   accent: z.string().optional(),
   cameraAngle: z.string().optional(),
   duration: z.number().optional(),
@@ -27,16 +27,19 @@ const generateVideoSchema = z.object({
   allowPhysicalText: z.boolean().optional(),
 });
 
-type VideoState = {
+type FullSceneState = {
   success: boolean;
   videoDataUri?: string;
+  generatedTitle?: string;
+  generatedAction?: string;
+  generatedDialogue?: string;
   error?: string;
 };
 
-export async function generateVideoAction(
-  data: z.infer<typeof generateVideoSchema>
-): Promise<VideoState> {
-  const validatedFields = generateVideoSchema.safeParse(data);
+export async function generateFullSceneAction(
+  data: z.infer<typeof generateFullSceneSchema>
+): Promise<FullSceneState> {
+  const validatedFields = generateFullSceneSchema.safeParse(data);
 
   if (!validatedFields.success) {
     return {
@@ -46,70 +49,21 @@ export async function generateVideoAction(
   }
 
   try {
-    const result = await generateAvatarVideo(validatedFields.data);
-    return { success: true, videoDataUri: result.videoDataUri };
+    const result = await generateFullScene(validatedFields.data);
+    return { 
+        success: true, 
+        videoDataUri: result.videoDataUri,
+        generatedTitle: result.generatedTitle,
+        generatedAction: result.generatedAction,
+        generatedDialogue: result.generatedDialogue,
+    };
   } catch (error) {
-    console.error("Video generation failed:", error);
+    console.error("Full scene generation failed:", error);
     const errorMessage = error instanceof Error ? error.message : "An unknown error occurred.";
-    return { success: false, error: `Video generation failed: ${errorMessage}` };
+    return { success: false, error: `Scene generation failed: ${errorMessage}` };
   }
 }
 
-const generateTitleSchema = z.object({
-  context: z.string(),
-});
-
-type TitleState = {
-  success: boolean;
-  title?: string;
-  error?: string;
-};
-
-export async function generateTitleAction(
-  data: z.infer<typeof generateTitleSchema>
-): Promise<TitleState> {
-  const validatedFields = generateTitleSchema.safeParse(data);
-
-  if (!validatedFields.success) {
-    return { success: false, error: 'Invalid input' };
-  }
-
-  try {
-    const result = await generateTitle(validatedFields.data.context);
-    return { success: true, title: result.title };
-  } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : "An unknown error occurred.";
-    return { success: false, error: `Title generation failed: ${errorMessage}` };
-  }
-}
-
-const generateActionSchema = z.object({
-  context: z.string(),
-});
-
-type ActionState = {
-  success: boolean;
-  action?: string;
-  error?: string;
-};
-
-export async function generateActionAction(
-  data: z.infer<typeof generateActionSchema>
-): Promise<ActionState> {
-  const validatedFields = generateActionSchema.safeParse(data);
-
-  if (!validatedFields.success) {
-    return { success: false, error: 'Invalid input' };
-  }
-
-  try {
-    const result = await generateAction(validatedFields.data.context);
-    return { success: true, action: result.action };
-  } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : "An unknown error occurred.";
-    return { success: false, error: `Action generation failed: ${errorMessage}` };
-  }
-}
 
 const analyzeImageSchema = z.object({
     photoDataUri: z.string(),
@@ -161,32 +115,6 @@ export async function analyzeTextAction(
     } catch (error) {
         const errorMessage = error instanceof Error ? error.message : "An unknown error occurred.";
         return { success: false, error: `Text analysis failed: ${errorMessage}` };
-    }
-}
-
-const generateDialogueSchema = z.object({
-    context: z.string(),
-});
-
-type DialogueState = {
-    success: boolean;
-    dialogue?: string;
-    error?: string;
-};
-
-export async function generateDialogueAction(
-    data: z.infer<typeof generateDialogueSchema>
-): Promise<DialogueState> {
-    const validatedFields = generateDialogueSchema.safeParse(data);
-    if (!validatedFields.success) {
-        return { success: false, error: 'Invalid input' };
-    }
-    try {
-        const result = await generateDialogue(validatedFields.data);
-        return { success: true, dialogue: result.dialogue };
-    } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : "An unknown error occurred.";
-        return { success: false, error: `Dialogue generation failed: ${errorMessage}` };
     }
 }
 
