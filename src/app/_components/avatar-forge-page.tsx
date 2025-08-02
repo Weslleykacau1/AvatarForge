@@ -1007,10 +1007,10 @@ export default function AvatarForgePage() {
                   </div>
 
                   <div className="lg:col-span-3 flex flex-col gap-8">
-                    <Card className="p-4 bg-blue-900/10 border border-blue-700">
+                    <Card className="p-4 bg-gradient-orange/10 border border-gradient-orange">
                         <CardHeader className="p-0 mb-4">
-                            <CardTitle className="flex items-center text-base gap-2 text-blue-400">
-                                <Sparkles className="text-blue-400" />
+                            <CardTitle className="flex items-center text-base gap-2 text-gradient-orange">
+                                <Sparkles className="text-gradient-orange" />
                                 Melhorias de Qualidade
                             </CardTitle>
                         </CardHeader>
