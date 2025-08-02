@@ -1,12 +1,12 @@
 "use client";
 
 import { useState, useEffect, useCallback } from 'react';
-import type { Influencer } from '@/app/types';
+import type { Scene } from '@/app/types';
 
 const GALLERY_KEY = 'avatar-forge-gallery-scenes';
 
 export function useGallery() {
-  const [gallery, setGallery] = useState<Influencer[]>([]);
+  const [gallery, setGallery] = useState<Scene[]>([]);
   const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
@@ -21,7 +21,7 @@ export function useGallery() {
     setIsLoaded(true);
   }, []);
 
-  const saveGallery = useCallback((newGallery: Influencer[]) => {
+  const saveGallery = useCallback((newGallery: Scene[]) => {
     try {
       const sortedGallery = newGallery.sort((a, b) => a.name.localeCompare(b.name));
       setGallery(sortedGallery);
@@ -31,21 +31,21 @@ export function useGallery() {
     }
   }, []);
 
-  const addOrUpdateInfluencer = useCallback((influencer: Influencer) => {
+  const addOrUpdateScene = useCallback((scene: Scene) => {
     const newGallery = [...gallery];
-    const existingIndex = newGallery.findIndex(item => item.id === influencer.id);
+    const existingIndex = newGallery.findIndex(item => item.id === scene.id);
     if (existingIndex > -1) {
-      newGallery[existingIndex] = influencer;
+      newGallery[existingIndex] = scene;
     } else {
-      newGallery.unshift(influencer);
+      newGallery.unshift(scene);
     }
     saveGallery(newGallery);
   }, [gallery, saveGallery]);
 
-  const removeInfluencer = useCallback((id: string) => {
+  const removeScene = useCallback((id: string) => {
     const newGallery = gallery.filter(item => item.id !== id);
     saveGallery(newGallery);
   }, [gallery, saveGallery]);
 
-  return { gallery, addOrUpdateInfluencer, removeInfluencer, isLoaded };
+  return { gallery, addOrUpdateScene, removeScene, isLoaded };
 }

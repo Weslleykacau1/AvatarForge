@@ -15,15 +15,17 @@ import { Textarea } from "@/components/ui/textarea";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
 import { useGallery } from "@/hooks/use-gallery";
+import { useAvatars } from "@/hooks/use-avatars";
+import { useProducts } from "@/hooks/use-products";
 import { generateVideoAction, generateTitleAction, generateActionAction, analyzeImageAction, analyzeTextAction, generateDialogueAction, generateSeoAction } from "@/app/actions";
-import type { Influencer } from "@/app/types";
+import type { Scene, Avatar, Product } from "@/app/types";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Checkbox } from "@/components/ui/checkbox";
 
-const influencerSchema = z.object({
+const formSchema = z.object({
   name: z.string().min(1, "Nome é obrigatório.").max(100, "Nome muito longo."),
   niche: z.string().min(1, "Nicho é obrigatório.").max(100, "Nicho muito longo."),
   scenarioPrompt: z.string().min(1, "Descrição do cenário é obrigatória.").max(1000, "Descrição muito longa."),
@@ -51,13 +53,17 @@ const influencerSchema = z.object({
   isPartnership: z.boolean().optional(),
 });
 
-type InfluencerFormData = z.infer<typeof influencerSchema>;
+type FormData = z.infer<typeof formSchema>;
 
 export default function AvatarForgePage() {
-  const [currentId, setCurrentId] = useState<string | null>(null);
+  const [currentSceneId, setCurrentSceneId] = useState<string | null>(null);
+  const [currentAvatarId, setCurrentAvatarId] = useState<string | null>(null);
+  const [currentProductId, setCurrentProductId] = useState<string | null>(null);
   const [videoUrl, setVideoUrl] = useState<string | null>(null);
   const { toast } = useToast();
-  const { gallery, addOrUpdateInfluencer, removeInfluencer, isLoaded } = useGallery();
+  const { gallery: sceneGallery, addOrUpdateScene, removeScene, isLoaded: isSceneGalleryLoaded } = useGallery();
+  const { avatars, addOrUpdateAvatar, removeAvatar, isLoaded: isAvatarGalleryLoaded } = useAvatars();
+  const { products, addOrUpdateProduct, removeProduct, isLoaded: isProductGalleryLoaded } = useProducts();
   const [isPending, startTransition] = useTransition();
   const [isGeneratingTitle, startTitleTransition] = useTransition();
   const [isGeneratingAction, startActionTransition] = useTransition();
@@ -72,8 +78,8 @@ export default function AvatarForgePage() {
   const referenceFileInputRef = useRef<HTMLInputElement>(null);
   const productFileInputRef = useRef<HTMLInputElement>(null);
 
-  const form = useForm<InfluencerFormData>({
-    resolver: zodResolver(influencerSchema),
+  const form = useForm<FormData>({
+    resolver: zodResolver(formSchema),
     mode: 'onChange',
     defaultValues: {
       name: "",
@@ -308,44 +314,126 @@ export default function AvatarForgePage() {
   };
 
 
-  const handleSaveToGallery = (data: InfluencerFormData) => {
-    const id = currentId || crypto.randomUUID();
-    addOrUpdateInfluencer({ id, ...data });
-    if (!currentId) setCurrentId(id);
+  const handleSaveScene = (data: FormData) => {
+    const id = currentSceneId || crypto.randomUUID();
+    addOrUpdateScene({ id, ...data });
+    if (!currentSceneId) setCurrentSceneId(id);
     toast({
       title: "Salvo na Galeria",
       description: `Cena "${data.name}" foi salva.`,
     });
   };
 
-  const handleLoadInfluencer = (influencer: Influencer) => {
-    form.reset(influencer);
-    setCurrentId(influencer.id);
+  const handleLoadScene = (scene: Scene) => {
+    form.reset(scene);
+    setCurrentSceneId(scene.id);
     setVideoUrl(null);
-    setReferenceImagePreview(influencer.referenceImage || null);
+    setReferenceImagePreview(scene.referenceImage || null);
     toast({
       title: "Cena Carregada",
-      description: `Carregado "${influencer.name}" no editor.`,
+      description: `Carregado "${scene.name}" no editor.`,
     });
   };
 
-  const handleNewInfluencer = () => {
+  const handleNewScene = () => {
     form.reset({ name: "", niche: "", scenarioPrompt: "", actionPrompt: "", sceneImage: "", referenceImage: "", characteristics: "", personalityTraits: "", appearanceDetails: "", clothing: "", shortBio: "", uniqueTrait: "", age: "", gender: "", dialogue: "", cameraAngle: "dynamic", duration: 8, videoFormat: "9:16", allowDigitalText: "false", allowPhysicalText: "false", productName: "", partnerBrand: "", productImage: "", productDescription: "", isPartnership: false });
-    setCurrentId(null);
+    setCurrentSceneId(null);
+    setCurrentAvatarId(null);
+    setCurrentProductId(null);
     setVideoUrl(null);
     setReferenceImagePreview(null);
   };
 
-  const handleDeleteInfluencer = (id: string, name: string) => {
-    removeInfluencer(id);
-    if (currentId === id) {
-      handleNewInfluencer();
+  const handleDeleteScene = (id: string, name: string) => {
+    removeScene(id);
+    if (currentSceneId === id) {
+      handleNewScene();
     }
     toast({
       title: "Cena Deletada",
       description: `"${name}" foi removido da sua galeria.`,
     });
   };
+  
+  const handleSaveAvatar = () => {
+    const data = form.getValues();
+    const id = currentAvatarId || crypto.randomUUID();
+    const avatarData: Avatar = {
+      id,
+      name: data.name,
+      niche: data.niche,
+      referenceImage: data.referenceImage,
+      characteristics: data.characteristics,
+      personalityTraits: data.personalityTraits,
+      appearanceDetails: data.appearanceDetails,
+      clothing: data.clothing,
+      shortBio: data.shortBio,
+      uniqueTrait: data.uniqueTrait,
+      age: data.age,
+      gender: data.gender,
+    };
+    addOrUpdateAvatar(avatarData);
+    if(!currentAvatarId) setCurrentAvatarId(id);
+    toast({ title: "Avatar Salvo", description: `Avatar "${data.name}" salvo na galeria.`});
+  };
+
+  const handleLoadAvatar = (avatar: Avatar) => {
+    form.setValue("name", avatar.name);
+    form.setValue("niche", avatar.niche);
+    form.setValue("referenceImage", avatar.referenceImage);
+    form.setValue("characteristics", avatar.characteristics);
+    form.setValue("personalityTraits", avatar.personalityTraits);
+    form.setValue("appearanceDetails", avatar.appearanceDetails);
+    form.setValue("clothing", avatar.clothing);
+    form.setValue("shortBio", avatar.shortBio);
+    form.setValue("uniqueTrait", avatar.uniqueTrait);
+    form.setValue("age", avatar.age);
+    form.setValue("gender", avatar.gender);
+    setReferenceImagePreview(avatar.referenceImage || null);
+    setCurrentAvatarId(avatar.id);
+    toast({ title: "Avatar Carregado", description: `Avatar "${avatar.name}" carregado.`});
+  };
+  
+  const handleDeleteAvatar = (id: string, name: string) => {
+    removeAvatar(id);
+    toast({ title: "Avatar Deletado", description: `"${name}" foi removido.` });
+  };
+
+  const handleSaveProduct = () => {
+    const data = form.getValues();
+    if (!data.productName) {
+        toast({ variant: "destructive", title: "Faltando Nome", description: "O nome do produto é obrigatório." });
+        return;
+    }
+    const id = currentProductId || crypto.randomUUID();
+    const productData: Product = {
+      id,
+      productName: data.productName,
+      partnerBrand: data.partnerBrand,
+      productImage: data.productImage,
+      productDescription: data.productDescription,
+      isPartnership: data.isPartnership,
+    };
+    addOrUpdateProduct(productData);
+    if(!currentProductId) setCurrentProductId(id);
+    toast({ title: "Produto Salvo", description: `Produto "${data.productName}" salvo na galeria.`});
+  };
+
+  const handleLoadProduct = (product: Product) => {
+    form.setValue("productName", product.productName);
+    form.setValue("partnerBrand", product.partnerBrand);
+    form.setValue("productImage", product.productImage);
+    form.setValue("productDescription", product.productDescription);
+    form.setValue("isPartnership", product.isPartnership);
+    setCurrentProductId(product.id);
+    toast({ title: "Produto Carregado", description: `Produto "${product.productName}" carregado.`});
+  };
+  
+  const handleDeleteProduct = (id: string, name: string) => {
+    removeProduct(id);
+    toast({ title: "Produto Deletado", description: `"${name}" foi removido.` });
+  };
+
 
   return (
     <div className="min-h-screen bg-background text-foreground font-body">
@@ -368,6 +456,7 @@ export default function AvatarForgePage() {
                   <Film className="text-accent" />
                   Editor de Cena
                 </CardTitle>
+                <CardDescription>Crie seu avatar, defina a cena e gere o vídeo.</CardDescription>
               </CardHeader>
               <CardContent>
                 <Form {...form}>
@@ -428,6 +517,13 @@ export default function AvatarForgePage() {
                               </Button>
                           </CardContent>
                         </Card>
+                        
+                        <div className="flex justify-end">
+                            <Button type="button" variant="secondary" size="sm" onClick={handleSaveAvatar}>
+                                <Save className="mr-2 h-4 w-4" />
+                                Salvar Avatar
+                            </Button>
+                        </div>
 
                         <FormField control={form.control} name="name" render={({ field }) => (
                           <FormItem>
@@ -630,11 +726,15 @@ export default function AvatarForgePage() {
                         </Card>
                         
                         <Card className="p-4 bg-muted/30">
-                          <CardHeader className="p-0 pb-4">
+                          <CardHeader className="p-0 pb-4 flex flex-row items-center justify-between">
                             <CardTitle className="flex items-center gap-2 font-headline text-base">
                                 <Package className="text-accent"/>
                                 Integração de Produto (Opcional)
                             </CardTitle>
+                             <Button type="button" variant="secondary" size="sm" onClick={handleSaveProduct}>
+                                <Save className="mr-2 h-4 w-4" />
+                                Salvar Produto
+                            </Button>
                           </CardHeader>
                           <CardContent className="p-0 space-y-4">
                             <FormField control={form.control} name="productName" render={({ field }) => (
@@ -711,49 +811,98 @@ export default function AvatarForgePage() {
                         {isPending ? <Loader className="animate-spin mr-2 h-4 w-4" /> : <Bot className="mr-2 h-4 w-4" />}
                         {isPending ? "Gerando..." : "Gerar Vídeo"}
                       </Button>
-                      <Button type="button" variant="secondary" onClick={form.handleSubmit(handleSaveToGallery)} className="flex-grow">
+                      <Button type="button" variant="secondary" onClick={form.handleSubmit(handleSaveScene)} className="flex-grow">
                         <Save className="mr-2 h-4 w-4" />
-                        Salvar na Galeria
+                        Salvar Cena
                       </Button>
                     </div>
                   </form>
                 </Form>
               </CardContent>
             </Card>
-
+            
             <Card className="bg-card/80">
-              <CardHeader>
-                <CardTitle className="flex items-center justify-between font-headline text-xl">
-                  <span className="flex items-center gap-2">Minha Galeria</span>
-                  <Button variant="ghost" size="sm" onClick={handleNewInfluencer}>
-                    <Plus className="mr-2 h-4 w-4" /> Nova Cena
-                  </Button>
-                </CardTitle>
-                <CardDescription>Carregue ou delete suas cenas salvas.</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <ScrollArea className="h-60 pr-4">
-                  <div className="space-y-3">
-                    {!isLoaded && Array.from({ length: 3 }).map((_, i) => <Skeleton key={i} className="h-10 w-full rounded-md" />)}
-                    {isLoaded && gallery.length === 0 && (
-                      <div className="text-center text-muted-foreground py-10">
-                        <p>Sua galeria está vazia.</p>
-                      </div>
-                    )}
-                    {isLoaded && gallery.map((influencer) => (
-                      <div key={influencer.id} className="flex items-center justify-between p-2 rounded-md hover:bg-accent/10 transition-colors">
-                        <span className="font-medium truncate pr-2">{influencer.name}</span>
-                        <div className="flex gap-1 shrink-0">
-                          <Button variant="outline" size="sm" onClick={() => handleLoadInfluencer(influencer)}>Carregar</Button>
-                          <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-destructive hover:bg-destructive/10 h-8 w-8" onClick={() => handleDeleteInfluencer(influencer.id, influencer.name)}>
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </ScrollArea>
-              </CardContent>
+                <CardHeader>
+                    <CardTitle className="flex items-center justify-between font-headline text-xl">
+                        <span className="flex items-center gap-2">Galerias</span>
+                        <Button variant="ghost" size="sm" onClick={handleNewScene}>
+                            <Plus className="mr-2 h-4 w-4" /> Nova Cena
+                        </Button>
+                    </CardTitle>
+                    <CardDescription>Carregue ou delete suas cenas, avatares e produtos salvos.</CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <Tabs defaultValue="scenes" className="w-full">
+                        <TabsList className="grid w-full grid-cols-3">
+                            <TabsTrigger value="scenes">Cenas</TabsTrigger>
+                            <TabsTrigger value="avatars">Avatares</TabsTrigger>
+                            <TabsTrigger value="products">Produtos</TabsTrigger>
+                        </TabsList>
+                        <TabsContent value="scenes" className="pt-4">
+                            <ScrollArea className="h-60 pr-4">
+                                <div className="space-y-3">
+                                    {!isSceneGalleryLoaded && Array.from({ length: 3 }).map((_, i) => <Skeleton key={i} className="h-10 w-full rounded-md" />)}
+                                    {isSceneGalleryLoaded && sceneGallery.length === 0 && (
+                                        <div className="text-center text-muted-foreground py-10"><p>Sua galeria de cenas está vazia.</p></div>
+                                    )}
+                                    {isSceneGalleryLoaded && sceneGallery.map((scene) => (
+                                        <div key={scene.id} className="flex items-center justify-between p-2 rounded-md hover:bg-accent/10 transition-colors">
+                                            <span className="font-medium truncate pr-2">{scene.name}</span>
+                                            <div className="flex gap-1 shrink-0">
+                                                <Button variant="outline" size="sm" onClick={() => handleLoadScene(scene)}>Carregar</Button>
+                                                <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-destructive hover:bg-destructive/10 h-8 w-8" onClick={() => handleDeleteScene(scene.id, scene.name)}>
+                                                    <Trash2 className="h-4 w-4" />
+                                                </Button>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </ScrollArea>
+                        </TabsContent>
+                        <TabsContent value="avatars" className="pt-4">
+                            <ScrollArea className="h-60 pr-4">
+                                <div className="space-y-3">
+                                    {!isAvatarGalleryLoaded && Array.from({ length: 3 }).map((_, i) => <Skeleton key={i} className="h-10 w-full rounded-md" />)}
+                                    {isAvatarGalleryLoaded && avatars.length === 0 && (
+                                        <div className="text-center text-muted-foreground py-10"><p>Sua galeria de avatares está vazia.</p></div>
+                                    )}
+                                    {isAvatarGalleryLoaded && avatars.map((avatar) => (
+                                        <div key={avatar.id} className="flex items-center justify-between p-2 rounded-md hover:bg-accent/10 transition-colors">
+                                            <span className="font-medium truncate pr-2">{avatar.name}</span>
+                                            <div className="flex gap-1 shrink-0">
+                                                <Button variant="outline" size="sm" onClick={() => handleLoadAvatar(avatar)}>Carregar</Button>
+                                                <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-destructive hover:bg-destructive/10 h-8 w-8" onClick={() => handleDeleteAvatar(avatar.id, avatar.name)}>
+                                                    <Trash2 className="h-4 w-4" />
+                                                </Button>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </ScrollArea>
+                        </TabsContent>
+                        <TabsContent value="products" className="pt-4">
+                            <ScrollArea className="h-60 pr-4">
+                                <div className="space-y-3">
+                                    {!isProductGalleryLoaded && Array.from({ length: 3 }).map((_, i) => <Skeleton key={i} className="h-10 w-full rounded-md" />)}
+                                    {isProductGalleryLoaded && products.length === 0 && (
+                                        <div className="text-center text-muted-foreground py-10"><p>Sua galeria de produtos está vazia.</p></div>
+                                    )}
+                                    {isProductGalleryLoaded && products.map((product) => (
+                                        <div key={product.id} className="flex items-center justify-between p-2 rounded-md hover:bg-accent/10 transition-colors">
+                                            <span className="font-medium truncate pr-2">{product.productName}</span>
+                                            <div className="flex gap-1 shrink-0">
+                                                <Button variant="outline" size="sm" onClick={() => handleLoadProduct(product)}>Carregar</Button>
+                                                <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-destructive hover:bg-destructive/10 h-8 w-8" onClick={() => handleDeleteProduct(product.id, product.productName)}>
+                                                    <Trash2 className="h-4 w-4" />
+                                                </Button>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </ScrollArea>
+                        </TabsContent>
+                    </Tabs>
+                </CardContent>
             </Card>
           </div>
 
