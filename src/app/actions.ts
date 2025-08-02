@@ -8,6 +8,7 @@ import { analyzeImage } from "@/ai/flows/analyze-image-flow";
 import { analyzeText } from "@/ai/flows/analyze-text-flow";
 import { generateDialogue } from "@/ai/flows/generate-dialogue-flow";
 import { generateSeo } from "@/ai/flows/generate-seo-flow";
+import { analyzeAvatarDetails, type AnalyzeAvatarDetailsOutput } from "@/ai/flows/analyze-avatar-details-flow";
 
 const generateVideoSchema = z.object({
   sceneTitle: z.string().min(1, "Título da cena é obrigatório."),
@@ -208,5 +209,31 @@ export async function generateSeoAction(
     } catch (error) {
         const errorMessage = error instanceof Error ? error.message : "An unknown error occurred.";
         return { success: false, error: `SEO generation failed: ${errorMessage}` };
+    }
+}
+
+const analyzeAvatarDetailsSchema = z.object({
+    photoDataUri: z.string(),
+});
+
+type AnalyzeAvatarDetailsState = {
+    success: boolean;
+    details?: AnalyzeAvatarDetailsOutput;
+    error?: string;
+};
+
+export async function analyzeAvatarDetailsAction(
+    data: z.infer<typeof analyzeAvatarDetailsSchema>
+): Promise<AnalyzeAvatarDetailsState> {
+    const validatedFields = analyzeAvatarDetailsSchema.safeParse(data);
+    if (!validatedFields.success) {
+        return { success: false, error: 'Invalid input' };
+    }
+    try {
+        const result = await analyzeAvatarDetails(validatedFields.data);
+        return { success: true, details: result };
+    } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : "An unknown error occurred.";
+        return { success: false, error: `Avatar details analysis failed: ${errorMessage}` };
     }
 }

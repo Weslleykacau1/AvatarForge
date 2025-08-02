@@ -9,3 +9,4 @@ import '@/ai/flows/analyze-image-flow.ts';
 import '@/ai/flows/analyze-text-flow.ts';
 import '@/ai/flows/generate-dialogue-flow.ts';
 import '@/ai/flows/generate-seo-flow.ts';
+import '@/ai/flows/analyze-avatar-details-flow.ts';

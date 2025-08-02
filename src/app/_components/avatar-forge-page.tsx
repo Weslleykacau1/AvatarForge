@@ -17,7 +17,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useGallery } from "@/hooks/use-gallery";
 import { useAvatars } from "@/hooks/use-avatars";
 import { useProducts } from "@/hooks/use-products";
-import { generateVideoAction, generateTitleAction, generateActionAction, analyzeImageAction, analyzeTextAction, generateDialogueAction, generateSeoAction } from "@/app/actions";
+import { generateVideoAction, generateTitleAction, generateActionAction, analyzeImageAction, analyzeTextAction, generateDialogueAction, generateSeoAction, analyzeAvatarDetailsAction } from "@/app/actions";
 import type { Scene, Avatar, Product } from "@/app/types";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -71,6 +71,7 @@ export default function AvatarForgePage() {
   const [isAnalyzingText, startTextAnalysisTransition] = useTransition();
   const [isGeneratingDialogue, startDialogueTransition] = useTransition();
   const [isGeneratingSeo, startSeoTransition] = useTransition();
+  const [isAnalyzingAvatar, startAvatarAnalysisTransition] = useTransition();
   const [referenceImagePreview, setReferenceImagePreview] = useState<string | null>(null);
 
 
@@ -278,22 +279,32 @@ export default function AvatarForgePage() {
     }
   };
 
-  const handleAnalyzeImage = () => {
+  const handleAnalyzeAndFill = () => {
     const referenceImage = form.getValues("referenceImage");
     if (!referenceImage) {
-      toast({ variant: "destructive", title: "Nenhuma imagem selecionada", description: "Por favor, carregue uma foto de referência." });
-      return;
+        toast({ variant: "destructive", title: "Nenhuma imagem selecionada", description: "Por favor, carregue uma foto de referência." });
+        return;
     }
-    startImageAnalysisTransition(async () => {
-      const result = await analyzeImageAction({ photoDataUri: referenceImage });
-      if (result.success && result.description) {
-        form.setValue("characteristics", result.description, { shouldValidate: true });
-        toast({ title: "Análise de Imagem Concluída", description: "As características foram preenchidas." });
-      } else {
-        toast({ variant: "destructive", title: "Falha na Análise de Imagem", description: result.error });
-      }
+    startAvatarAnalysisTransition(async () => {
+        const result = await analyzeAvatarDetailsAction({ photoDataUri: referenceImage });
+        if (result.success && result.details) {
+            const { details } = result;
+            form.setValue("name", details.name, { shouldValidate: true });
+            form.setValue("niche", details.niche, { shouldValidate: true });
+            form.setValue("characteristics", details.characteristics, { shouldValidate: true });
+            form.setValue("personalityTraits", details.personalityTraits, { shouldValidate: true });
+            form.setValue("appearanceDetails", details.appearanceDetails, { shouldValidate: true });
+            form.setValue("clothing", details.clothing, { shouldValidate: true });
+            form.setValue("shortBio", details.shortBio, { shouldValidate: true });
+            form.setValue("uniqueTrait", details.uniqueTrait, { shouldValidate: true });
+            form.setValue("age", details.age, { shouldValidate: true });
+            form.setValue("gender", details.gender, { shouldValidate: true });
+            toast({ title: "Análise Concluída", description: "Todos os campos do avatar foram preenchidos." });
+        } else {
+            toast({ variant: "destructive", title: "Falha na Análise", description: result.error });
+        }
     });
-  };
+};
   
   const handleAnalyzeText = () => {
     const characteristics = form.getValues("characteristics");
@@ -489,11 +500,11 @@ export default function AvatarForgePage() {
                                 )}
                               </div>
                               
-                              <Button type="button" className="w-full" onClick={handleAnalyzeImage} disabled={isAnalyzingImage || !form.getValues("referenceImage")}>
-                                  {isAnalyzingImage ? <Loader className="animate-spin mr-2"/> : <Bot />}
-                                  Analisar Imagem
+                              <Button type="button" className="w-full" onClick={handleAnalyzeAndFill} disabled={isAnalyzingAvatar || !form.getValues("referenceImage")}>
+                                  {isAnalyzingAvatar ? <Loader className="animate-spin mr-2"/> : <Bot />}
+                                  Analisar Imagem e Preencher Campos
                               </Button>
-                              <p className="text-xs text-muted-foreground text-center">Dica: A análise será detalhada, incluindo características faciais, cabelo, estilo e personalidade.</p>
+                              <p className="text-xs text-muted-foreground text-center">Dica: A análise preencherá todos os campos do avatar com base na imagem.</p>
                           </CardContent>
                         </Card>
 
@@ -513,7 +524,7 @@ export default function AvatarForgePage() {
                                 </FormItem>
                               )} />
                               <Button type="button" className="w-full" onClick={handleAnalyzeText} disabled={isAnalyzingText}>
-                                {isAnalyzingText ? <Loader className="animate-spin mr-2" /> : <Search />} Analisar Texto e Preencher
+                                {isAnalyzingText ? <Loader className="animate-spin mr-2" /> : <Search />} Analisar Texto e Preencher Nome/Nicho
                               </Button>
                           </CardContent>
                         </Card>
