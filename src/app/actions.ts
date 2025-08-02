@@ -16,6 +16,7 @@ const generateVideoSchema = z.object({
   sceneTitle: z.string().min(1, "Título da cena é obrigatório."),
   scenarioPrompt: z.string().min(1, "Descrição do cenário é obrigatória."),
   actionPrompt: z.string().min(1, "Ação principal é obrigatória."),
+  negativePrompt: z.string().optional(),
   sceneImageDataUri: z.string().optional(),
   dialogue: z.string().optional(),
   accent: z.string().optional(),

@@ -31,6 +31,7 @@ const formSchema = z.object({
   niche: z.string().min(1, "Nicho é obrigatório.").max(100, "Nicho muito longo."),
   scenarioPrompt: z.string().min(1, "Descrição do cenário é obrigatória.").max(1000, "Descrição muito longa."),
   actionPrompt: z.string().min(1, "Ação principal é obrigatória.").max(1000, "Descrição muito longa."),
+  negativePrompt: z.string().optional(),
   sceneImage: z.string().optional(),
   referenceImage: z.string().optional(),
   characteristics: z.string().optional(),
@@ -93,6 +94,7 @@ export default function AvatarForgePage() {
       niche: "",
       scenarioPrompt: "",
       actionPrompt: "",
+      negativePrompt: "",
       sceneImage: "",
       referenceImage: "",
       characteristics: "",
@@ -147,6 +149,7 @@ export default function AvatarForgePage() {
         sceneTitle: data.name,
         scenarioPrompt: `${influencerDescription}\n\n**Cenário:** ${scenarioPrompt}`,
         actionPrompt: data.actionPrompt,
+        negativePrompt: data.negativePrompt,
         sceneImageDataUri: data.sceneImage || data.productImage,
         dialogue: data.dialogue,
         accent: data.accent,
@@ -410,7 +413,7 @@ export default function AvatarForgePage() {
   };
 
   const handleNewScene = () => {
-    form.reset({ name: "", niche: "", scenarioPrompt: "", actionPrompt: "", sceneImage: "", referenceImage: "", characteristics: "", personalityTraits: "", appearanceDetails: "", clothing: "", shortBio: "", uniqueTrait: "", age: "", gender: "", accent: "Padrão", dialogue: "", cameraAngle: "dynamic", duration: 8, videoFormat: "9:16", allowDigitalText: "false", allowPhysicalText: "false", productName: "", partnerBrand: "", productImage: "", productDescription: "", isPartnership: false });
+    form.reset({ name: "", niche: "", scenarioPrompt: "", actionPrompt: "", negativePrompt: "", sceneImage: "", referenceImage: "", characteristics: "", personalityTraits: "", appearanceDetails: "", clothing: "", shortBio: "", uniqueTrait: "", age: "", gender: "", accent: "Padrão", dialogue: "", cameraAngle: "dynamic", duration: 8, videoFormat: "9:16", allowDigitalText: "false", allowPhysicalText: "false", productName: "", partnerBrand: "", productImage: "", productDescription: "", isPartnership: false });
     setCurrentSceneId(null);
     setCurrentAvatarId(null);
     setCurrentProductId(null);
@@ -775,6 +778,14 @@ export default function AvatarForgePage() {
                               <Button type="button" variant="outline" size="sm" onClick={handleGenerateAction} disabled={isGeneratingAction}>
                                 {isGeneratingAction ? <Loader className="animate-spin mr-2" /> : <Wand2 />} Gerar Ação com IA
                               </Button>
+
+                               <FormField control={form.control} name="negativePrompt" render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel>Prompt Negativo (o que evitar)</FormLabel>
+                                  <FormControl><Textarea placeholder="Ex: má qualidade, mãos deformadas, texto ilegível..." {...field} rows={2} /></FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )} />
 
                               <FormField control={form.control} name="dialogue" render={({ field }) => (
                                   <FormItem>

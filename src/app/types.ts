@@ -5,6 +5,7 @@ export type Scene = {
   sceneImage?: string;
   scenarioPrompt: string;
   actionPrompt: string;
+  negativePrompt?: string;
   referenceImage?: string;
   characteristics?: string;
   personalityTraits?: string;

@@ -16,6 +16,7 @@ const GenerateAvatarVideoInputSchema = z.object({
   sceneTitle: z.string().describe('Title of the scene.'),
   scenarioPrompt: z.string().describe('Detailed description of the environment and the influencer, including lighting, colors, objects, and atmosphere.'),
   actionPrompt: z.string().describe('The main action the influencer is performing.'),
+  negativePrompt: z.string().optional().describe('A description of what to avoid in the video.'),
   dialogue: z.string().optional().describe('The dialogue the influencer is speaking.'),
   accent: z.string().optional().describe("The influencer's accent (e.g., Paulistano, Carioca)."),
   cameraAngle: z.string().optional().describe('The camera angle for the video.'),
@@ -72,6 +73,7 @@ const generateAvatarVideoFlow = ai.defineFlow(
       config: {
         durationSeconds: input.duration || 5,
         aspectRatio: input.videoFormat || '9:16',
+        negativePrompt: input.negativePrompt,
       },
     });
 
