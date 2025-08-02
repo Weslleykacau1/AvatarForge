@@ -4,7 +4,7 @@ import { useEffect, useState, useTransition, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Bot, Save, Trash2, Plus, Loader, Clapperboard, Edit, User, Shirt, Sparkles, Film, Wand2, FileImage, UploadCloud, FileText, Search, MessageSquare, Briefcase, Users, Camera, Package, Code, Palette, LayoutGrid, Zap, Upload, Download, FileJson, RectangleVertical, RectangleHorizontal, Square, BookText, Link, Video } from "lucide-react";
+import { Bot, Save, Trash2, Plus, Loader, Clapperboard, Edit, User, Shirt, Sparkles, Film, Wand2, FileImage, UploadCloud, FileText, Search, MessageSquare, Briefcase, Users, Camera, Package, Code, Palette, LayoutGrid, Zap, Upload, Download, FileJson, RectangleVertical, RectangleHorizontal, Square, BookText, Link, Video, Copy } from "lucide-react";
 import Image from "next/image";
 
 import { Button } from "@/components/ui/button";
@@ -551,6 +551,14 @@ export default function AvatarForgePage() {
     toast({ title: "Produto Deletado", description: `"${name}" foi removido.` });
   };
   
+  const handleCopyScript = () => {
+    navigator.clipboard.writeText(jsonScript);
+    toast({
+      title: "Roteiro Copiado!",
+      description: "O roteiro JSON foi copiado para a área de transferência.",
+    });
+  };
+
   const showNotImplementedToast = () => {
     toast({
       title: "Funcionalidade não implementada",
@@ -1267,6 +1275,12 @@ export default function AvatarForgePage() {
                                 placeholder="Cole seu roteiro JSON aqui..."
                                 className="font-mono text-sm"
                             />
+                            <div className="flex gap-2">
+                                <Button type="button" variant="outline" onClick={handleCopyScript}>
+                                    <Copy className="mr-2" />
+                                    Copiar Roteiro
+                                </Button>
+                            </div>
                             <div className="flex gap-2">
                                 <Button asChild>
                                   <a href="https://docs.google.com/videos/u/0/" target="_blank" rel="noopener noreferrer">
