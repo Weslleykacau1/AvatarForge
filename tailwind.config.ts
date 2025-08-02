@@ -15,6 +15,8 @@ export default {
         code: ['monospace'],
       },
       colors: {
+        'gradient-purple': '#8E2DE2',
+        'gradient-orange': '#F27121',
         background: 'hsl(var(--background))',
         foreground: 'hsl(var(--foreground))',
         card: {
