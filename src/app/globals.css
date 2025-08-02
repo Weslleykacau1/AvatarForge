@@ -4,25 +4,25 @@
 
 @layer base {
   :root {
-    --background: 0 0% 3%; /* #080808 */
+    --background: 0 0% 0%; /* #000000 */
     --foreground: 0 0% 100%; /* #FFFFFF */
     --card: 0 0% 10%; /* #1A1A1A */
     --card-foreground: 0 0% 100%;
-    --popover: 0 0% 3%;
+    --popover: 0 0% 0%;
     --popover-foreground: 0 0% 100%;
-    --primary: 340 100% 70%; /* Rosa */
-    --primary-foreground: 0 0% 100%; /* Branco para texto no botão primário */
-    --secondary: 0 0% 100%; /* Branco para botões secundários */
-    --secondary-foreground: 0 0% 0%; /* Preto para texto em botões secundários */
+    --primary: 216 100% 74%; /* #7AB0FF */
+    --primary-foreground: 0 0% 0%;
+    --secondary: 0 0% 100%;
+    --secondary-foreground: 0 0% 0%;
     --muted: 0 0% 10%;
     --muted-foreground: 0 0% 70%;
-    --accent: 340 100% 70%; /* Rosa/Vermelho como destaque */
-    --accent-foreground: 0 0% 100%;
+    --accent: 216 100% 74%; /* #7AB0FF */
+    --accent-foreground: 0 0% 0%;
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 98%;
     --border: 0 0% 17%; /* #2C2C2C */
     --input: 0 0% 17%;
-    --ring: 340 100% 70%;
+    --ring: 216 100% 74%;
     --chart-1: 12 76% 61%;
     --chart-2: 173 58% 39%;
     --chart-3: 197 37% 24%;
