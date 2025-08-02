@@ -11,7 +11,7 @@ import Image from "next/image";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -629,7 +629,7 @@ export default function AvatarForgePage() {
 
       <main className="container mx-auto p-4 md:p-8">
        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="grid w-full grid-cols-5 gap-2 mx-auto max-w-4xl">
+            <TabsList className="grid w-full grid-cols-2 md:grid-cols-5 gap-2 mx-auto max-w-4xl">
                <TabsTrigger value="creator" className="flex items-center justify-center"><Film className="h-5 w-5 md:mr-2" /><span className="hidden md:inline">Criador</span></TabsTrigger>
                <TabsTrigger value="influencer-gallery" className="flex items-center justify-center"><Users className="h-5 w-5 md:mr-2" /><span className="hidden md:inline">Personagens</span></TabsTrigger>
                <TabsTrigger value="scene-gallery" className="flex items-center justify-center"><LayoutGrid className="h-5 w-5 md:mr-2" /><span className="hidden md:inline">Cenas</span></TabsTrigger>
@@ -998,10 +998,15 @@ export default function AvatarForgePage() {
                             </CardTitle>
                         </CardHeader>
                         <CardContent className="p-0">
-                            <div className="space-y-4 text-foreground">
+                            <div className="space-y-2 text-foreground">
                               <FormField control={form.control} name="hyperrealism" render={({ field }) => (
                                   <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm bg-card/80">
-                                      <FormLabel>Hiper-realismo</FormLabel>
+                                      <div className="space-y-0.5">
+                                          <FormLabel>Hiper-realismo</FormLabel>
+                                          <FormDescription>
+                                              Vídeos com aparência realista e detalhes impressionantes.
+                                          </FormDescription>
+                                      </div>
                                       <FormControl>
                                           <Switch checked={field.value} onCheckedChange={field.onChange} />
                                       </FormControl>
@@ -1009,7 +1014,12 @@ export default function AvatarForgePage() {
                               )} />
                               <FormField control={form.control} name="fourK" render={({ field }) => (
                                   <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm bg-card/80">
-                                      <FormLabel>4K</FormLabel>
+                                      <div className="space-y-0.5">
+                                          <FormLabel>4K</FormLabel>
+                                          <FormDescription>
+                                              Qualidade ultra nítida em altíssima resolução.
+                                          </FormDescription>
+                                      </div>
                                       <FormControl>
                                           <Switch checked={field.value} onCheckedChange={field.onChange} />
                                       </FormControl>
@@ -1017,7 +1027,12 @@ export default function AvatarForgePage() {
                               )} />
                               <FormField control={form.control} name="professionalCamera" render={({ field }) => (
                                   <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm bg-card/80">
-                                      <FormLabel>Câmera Profissional</FormLabel>
+                                      <div className="space-y-0.5">
+                                          <FormLabel>Câmera Profissional</FormLabel>
+                                          <FormDescription>
+                                              Movimentos e enquadramentos cinematográficos.
+                                          </FormDescription>
+                                      </div>
                                       <FormControl>
                                           <Switch checked={field.value} onCheckedChange={field.onChange} />
                                       </FormControl>
@@ -1374,4 +1389,5 @@ export default function AvatarForgePage() {
     
 
     
+
 
