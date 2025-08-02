@@ -1217,7 +1217,7 @@ export default function AvatarForgePage() {
                                 <Button onClick={() => { setActiveTab("creator"); handleNewScene(); }} className="flex-1 md:flex-none">
                                   <Plus className="mr-2" /> Nova Cena
                                 </Button>
-                                 <Button variant="secondary" onClick={handleSaveScene} className="flex-1 md:flex-none">
+                                 <Button variant="secondary" size="sm" onClick={handleSaveScene} className="flex-1 md:flex-none">
                                     <Save className="mr-2 h-4 w-4" />
                                     Salvar Cena Atual
                                 </Button>
@@ -1232,6 +1232,13 @@ export default function AvatarForgePage() {
                             )}
                             {isSceneGalleryLoaded && sceneGallery.map((scene) => (
                                 <Card key={scene.id} className="flex flex-col overflow-hidden">
+                                     <div className="bg-black/20 aspect-square w-full flex items-center justify-center">
+                                      {scene.sceneImage ? (
+                                        <Image src={scene.sceneImage} alt={scene.name} width={300} height={300} className="object-cover w-full h-full" />
+                                      ) : (
+                                        <Camera className="w-24 h-24 text-muted-foreground" />
+                                      )}
+                                  </div>
                                     <div className="p-4 flex flex-col flex-grow">
                                         <CardTitle className="truncate text-lg">{scene.name || 'Cena Sem Título'}</CardTitle>
                                         <CardDescription className="line-clamp-3 h-[60px] flex-grow mt-2">{scene.scenarioPrompt}</CardDescription>
@@ -1367,3 +1374,4 @@ export default function AvatarForgePage() {
     
 
     
+
