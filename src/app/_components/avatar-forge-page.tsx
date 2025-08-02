@@ -4,7 +4,7 @@ import { useEffect, useState, useTransition, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Bot, Save, Trash2, Plus, Loader, Clapperboard, Edit, User, Shirt, Sparkles, Film, Wand2, FileImage, UploadCloud, FileText, Search, MessageSquare, Briefcase, Users, Camera, Package, Code, Palette, LayoutGrid, Zap, Upload, Download, FileJson, RectangleVertical, RectangleHorizontal, Square, BookText } from "lucide-react";
+import { Bot, Save, Trash2, Plus, Loader, Clapperboard, Edit, User, Shirt, Sparkles, Film, Wand2, FileImage, UploadCloud, FileText, Search, MessageSquare, Briefcase, Users, Camera, Package, Code, Palette, LayoutGrid, Zap, Upload, Download, FileJson, RectangleVertical, RectangleHorizontal, Square, BookText, Link } from "lucide-react";
 import Image from "next/image";
 
 import { Button } from "@/components/ui/button";
@@ -1267,10 +1267,19 @@ export default function AvatarForgePage() {
                                 placeholder="Cole seu roteiro JSON aqui..."
                                 className="font-mono text-sm"
                             />
-                            <Button onClick={handleGenerateFromScript} disabled={isGeneratingFromScript}>
-                                {isGeneratingFromScript ? <Loader className="animate-spin mr-2" /> : <Bot />}
-                                Gerar Vídeo (Primeira Cena)
-                            </Button>
+                            <div className="flex gap-2">
+                                <Button onClick={handleGenerateFromScript} disabled={isGeneratingFromScript}>
+                                    {isGeneratingFromScript ? <Loader className="animate-spin mr-2" /> : <Bot />}
+                                    Gerar Vídeo (Primeira Cena)
+                                </Button>
+                                <Button asChild variant="secondary">
+                                  <a href="https://labs.google/fx/tools/flow" target="_blank" rel="noopener noreferrer">
+                                    <Link className="mr-2" />
+                                    Abrir no Flow
+                                  </a>
+                                </Button>
+                            </div>
+
                         </div>
                         <p className="text-xs text-muted-foreground text-center">
                             Nota: Atualmente, apenas a primeira cena do roteiro será gerada. A funcionalidade completa de combinação de cenas será implementada em breve.
