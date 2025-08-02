@@ -1150,7 +1150,7 @@ export default function AvatarForgePage() {
                                         <div className="flex justify-end items-center gap-1 mt-2">
                                             <Button variant="ghost" size="icon" className="text-muted-foreground h-8 w-8" onClick={showNotImplementedToast}>
                                                 <FileJson className="h-4 w-4" />
-                                                <span className="sr-only">Exportar</span>
+                                                <span className="sr-only">exporta txt</span>
                                             </Button>
                                             <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-destructive hover:bg-destructive/10 h-8 w-8" onClick={() => handleDeleteAvatar(avatar.id, avatar.name)}>
                                                 <Trash2 className="h-4 w-4" />
@@ -1206,7 +1206,7 @@ export default function AvatarForgePage() {
                                         <div className="flex justify-end gap-1 mt-2">
                                             <Button variant="ghost" size="icon" className="text-muted-foreground h-8 w-8" onClick={showNotImplementedToast}>
                                                 <FileJson className="h-4 w-4" />
-                                                <span className="sr-only">Exportar</span>
+                                                <span className="sr-only">exporta txt</span>
                                             </Button>
                                             <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-destructive hover:bg-destructive/10 h-8 w-8" onClick={() => handleDeleteScene(scene.id, scene.name)}>
                                                 <Trash2 className="h-4 w-4" />
