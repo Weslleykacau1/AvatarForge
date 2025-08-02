@@ -1274,6 +1274,12 @@ export default function AvatarForgePage() {
                                     Google Vids
                                   </a>
                                 </Button>
+                                <Button asChild>
+                                  <a href="https://labs.google/fx/tools/flow" target="_blank" rel="noopener noreferrer">
+                                    <Link className="mr-2" />
+                                    Abrir Flow
+                                  </a>
+                                </Button>
                             </div>
 
                         </div>
