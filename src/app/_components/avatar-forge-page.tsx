@@ -1,4 +1,5 @@
 
+
 "use client";
 
 import { useEffect, useState, useTransition, useRef } from "react";
@@ -27,6 +28,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Checkbox } from "@/components/ui/checkbox";
 import { cn } from "@/lib/utils";
 import { Switch } from "@/components/ui/switch";
+import { LoadingOverlay } from "./loading-overlay";
 
 const formSchema = z.object({
   name: z.string().min(1, "Nome é obrigatório.").max(100, "Nome muito longo."),
@@ -587,7 +589,8 @@ export default function AvatarForgePage() {
 
 
   return (
-    <div className="min-h-screen bg-background text-foreground font-body">
+    <div className="min-h-screen bg-background text-foreground font-body relative">
+      <LoadingOverlay isVisible={isPending || isGeneratingFromScript} />
       <header className="p-4 border-b border-border/50 bg-background/50 backdrop-blur-sm sticky top-0 z-10">
         <div className="container mx-auto flex items-center justify-between">
           <div className="flex items-center gap-3">
