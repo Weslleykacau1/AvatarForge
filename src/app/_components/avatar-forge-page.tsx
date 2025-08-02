@@ -918,8 +918,35 @@ export default function AvatarForgePage() {
                       </Form>
                     </CardContent>
                   </Card>
+                </div>
 
-                   <Card className="bg-card/80">
+                <div className="lg:col-span-3 flex flex-col gap-8">
+                  <Card className="sticky top-24 bg-card/80">
+                    <CardHeader>
+                      <CardTitle className="font-headline">Preview</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="aspect-video w-full rounded-lg bg-black flex items-center justify-center overflow-hidden">
+                        {isPending ? (
+                          <div className="text-center space-y-4 text-muted-foreground p-4">
+                            <Loader className="h-12 w-12 animate-spin mx-auto text-accent" />
+                            <p className="font-headline text-lg">Gerando seu avatar...</p>
+                            <p className="text-sm">Isso pode levar até um minuto. Por favor, aguarde.</p>
+                          </div>
+                        ) : videoUrl ? (
+                          <video src={videoUrl} controls autoPlay loop className="w-full h-full object-cover" />
+                        ) : (
+                          <div className="text-center space-y-4 text-muted-foreground p-4">
+                            <Clapperboard className="h-16 w-16 mx-auto" />
+                            <p className="font-headline text-lg">Seu vídeo aparecerá aqui</p>
+                            <p className="text-sm">Preencha os campos e clique em "Gerar Vídeo".</p>
+                          </div>
+                        )}
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  <Card className="bg-card/80">
                       <CardHeader>
                           <CardTitle className="flex items-center gap-2 font-headline text-xl">
                               <Edit className="text-accent" />
@@ -960,33 +987,6 @@ export default function AvatarForgePage() {
                               </ScrollArea>
                           )}
                       </CardContent>
-                  </Card>
-                </div>
-
-                <div className="lg:col-span-3">
-                  <Card className="sticky top-24 bg-card/80">
-                    <CardHeader>
-                      <CardTitle className="font-headline">Preview</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="aspect-video w-full rounded-lg bg-black flex items-center justify-center overflow-hidden">
-                        {isPending ? (
-                          <div className="text-center space-y-4 text-muted-foreground p-4">
-                            <Loader className="h-12 w-12 animate-spin mx-auto text-accent" />
-                            <p className="font-headline text-lg">Gerando seu avatar...</p>
-                            <p className="text-sm">Isso pode levar até um minuto. Por favor, aguarde.</p>
-                          </div>
-                        ) : videoUrl ? (
-                          <video src={videoUrl} controls autoPlay loop className="w-full h-full object-cover" />
-                        ) : (
-                          <div className="text-center space-y-4 text-muted-foreground p-4">
-                            <Clapperboard className="h-16 w-16 mx-auto" />
-                            <p className="font-headline text-lg">Seu vídeo aparecerá aqui</p>
-                            <p className="text-sm">Preencha os campos e clique em "Gerar Vídeo".</p>
-                          </div>
-                        )}
-                      </div>
-                    </CardContent>
                   </Card>
                 </div>
               </div>
