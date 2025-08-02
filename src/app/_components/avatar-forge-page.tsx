@@ -836,9 +836,9 @@ export default function AvatarForgePage() {
                                   </div>
                               </Card>
                               
-                              <Card className="p-4 bg-muted/30">
+                              <Card className="p-4 bg-card border-accent/50">
                                 <CardHeader className="p-0 pb-4 flex flex-row items-center justify-between">
-                                  <CardTitle className="flex items-center gap-2 font-headline text-base">
+                                  <CardTitle className="flex items-center gap-2 font-headline text-base text-accent">
                                       <Package className="text-accent"/>
                                       Integração de Produto (Opcional)
                                   </CardTitle>
@@ -848,20 +848,22 @@ export default function AvatarForgePage() {
                                   </Button>
                                 </CardHeader>
                                 <CardContent className="p-0 space-y-4">
-                                  <FormField control={form.control} name="productName" render={({ field }) => (
-                                      <FormItem>
-                                          <FormLabel>Nome do Produto</FormLabel>
-                                          <FormControl><Input placeholder="Nome do produto..." {...field} disabled={isAnalyzingProduct} /></FormControl>
-                                          <FormMessage />
-                                      </FormItem>
-                                  )} />
-                                  <FormField control={form.control} name="partnerBrand" render={({ field }) => (
-                                      <FormItem>
-                                          <FormLabel>Marca Parceira</FormLabel>
-                                          <FormControl><Input placeholder="Marca parceira..." {...field} disabled={isAnalyzingProduct} /></FormControl>
-                                          <FormMessage />
-                                      </FormItem>
-                                  )} />
+                                  <div className="grid grid-cols-2 gap-4">
+                                    <FormField control={form.control} name="productName" render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Nome do Produto</FormLabel>
+                                            <FormControl><Input placeholder="Nome do produto..." {...field} disabled={isAnalyzingProduct} /></FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )} />
+                                    <FormField control={form.control} name="partnerBrand" render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Marca Parceira</FormLabel>
+                                            <FormControl><Input placeholder="Marca parceira..." {...field} disabled={isAnalyzingProduct} /></FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )} />
+                                  </div>
                                    <FormField control={form.control} name="productImage" render={({ field }) => (
                                       <FormItem>
                                           <FormLabel>Carregue a imagem do produto</FormLabel>
