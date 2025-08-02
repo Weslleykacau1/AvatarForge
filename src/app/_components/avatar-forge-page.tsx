@@ -519,7 +519,7 @@ export default function AvatarForgePage() {
               <TabsTrigger value="creator"><Film className="mr-2" />Criador</TabsTrigger>
               <TabsTrigger value="influencer-gallery"><Palette className="mr-2" />Galeria de Personagens</TabsTrigger>
               <TabsTrigger value="scene-gallery"><LayoutGrid className="mr-2" />Galeria de Cenas</TabsTrigger>
-              <TabsTrigger value="viral-video"><Zap className="mr-2" />Vídeo Viral</TabsTrigger>
+              <TabsTrigger value="product-gallery"><Package className="mr-2" />Galeria de Produtos</TabsTrigger>
             </TabsList>
 
             <TabsContent value="creator">
@@ -977,13 +977,13 @@ export default function AvatarForgePage() {
                       <div className="flex items-center justify-between">
                           <div>
                               <CardTitle className="flex items-center gap-2 font-headline text-xl">
-                                  <Users className="text-accent" />
+                                  <Palette className="text-accent" />
                                   Galeria de Personagens
                               </CardTitle>
                               <CardDescription>Personagens que você criou. Carregue um para editar ou gerar roteiros.</CardDescription>
                           </div>
                           <div className="flex gap-2">
-                              <Button variant="outline" onClick={handleNewScene}>
+                              <Button variant="outline" onClick={() => { setActiveTab("creator"); handleNewScene(); }}>
                                 <Plus className="mr-2" /> Novo Personagem
                               </Button>
                                <Button variant="outline" onClick={showNotImplementedToast}>
@@ -994,31 +994,40 @@ export default function AvatarForgePage() {
                   </CardHeader>
                   <CardContent>
                       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-                          {!isAvatarGalleryLoaded && Array.from({ length: 4 }).map((_, i) => <Skeleton key={i} className="h-48 w-full rounded-md" />)}
+                          {!isAvatarGalleryLoaded && Array.from({ length: 4 }).map((_, i) => <Skeleton key={i} className="h-96 w-full rounded-md" />)}
                           {isAvatarGalleryLoaded && avatars.length === 0 && (
                               <div className="text-center text-muted-foreground py-10 col-span-full"><p>Sua galeria de personagens está vazia.</p></div>
                           )}
                           {isAvatarGalleryLoaded && avatars.map((avatar) => (
-                              <Card key={avatar.id} className="flex flex-col">
-                                  <CardHeader className="flex-1">
-                                      <CardTitle className="truncate">{avatar.name || 'Personagem Sem Nome'}</CardTitle>
-                                  </CardHeader>
-                                  <CardContent className="flex flex-col gap-2">
-                                      <div className="flex gap-2">
-                                          <Button className="flex-1" onClick={() => handleLoadAvatar(avatar)}><Upload className="mr-2"/> Carregar</Button>
-                                          <Button variant="secondary" className="flex-1" onClick={showNotImplementedToast}>Cena Rápida</Button>
-                                      </div>
-                                      <div className="flex justify-end gap-1">
-                                          <Button variant="ghost" size="icon" className="text-muted-foreground h-8 w-8" onClick={showNotImplementedToast}>
-                                              <FileJson className="h-4 w-4" />
-                                              <span className="sr-only">Exportar</span>
-                                          </Button>
-                                          <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-destructive hover:bg-destructive/10 h-8 w-8" onClick={() => handleDeleteAvatar(avatar.id, avatar.name)}>
-                                              <Trash2 className="h-4 w-4" />
-                                              <span className="sr-only">Deletar</span>
-                                          </Button>
-                                      </div>
-                                  </CardContent>
+                              <Card key={avatar.id} className="flex flex-col overflow-hidden">
+                                  <div className="bg-black/20 aspect-square w-full flex items-center justify-center">
+                                      {avatar.referenceImage ? (
+                                        <Image src={avatar.referenceImage} alt={avatar.name} width={300} height={300} className="object-cover w-full h-full" />
+                                      ) : (
+                                        <User className="w-24 h-24 text-muted-foreground" />
+                                      )}
+                                  </div>
+                                  <div className="p-4 flex flex-col flex-grow">
+                                    <CardTitle className="truncate text-lg">{avatar.name || 'Personagem Sem Nome'}</CardTitle>
+                                    <CardDescription>{avatar.niche}</CardDescription>
+                                    <p className="text-sm text-muted-foreground mt-2 line-clamp-3 flex-grow">{avatar.shortBio}</p>
+                                    <div className="mt-4 flex flex-col gap-2">
+                                        <div className="flex gap-2">
+                                            <Button className="flex-1" onClick={() => handleLoadAvatar(avatar)}><Upload className="mr-2"/> Carregar</Button>
+                                            <Button variant="secondary" className="flex-1" onClick={showNotImplementedToast}>Cena Rápida</Button>
+                                        </div>
+                                        <div className="flex justify-end items-center gap-1 mt-2">
+                                            <Button variant="ghost" size="icon" className="text-muted-foreground h-8 w-8" onClick={showNotImplementedToast}>
+                                                <FileJson className="h-4 w-4" />
+                                                <span className="sr-only">Exportar</span>
+                                            </Button>
+                                            <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-destructive hover:bg-destructive/10 h-8 w-8" onClick={() => handleDeleteAvatar(avatar.id, avatar.name)}>
+                                                <Trash2 className="h-4 w-4" />
+                                                <span className="sr-only">Deletar</span>
+                                            </Button>
+                                        </div>
+                                    </div>
+                                  </div>
                               </Card>
                           ))}
                       </div>
@@ -1038,7 +1047,7 @@ export default function AvatarForgePage() {
                                 <CardDescription>Cenas que você salvou. Carregue uma para editar ou use-a com um influenciador para gerar um roteiro.</CardDescription>
                             </div>
                             <div className="flex gap-2">
-                                <Button onClick={handleNewScene}>
+                                <Button onClick={() => { setActiveTab("creator"); handleNewScene(); }}>
                                   <Plus className="mr-2" /> Nova Cena
                                 </Button>
                                 <Button variant="outline" onClick={showNotImplementedToast}>
@@ -1054,17 +1063,15 @@ export default function AvatarForgePage() {
                                 <div className="text-center text-muted-foreground py-10 col-span-full"><p>Sua galeria de cenas está vazia.</p></div>
                             )}
                             {isSceneGalleryLoaded && sceneGallery.map((scene) => (
-                                <Card key={scene.id} className="flex flex-col">
-                                    <CardHeader className="flex-1 pb-4">
-                                        <CardTitle className="truncate">{scene.name || 'Cena Sem Título'}</CardTitle>
-                                        <CardDescription className="line-clamp-3 h-[60px]">{scene.scenarioPrompt}</CardDescription>
-                                    </CardHeader>
-                                    <CardContent className="pb-4">
-                                        <div className="text-sm text-muted-foreground">{scene.duration || 8} seg</div>
-                                    </CardContent>
-                                    <CardFooter className="flex flex-col items-stretch gap-2 pt-0">
+                                <Card key={scene.id} className="flex flex-col overflow-hidden">
+                                    <div className="p-4 flex flex-col flex-grow">
+                                        <CardTitle className="truncate text-lg">{scene.name || 'Cena Sem Título'}</CardTitle>
+                                        <CardDescription className="line-clamp-3 h-[60px] flex-grow mt-2">{scene.scenarioPrompt}</CardDescription>
+                                        <div className="text-sm text-muted-foreground mt-2">{scene.duration || 8} seg</div>
+                                    </div>
+                                    <CardFooter className="flex flex-col items-stretch gap-2 pt-0 p-4">
                                         <Button onClick={() => handleLoadScene(scene)}><Upload className="mr-2 h-4 w-4" /> Carregar</Button>
-                                        <div className="flex justify-end gap-1">
+                                        <div className="flex justify-end gap-1 mt-2">
                                             <Button variant="ghost" size="icon" className="text-muted-foreground h-8 w-8" onClick={showNotImplementedToast}>
                                                 <FileJson className="h-4 w-4" />
                                                 <span className="sr-only">Exportar</span>
@@ -1082,14 +1089,59 @@ export default function AvatarForgePage() {
                 </Card>
             </TabsContent>
 
-             <TabsContent value="viral-video">
+            <TabsContent value="product-gallery">
                 <Card className="mt-6">
                     <CardHeader>
-                        <CardTitle>Vídeo Viral</CardTitle>
-                        <CardDescription>Em breve...</CardDescription>
+                       <div className="flex items-center justify-between">
+                          <div>
+                              <CardTitle className="flex items-center gap-2 font-headline text-xl">
+                                  <Package className="text-accent" />
+                                  Galeria de Produtos
+                              </CardTitle>
+                              <CardDescription>Produtos que você salvou. Carregue um para usar em uma cena.</CardDescription>
+                          </div>
+                          <div className="flex gap-2">
+                               <Button variant="outline" onClick={() => { setActiveTab("creator"); handleNewScene(); }}>
+                                <Plus className="mr-2" /> Novo Produto
+                              </Button>
+                               <Button variant="outline" onClick={showNotImplementedToast}>
+                                <Download className="mr-2" /> Exportar para CSV
+                              </Button>
+                          </div>
+                      </div>
                     </CardHeader>
                     <CardContent>
-                        <p className="text-muted-foreground">Esta funcionalidade está em desenvolvimento.</p>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                            {!isProductGalleryLoaded && Array.from({ length: 4 }).map((_, i) => <Skeleton key={i} className="h-96 w-full rounded-md" />)}
+                            {isProductGalleryLoaded && products.length === 0 && (
+                                <div className="text-center text-muted-foreground py-10 col-span-full"><p>Sua galeria de produtos está vazia.</p></div>
+                            )}
+                            {isProductGalleryLoaded && products.map((product) => (
+                                <Card key={product.id} className="flex flex-col overflow-hidden">
+                                     <div className="bg-black/20 aspect-square w-full flex items-center justify-center">
+                                      {product.productImage ? (
+                                        <Image src={product.productImage} alt={product.productName} width={300} height={300} className="object-cover w-full h-full" />
+                                      ) : (
+                                        <Package className="w-24 h-24 text-muted-foreground" />
+                                      )}
+                                  </div>
+                                   <div className="p-4 flex flex-col flex-grow">
+                                        <CardTitle className="truncate text-lg">{product.productName || 'Produto Sem Nome'}</CardTitle>
+                                        <CardDescription>{product.partnerBrand}</CardDescription>
+                                        <p className="text-sm text-muted-foreground mt-2 line-clamp-3 flex-grow">{product.productDescription}</p>
+                                        <div className="mt-4 flex flex-col gap-2">
+                                            <Button className="w-full" onClick={() => handleLoadProduct(product)}><Upload className="mr-2"/> Carregar</Button>
+                                            <div className="flex justify-end items-center gap-1 mt-2">
+                                                <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-destructive hover:bg-destructive/10 h-8 w-8" onClick={() => handleDeleteProduct(product.id, product.productName)}>
+                                                    <Trash2 className="h-4 w-4" />
+                                                    <span className="sr-only">Deletar</span>
+                                                </Button>
+                                            </div>
+                                        </div>
+                                   </div>
+                                </Card>
+                            ))}
+                        </div>
                     </CardContent>
                 </Card>
             </TabsContent>
@@ -1098,3 +1150,5 @@ export default function AvatarForgePage() {
     </div>
   );
 }
+
+    
