@@ -1069,7 +1069,6 @@ export default function AvatarForgePage() {
                           <div className="text-center space-y-4 text-muted-foreground p-4">
                             <Clapperboard className="h-16 w-16 mx-auto" />
                             <p className="font-headline text-lg">Seu vídeo aparecerá aqui</p>
-                            <p className="text-sm">Preencha os campos e clique em "Gerar Vídeo".</p>
                           </div>
                         )}
                       </div>
