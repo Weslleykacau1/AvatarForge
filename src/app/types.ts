@@ -14,6 +14,7 @@ export type Scene = {
   uniqueTrait?: string;
   age?: string;
   gender?: string;
+  accent?: string;
   dialogue?: string;
   cameraAngle?: string;
   duration?: number;
@@ -40,6 +41,7 @@ export type Avatar = {
   uniqueTrait?: string;
   age?: string;
   gender?: string;
+  accent?: string;
 };
 
 export type Product = {

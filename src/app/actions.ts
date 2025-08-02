@@ -18,6 +18,7 @@ const generateVideoSchema = z.object({
   actionPrompt: z.string().min(1, "Ação principal é obrigatória."),
   sceneImageDataUri: z.string().optional(),
   dialogue: z.string().optional(),
+  accent: z.string().optional(),
   cameraAngle: z.string().optional(),
   duration: z.number().optional(),
   videoFormat: z.string().optional(),

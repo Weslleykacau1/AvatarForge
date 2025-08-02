@@ -41,6 +41,7 @@ const formSchema = z.object({
   uniqueTrait: z.string().optional(),
   age: z.string().optional(),
   gender: z.string().optional(),
+  accent: z.string().optional(),
   dialogue: z.string().optional(),
   cameraAngle: z.string().optional(),
   duration: z.coerce.number().optional(),
@@ -102,6 +103,7 @@ export default function AvatarForgePage() {
       uniqueTrait: "",
       age: "",
       gender: "",
+      accent: "Padrão",
       dialogue: "",
       cameraAngle: "dynamic",
       duration: 8,
@@ -121,6 +123,7 @@ export default function AvatarForgePage() {
     **Nicho:** ${data.niche}
     **Idade:** ${data.age}
     **Gênero:** ${data.gender}
+    **Sotaque:** ${data.accent}
     **Biografia:** ${data.shortBio}
     **Traço Único:** ${data.uniqueTrait}
     **Traços de Personalidade:** ${data.personalityTraits}
@@ -146,6 +149,7 @@ export default function AvatarForgePage() {
         actionPrompt: data.actionPrompt,
         sceneImageDataUri: data.sceneImage || data.productImage,
         dialogue: data.dialogue,
+        accent: data.accent,
         cameraAngle: data.cameraAngle,
         duration: data.duration,
         videoFormat: data.videoFormat,
@@ -406,7 +410,7 @@ export default function AvatarForgePage() {
   };
 
   const handleNewScene = () => {
-    form.reset({ name: "", niche: "", scenarioPrompt: "", actionPrompt: "", sceneImage: "", referenceImage: "", characteristics: "", personalityTraits: "", appearanceDetails: "", clothing: "", shortBio: "", uniqueTrait: "", age: "", gender: "", dialogue: "", cameraAngle: "dynamic", duration: 8, videoFormat: "9:16", allowDigitalText: "false", allowPhysicalText: "false", productName: "", partnerBrand: "", productImage: "", productDescription: "", isPartnership: false });
+    form.reset({ name: "", niche: "", scenarioPrompt: "", actionPrompt: "", sceneImage: "", referenceImage: "", characteristics: "", personalityTraits: "", appearanceDetails: "", clothing: "", shortBio: "", uniqueTrait: "", age: "", gender: "", accent: "Padrão", dialogue: "", cameraAngle: "dynamic", duration: 8, videoFormat: "9:16", allowDigitalText: "false", allowPhysicalText: "false", productName: "", partnerBrand: "", productImage: "", productDescription: "", isPartnership: false });
     setCurrentSceneId(null);
     setCurrentAvatarId(null);
     setCurrentProductId(null);
@@ -442,6 +446,7 @@ export default function AvatarForgePage() {
       uniqueTrait: data.uniqueTrait,
       age: data.age,
       gender: data.gender,
+      accent: data.accent,
     };
     addOrUpdateAvatar(avatarData);
     if(!currentAvatarId) setCurrentAvatarId(id);
@@ -460,6 +465,7 @@ export default function AvatarForgePage() {
     form.setValue("uniqueTrait", avatar.uniqueTrait);
     form.setValue("age", avatar.age);
     form.setValue("gender", avatar.gender);
+    form.setValue("accent", avatar.accent);
     setReferenceImagePreview(avatar.referenceImage || null);
     setCurrentAvatarId(avatar.id);
     setActiveTab("creator");
@@ -698,6 +704,27 @@ export default function AvatarForgePage() {
                                   <FormMessage />
                                 </FormItem>
                               )} />
+                              
+                              <FormField control={form.control} name="accent" render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel>Sotaque (Português do Brasil)</FormLabel>
+                                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                    <FormControl>
+                                      <SelectTrigger>
+                                        <SelectValue placeholder="Selecione o sotaque..." />
+                                      </SelectTrigger>
+                                    </FormControl>
+                                    <SelectContent>
+                                      <SelectItem value="Padrão">Padrão</SelectItem>
+                                      <SelectItem value="Paulistano">Paulistano</SelectItem>
+                                      <SelectItem value="Carioca">Carioca</SelectItem>
+                                      <SelectItem value="Mineiro">Mineiro</SelectItem>
+                                      <SelectItem value="Nordestino">Nordestino</SelectItem>
+                                    </SelectContent>
+                                  </Select>
+                                  <FormMessage />
+                                </FormItem>
+                              )} />
                             </TabsContent>
 
                             <TabsContent value="scene" className="space-y-6 pt-4">
@@ -772,9 +799,6 @@ export default function AvatarForgePage() {
                                         <FormControl><SelectTrigger><SelectValue placeholder="Selecione..." /></SelectTrigger></FormControl>
                                         <SelectContent>
                                             <SelectItem value="dynamic">Câmera Dinâmica (Criatividade da IA)</SelectItem>
-                                            <SelectItem value="vlog">Vlog (Conversacional)</SelectItem>
-                                            <SelectItem value="selfie">Selfie</SelectItem>
-                                            <SelectItem value="pov">Ponto de Vista</SelectItem>
                                             <SelectItem value="medium">Médio</SelectItem>
                                             <SelectItem value="wide">Plano Geral</SelectItem>
                                         </SelectContent>
@@ -807,28 +831,16 @@ export default function AvatarForgePage() {
                                       </SelectTrigger>
                                     </FormControl>
                                     <SelectContent>
-                                      <SelectItem value="9:16">
-                                        <div className="flex items-center gap-2">
-                                          <RectangleVertical /> 9:16 (Vertical)
-                                        </div>
-                                      </SelectItem>
-                                      <SelectItem value="16:9">
-                                        <div className="flex items-center gap-2">
-                                          <RectangleHorizontal /> 16:9 (Horizontal)
-                                        </div>
-                                      </SelectItem>
-                                      <SelectItem value="1:1">
-                                        <div className="flex items-center gap-2">
-                                          <Square /> 1:1 (Quadrado)
-                                        </div>
-                                      </SelectItem>
+                                      <SelectItem value="9:16">Vertical (9:16)</SelectItem>
+                                      <SelectItem value="16:9">Horizontal (16:9)</SelectItem>
+                                      <SelectItem value="1:1">Quadrado (1:1)</SelectItem>
                                     </SelectContent>
                                   </Select>
                                   <FormMessage />
                                 </FormItem>
                               )} />
 
-                              <Card className="p-4 bg-background border border-destructive/50">
+                              <Card className="p-4 bg-destructive/10 border border-destructive/50">
                                   <CardTitle className="flex items-center text-base mb-2 gap-2 text-red-400">
                                       <FileText className="text-red-400" />
                                       Controle de Texto no Ecrã

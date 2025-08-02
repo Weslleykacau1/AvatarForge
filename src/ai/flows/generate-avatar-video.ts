@@ -17,6 +17,7 @@ const GenerateAvatarVideoInputSchema = z.object({
   scenarioPrompt: z.string().describe('Detailed description of the environment and the influencer, including lighting, colors, objects, and atmosphere.'),
   actionPrompt: z.string().describe('The main action the influencer is performing.'),
   dialogue: z.string().optional().describe('The dialogue the influencer is speaking.'),
+  accent: z.string().optional().describe("The influencer's accent (e.g., Paulistano, Carioca)."),
   cameraAngle: z.string().optional().describe('The camera angle for the video.'),
   duration: z.number().optional().describe('The duration of the video in seconds.'),
   videoFormat: z.string().optional().describe('The format of the video (e.g., 9:16).'),
@@ -51,6 +52,7 @@ const generateAvatarVideoFlow = ai.defineFlow(
       Scenario and Influencer Details: ${input.scenarioPrompt}
       Main Action: ${input.actionPrompt}
       Dialogue: ${input.dialogue || 'No dialogue.'}
+      Accent: ${input.accent || 'Padrão'}
       Camera Angle: ${input.cameraAngle || 'Dynamic Camera'}
       Video Format: ${input.videoFormat || '9:16'}
       Allow Digital On-Screen Text: ${input.allowDigitalText ? 'Yes' : 'No'}
