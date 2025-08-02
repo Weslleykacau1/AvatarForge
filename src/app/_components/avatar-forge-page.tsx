@@ -912,9 +912,9 @@ export default function AvatarForgePage() {
                                   </FormItem>
                                 )} />
 
-                                <Card className="p-4 bg-accent/10 border-accent/50">
-                                    <CardTitle className="flex items-center text-base mb-2 gap-2 text-accent">
-                                        <FileText className="text-accent" />
+                                <Card className="p-4 bg-destructive/10 border-destructive/50">
+                                    <CardTitle className="flex items-center text-base mb-2 gap-2 text-destructive">
+                                        <FileText className="text-destructive" />
                                         Controle de Texto no Ecrã
                                     </CardTitle>
                                     <div className="space-y-4 text-foreground">
@@ -1329,5 +1329,7 @@ export default function AvatarForgePage() {
     </div>
   );
 }
+
+    
 
     
