@@ -581,6 +581,20 @@ export default function AvatarForgePage() {
     });
   };
 
+  const handleExportJson = (data: any, filename: string) => {
+    const jsonString = `data:text/json;charset=utf-8,${encodeURIComponent(
+      JSON.stringify(data, null, 2)
+    )}`;
+    const link = document.createElement("a");
+    link.href = jsonString;
+    link.download = `${filename}.json`;
+    link.click();
+    toast({
+      title: "Exportado!",
+      description: `O arquivo ${filename}.json foi baixado.`,
+    });
+  };
+
   const showNotImplementedToast = () => {
     toast({
       title: "Funcionalidade não implementada",
@@ -1148,7 +1162,7 @@ export default function AvatarForgePage() {
                                             <Button variant="secondary" className="flex-1" onClick={showNotImplementedToast}>Cena Rápida</Button>
                                         </div>
                                         <div className="flex justify-end items-center gap-1 mt-2">
-                                            <Button variant="ghost" size="icon" className="text-muted-foreground h-8 w-8" onClick={showNotImplementedToast}>
+                                            <Button variant="ghost" size="icon" className="text-muted-foreground h-8 w-8" onClick={() => handleExportJson(avatar, `avatar-${avatar.name}`)}>
                                                 <FileJson className="h-4 w-4" />
                                                 <span className="sr-only">exporta txt</span>
                                             </Button>
@@ -1204,7 +1218,7 @@ export default function AvatarForgePage() {
                                     <CardFooter className="flex flex-col items-stretch gap-2 pt-0 p-4">
                                         <Button onClick={() => handleLoadScene(scene)}><Upload className="mr-2 h-4 w-4" /> Carregar</Button>
                                         <div className="flex justify-end gap-1 mt-2">
-                                            <Button variant="ghost" size="icon" className="text-muted-foreground h-8 w-8" onClick={showNotImplementedToast}>
+                                            <Button variant="ghost" size="icon" className="text-muted-foreground h-8 w-8" onClick={() => handleExportJson(scene, `scene-${scene.name}`)}>
                                                 <FileJson className="h-4 w-4" />
                                                 <span className="sr-only">exporta txt</span>
                                             </Button>
@@ -1327,5 +1341,7 @@ export default function AvatarForgePage() {
   );
 }
 
+
+    
 
     
