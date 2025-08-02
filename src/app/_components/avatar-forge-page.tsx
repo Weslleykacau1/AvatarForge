@@ -117,19 +117,22 @@ export default function AvatarForgePage() {
     },
   });
   
-  const getInfluencerDescription = (data: FormData) => `
-    **Nome:** ${data.name}
-    **Nicho:** ${data.niche}
-    **Idade:** ${data.age}
-    **Gênero:** ${data.gender}
-    **Sotaque:** ${data.accent}
-    **Biografia:** ${data.shortBio}
-    **Traço Único:** ${data.uniqueTrait}
-    **Traços de Personalidade:** ${data.personalityTraits}
-    **Detalhes de Aparência:** ${data.appearanceDetails}
-    **Vestuário:** ${data.clothing}
-    **Características Adicionais:** ${data.characteristics}
-  `;
+  const getInfluencerDescription = (data: FormData) => {
+    const fields = [
+      data.name && `**Nome:** ${data.name}`,
+      data.niche && `**Nicho:** ${data.niche}`,
+      data.age && `**Idade:** ${data.age}`,
+      data.gender && `**Gênero:** ${data.gender}`,
+      data.accent && `**Sotaque:** ${data.accent}`,
+      data.shortBio && `**Biografia:** ${data.shortBio}`,
+      data.uniqueTrait && `**Traço Único:** ${data.uniqueTrait}`,
+      data.personalityTraits && `**Traços de Personalidade:** ${data.personalityTraits}`,
+      data.appearanceDetails && `**Detalhes de Aparência:** ${data.appearanceDetails}`,
+      data.clothing && `**Vestuário:** ${data.clothing}`,
+      data.characteristics && `**Características Adicionais:** ${data.characteristics}`
+    ];
+    return fields.filter(Boolean).join('\n');
+  }
 
   const onGenerateSubmit = form.handleSubmit((data) => {
     setVideoUrl(null);
@@ -308,8 +311,8 @@ export default function AvatarForgePage() {
       const influencerDetails = getInfluencerDescription(formData);
       const sceneDetails = formData.scenarioPrompt;
 
-      if (!formData.name || !sceneDetails) {
-          toast({ variant: "destructive", title: "Faltando Contexto", description: "Para gerar, é preciso carregar ou guardar um influenciador e preencher o campo 'Cenário' na cena." });
+      if (!influencerDetails || !sceneDetails) {
+          toast({ variant: "destructive", title: "Faltando Contexto", description: "Para gerar, preencha a descrição do influenciador e o cenário." });
           return;
       }
       
@@ -945,7 +948,7 @@ export default function AvatarForgePage() {
                               <Button
                                   type="button"
                                   onClick={() => handleGenerateScript('markdown')}
-                                  disabled={isGeneratingScript || !form.getValues("name") || !form.getValues("scenarioPrompt")}
+                                  disabled={isGeneratingScript || !getInfluencerDescription(form.getValues()) || !form.getValues("scenarioPrompt")}
                               >
                                   {isGeneratingScript ? <Loader className="animate-spin mr-2" /> : <Bot />}
                                   Gerar Roteiro (Markdown)
@@ -954,13 +957,13 @@ export default function AvatarForgePage() {
                                   type="button"
                                   variant="secondary"
                                   onClick={() => handleGenerateScript('json')}
-                                  disabled={isGeneratingScript || !form.getValues("name") || !form.getValues("scenarioPrompt")}
+                                  disabled={isGeneratingScript || !getInfluencerDescription(form.getValues()) || !form.getValues("scenarioPrompt")}
                               >
                                  {isGeneratingScript ? <Loader className="animate-spin mr-2" /> : <Code />}
                                   Gerar Roteiro (JSON)
                               </Button>
                           </div>
-                           <p className="text-xs text-muted-foreground text-center">Para gerar, é preciso carregar ou guardar um influenciador e preencher o campo 'Cenário' na cena.</p>
+                           <p className="text-xs text-muted-foreground text-center">Para gerar, preencha a descrição do influenciador e o cenário.</p>
                           {isGeneratingScript && (
                                <div className="space-y-2">
                                   <Skeleton className="h-4 w-1/4" />
