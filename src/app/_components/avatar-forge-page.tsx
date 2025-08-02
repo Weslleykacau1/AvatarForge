@@ -4,7 +4,7 @@ import { useEffect, useState, useTransition, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Bot, Save, Trash2, Plus, Loader, Clapperboard, Edit, User, Shirt, Sparkles, Film, Wand2, FileImage, UploadCloud, FileText, Search, MessageSquare, Briefcase, Users, Camera, Package, Code, Palette, LayoutGrid, Zap, Upload, Download, FileJson } from "lucide-react";
+import { Bot, Save, Trash2, Plus, Loader, Clapperboard, Edit, User, Shirt, Sparkles, Film, Wand2, FileImage, UploadCloud, FileText, Search, MessageSquare, Briefcase, Users, Camera, Package, Code, Palette, LayoutGrid, Zap, Upload, Download, FileJson, RectangleVertical, RectangleHorizontal, Square } from "lucide-react";
 import Image from "next/image";
 
 import { Button } from "@/components/ui/button";
@@ -796,18 +796,34 @@ export default function AvatarForgePage() {
                               )} />
 
                               <FormField control={form.control} name="videoFormat" render={({ field }) => (
-                                  <FormItem>
-                                      <FormLabel>Formato do Vídeo</FormLabel>
-                                      <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                          <FormControl><SelectTrigger><SelectValue placeholder="Selecione..." /></SelectTrigger></FormControl>
-                                          <SelectContent>
-                                              <SelectItem value="9:16">9:16 (Vertical)</SelectItem>
-                                              <SelectItem value="16:9">16:9 (Horizontal)</SelectItem>
-                                              <SelectItem value="1:1">1:1 (Quadrado)</SelectItem>
-                                          </SelectContent>
-                                      </Select>
-                                      <FormMessage />
-                                  </FormItem>
+                                <FormItem>
+                                  <FormLabel>Formato do Vídeo</FormLabel>
+                                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                    <FormControl>
+                                      <SelectTrigger>
+                                        <SelectValue placeholder="Selecione..." />
+                                      </SelectTrigger>
+                                    </FormControl>
+                                    <SelectContent>
+                                      <SelectItem value="9:16">
+                                        <div className="flex items-center gap-2">
+                                          <RectangleVertical /> 9:16 (Vertical)
+                                        </div>
+                                      </SelectItem>
+                                      <SelectItem value="16:9">
+                                        <div className="flex items-center gap-2">
+                                          <RectangleHorizontal /> 16:9 (Horizontal)
+                                        </div>
+                                      </SelectItem>
+                                      <SelectItem value="1:1">
+                                        <div className="flex items-center gap-2">
+                                          <Square /> 1:1 (Quadrado)
+                                        </div>
+                                      </SelectItem>
+                                    </SelectContent>
+                                  </Select>
+                                  <FormMessage />
+                                </FormItem>
                               )} />
 
                               <Card className="p-4 bg-background border border-destructive/50">
