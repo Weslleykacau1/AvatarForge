@@ -11,12 +11,12 @@
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
 import {googleAI} from '@genkit-ai/googleai';
-import * as fs from 'fs';
-import {Readable} from 'stream';
 
 const GenerateAvatarVideoInputSchema = z.object({
-  clothingPrompt: z.string().describe('Description of the avatar\'s clothing.'),
-  otherDetailsPrompt: z.string().describe('Additional details for the avatar, such as accessories or environment.'),
+  sceneTitle: z.string().describe('Title of the scene.'),
+  scenarioPrompt: z.string().describe('Detailed description of the environment, including lighting, colors, objects, and atmosphere.'),
+  actionPrompt: z.string().describe('The main action the influencer is performing.'),
+  sceneImageDataUri: z.string().optional().describe("An optional reference photo for the scene, as a data URI that must include a MIME type and use Base64 encoding. Expected format: 'data:<mimetype>;base64,<encoded_data>'."),
 });
 
 export type GenerateAvatarVideoInput = z.infer<typeof GenerateAvatarVideoInputSchema>;
@@ -39,9 +39,23 @@ const generateAvatarVideoFlow = ai.defineFlow(
     outputSchema: GenerateAvatarVideoOutputSchema,
   },
   async input => {
+    
+    const promptText = `
+      Scene Title: ${input.sceneTitle}
+      Scenario: ${input.scenarioPrompt}
+      Main Action: ${input.actionPrompt}
+      Generate a video of an avatar based on these details.
+    `;
+
+    const prompt: (string | {media: {url: string}})[] = [{text: promptText}];
+
+    if (input.sceneImageDataUri) {
+        prompt.push({media: {url: input.sceneImageDataUri}});
+    }
+
     let {operation} = await ai.generate({
       model: googleAI.model('veo-2.0-generate-001'),
-      prompt: `Generate a video of an avatar with the following characteristics: Clothing: ${input.clothingPrompt}. Other details: ${input.otherDetailsPrompt}.`,
+      prompt: prompt,
       config: {
         durationSeconds: 5,
         aspectRatio: '16:9',

@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect, useState, useTransition } from "react";
+import { useEffect, useState, useTransition, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Bot, Save, Trash2, Plus, Loader, Clapperboard, Edit, User, Shirt, Sparkles } from "lucide-react";
+import { Bot, Save, Trash2, Plus, Loader, Clapperboard, Edit, User, Shirt, Sparkles, Film, Wand2, FileImage } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -14,14 +14,15 @@ import { Textarea } from "@/components/ui/textarea";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
 import { useGallery } from "@/hooks/use-gallery";
-import { generateVideoAction } from "@/app/actions";
+import { generateVideoAction, generateTitleAction, generateActionAction } from "@/app/actions";
 import type { Influencer } from "@/app/types";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
 const influencerSchema = z.object({
-  name: z.string().min(1, "Influencer name is required.").max(50, "Name is too long."),
-  clothingPrompt: z.string().min(1, "Clothing prompt is required.").max(500, "Prompt is too long."),
-  otherDetailsPrompt: z.string().max(500, "Prompt is too long."),
+  name: z.string().min(1, "Título da Cena é obrigatório.").max(100, "Título muito longo."),
+  scenarioPrompt: z.string().min(1, "Descrição do cenário é obrigatória.").max(1000, "Descrição muito longa."),
+  actionPrompt: z.string().min(1, "Ação principal é obrigatória.").max(1000, "Descrição muito longa."),
+  sceneImage: z.string().optional(),
 });
 
 type InfluencerFormData = z.infer<typeof influencerSchema>;
@@ -32,44 +33,109 @@ export default function AvatarForgePage() {
   const { toast } = useToast();
   const { gallery, addOrUpdateInfluencer, removeInfluencer, isLoaded } = useGallery();
   const [isPending, startTransition] = useTransition();
+  const [isGeneratingTitle, startTitleTransition] = useTransition();
+  const [isGeneratingAction, startActionTransition] = useTransition();
+
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const form = useForm<InfluencerFormData>({
     resolver: zodResolver(influencerSchema),
     mode: 'onChange',
     defaultValues: {
       name: "",
-      clothingPrompt: "",
-      otherDetailsPrompt: "",
+      scenarioPrompt: "",
+      actionPrompt: "",
+      sceneImage: "",
     },
   });
 
   const onGenerateSubmit = form.handleSubmit((data) => {
     setVideoUrl(null);
     startTransition(async () => {
-        const result = await generateVideoAction(data);
-        if (result.success && result.videoDataUri) {
-            setVideoUrl(result.videoDataUri);
-            toast({
-                title: "Video Generated!",
-                description: "Your avatar video is ready.",
-            });
-        } else if (result.error) {
-            toast({
-                variant: "destructive",
-                title: "Generation Failed",
-                description: result.error,
-            });
-        }
+      const result = await generateVideoAction({
+        sceneTitle: data.name,
+        scenarioPrompt: data.scenarioPrompt,
+        actionPrompt: data.actionPrompt,
+        sceneImageDataUri: data.sceneImage,
+      });
+      if (result.success && result.videoDataUri) {
+        setVideoUrl(result.videoDataUri);
+        toast({
+          title: "Vídeo Gerado!",
+          description: "Seu vídeo de avatar está pronto.",
+        });
+      } else if (result.error) {
+        toast({
+          variant: "destructive",
+          title: "Falha na Geração",
+          description: result.error,
+        });
+      }
     });
   });
+
+  const handleGenerateTitle = () => {
+    const scenario = form.getValues("scenarioPrompt");
+    const action = form.getValues("actionPrompt");
+    if (!scenario || !action) {
+      toast({
+        variant: "destructive",
+        title: "Faltando contexto",
+        description: "Por favor, preencha o cenário e a ação principal para gerar um título.",
+      });
+      return;
+    }
+    startTitleTransition(async () => {
+      const result = await generateTitleAction({ context: `Cenário: ${scenario}, Ação: ${action}` });
+      if (result.success && result.title) {
+        form.setValue("name", result.title, { shouldValidate: true });
+        toast({ title: "Título Gerado!" });
+      } else {
+        toast({ variant: "destructive", title: "Falha ao gerar título", description: result.error });
+      }
+    });
+  };
+
+  const handleGenerateAction = () => {
+    const scenario = form.getValues("scenarioPrompt");
+    if (!scenario) {
+      toast({
+        variant: "destructive",
+        title: "Faltando contexto",
+        description: "Por favor, preencha o cenário para gerar uma ação.",
+      });
+      return;
+    }
+    startActionTransition(async () => {
+      const result = await generateActionAction({ context: `Cenário: ${scenario}` });
+      if (result.success && result.action) {
+        form.setValue("actionPrompt", result.action, { shouldValidate: true });
+        toast({ title: "Ação Gerada!" });
+      } else {
+        toast({ variant: "destructive", title: "Falha ao gerar ação", description: result.error });
+      }
+    });
+  };
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        form.setValue("sceneImage", reader.result as string, { shouldValidate: true });
+        toast({ title: "Imagem Carregada" });
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   const handleSaveToGallery = (data: InfluencerFormData) => {
     const id = currentId || crypto.randomUUID();
     addOrUpdateInfluencer({ id, ...data });
     if (!currentId) setCurrentId(id);
     toast({
-      title: "Saved to Gallery",
-      description: `Influencer "${data.name}" has been saved.`,
+      title: "Salvo na Galeria",
+      description: `Cena "${data.name}" foi salva.`,
     });
   };
 
@@ -78,13 +144,13 @@ export default function AvatarForgePage() {
     setCurrentId(influencer.id);
     setVideoUrl(null);
     toast({
-      title: "Influencer Loaded",
-      description: `Loaded "${influencer.name}" into the editor.`,
+      title: "Cena Carregada",
+      description: `Carregado "${influencer.name}" no editor.`,
     });
   };
 
   const handleNewInfluencer = () => {
-    form.reset({ name: "", clothingPrompt: "", otherDetailsPrompt: "" });
+    form.reset({ name: "", scenarioPrompt: "", actionPrompt: "", sceneImage: "" });
     setCurrentId(null);
     setVideoUrl(null);
   };
@@ -95,8 +161,8 @@ export default function AvatarForgePage() {
       handleNewInfluencer();
     }
     toast({
-      title: "Influencer Deleted",
-      description: `"${name}" has been removed from your gallery.`,
+      title: "Cena Deletada",
+      description: `"${name}" foi removido da sua galeria.`,
     });
   };
 
@@ -105,7 +171,7 @@ export default function AvatarForgePage() {
       <header className="p-4 border-b border-border/50 bg-background/50 backdrop-blur-sm sticky top-0 z-10">
         <div className="container mx-auto flex items-center justify-between">
           <div className="flex items-center gap-3">
-             <Clapperboard className="h-8 w-8 text-accent" />
+            <Clapperboard className="h-8 w-8 text-accent" />
             <h1 className="text-2xl font-bold font-headline text-primary-foreground">AvatarForge</h1>
           </div>
         </div>
@@ -113,48 +179,74 @@ export default function AvatarForgePage() {
 
       <main className="container mx-auto p-4 md:p-8">
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
-          
+
           <div className="lg:col-span-2 flex flex-col gap-8">
             <Card className="bg-card/80">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 font-headline text-xl">
-                  <Edit className="text-accent" />
-                  Influencer Editor
+                  <Film className="text-accent" />
+                  2. Crie ou Edite uma Cena
                 </CardTitle>
-                <CardDescription>Describe your avatar. The more detail, the better the result.</CardDescription>
               </CardHeader>
               <CardContent>
                 <Form {...form}>
                   <form onSubmit={onGenerateSubmit} className="space-y-6">
                     <FormField control={form.control} name="name" render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="flex items-center gap-2"><User size={16}/>Influencer Name</FormLabel>
-                        <FormControl><Input placeholder="e.g., Nova Starr" {...field} /></FormControl>
+                        <FormLabel>Título da Cena</FormLabel>
+                        <FormControl><Input placeholder="Ex: Unboxing do Produto X" {...field} /></FormControl>
                         <FormMessage />
                       </FormItem>
                     )} />
-                    <FormField control={form.control} name="clothingPrompt" render={({ field }) => (
+                    <Button type="button" variant="outline" size="sm" onClick={handleGenerateTitle} disabled={isGeneratingTitle}>
+                      {isGeneratingTitle ? <Loader className="animate-spin mr-2" /> : <Wand2 />} Gerar Título com IA
+                    </Button>
+
+                    <FormField control={form.control} name="sceneImage" render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="flex items-center gap-2"><Shirt size={16}/>Clothing Prompt</FormLabel>
-                        <FormControl><Textarea placeholder="A futuristic silver jacket with neon blue accents, glowing sneakers..." {...field} rows={4} /></FormControl>
+                        <FormLabel>Referência de Cenário (Opcional)</FormLabel>
+                        <FormControl>
+                          <>
+                            <input type="file" accept="image/*" ref={fileInputRef} onChange={handleFileChange} className="hidden" />
+                            <Button type="button" variant="outline" onClick={() => fileInputRef.current?.click()}>
+                              <FileImage className="mr-2" />
+                              Escolher ficheiro
+                            </Button>
+                          </>
+                        </FormControl>
+                        {field.value && <p className="text-sm text-muted-foreground">Imagem selecionada.</p>}
                         <FormMessage />
                       </FormItem>
                     )} />
-                    <FormField control={form.control} name="otherDetailsPrompt" render={({ field }) => (
+
+                    <FormField control={form.control} name="scenarioPrompt" render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="flex items-center gap-2"><Sparkles size={16}/>Other Details (Optional)</FormLabel>
-                        <FormControl><Textarea placeholder="Cyberpunk city background, holding a glowing cube, short pink hair..." {...field} rows={3} /></FormControl>
+                        <FormLabel>Cenário</FormLabel>
+                        <FormControl><Textarea placeholder="Descreva o ambiente em detalhes - iluminação, cores, objetos, atmosfera..." {...field} rows={5} /></FormControl>
+                        <p className="text-xs text-muted-foreground">Dica: Seja específico sobre iluminação, cores dominantes, materiais, e atmosfera. Quanto mais detalhes, melhor o resultado.</p>
                         <FormMessage />
                       </FormItem>
                     )} />
-                    <div className="flex flex-wrap gap-2">
+
+                    <FormField control={form.control} name="actionPrompt" render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Ação Principal</FormLabel>
+                        <FormControl><Textarea placeholder="O que o influenciador está a fazer..." {...field} rows={3} /></FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )} />
+                    <Button type="button" variant="outline" size="sm" onClick={handleGenerateAction} disabled={isGeneratingAction}>
+                      {isGeneratingAction ? <Loader className="animate-spin mr-2" /> : <Wand2 />} Gerar Ação com IA
+                    </Button>
+
+                    <div className="flex flex-wrap gap-2 pt-4">
                       <Button type="submit" disabled={isPending || !form.formState.isValid} className="flex-grow">
                         {isPending ? <Loader className="animate-spin mr-2 h-4 w-4" /> : <Bot className="mr-2 h-4 w-4" />}
-                        {isPending ? "Generating..." : "Generate Video"}
+                        {isPending ? "Gerando..." : "Gerar Vídeo"}
                       </Button>
                       <Button type="button" variant="secondary" onClick={form.handleSubmit(handleSaveToGallery)} className="flex-grow">
                         <Save className="mr-2 h-4 w-4" />
-                        Save to Gallery
+                        Salvar na Galeria
                       </Button>
                     </div>
                   </form>
@@ -165,12 +257,12 @@ export default function AvatarForgePage() {
             <Card className="bg-card/80">
               <CardHeader>
                 <CardTitle className="flex items-center justify-between font-headline text-xl">
-                  <span className="flex items-center gap-2">My Gallery</span>
+                  <span className="flex items-center gap-2">Minha Galeria</span>
                   <Button variant="ghost" size="sm" onClick={handleNewInfluencer}>
-                    <Plus className="mr-2 h-4 w-4" /> New
+                    <Plus className="mr-2 h-4 w-4" /> Nova Cena
                   </Button>
                 </CardTitle>
-                <CardDescription>Load or delete your saved influencers.</CardDescription>
+                <CardDescription>Carregue ou delete suas cenas salvas.</CardDescription>
               </CardHeader>
               <CardContent>
                 <ScrollArea className="h-60 pr-4">
@@ -178,14 +270,14 @@ export default function AvatarForgePage() {
                     {!isLoaded && Array.from({ length: 3 }).map((_, i) => <Skeleton key={i} className="h-10 w-full rounded-md" />)}
                     {isLoaded && gallery.length === 0 && (
                       <div className="text-center text-muted-foreground py-10">
-                        <p>Your gallery is empty.</p>
+                        <p>Sua galeria está vazia.</p>
                       </div>
                     )}
                     {isLoaded && gallery.map((influencer) => (
                       <div key={influencer.id} className="flex items-center justify-between p-2 rounded-md hover:bg-accent/10 transition-colors">
                         <span className="font-medium truncate pr-2">{influencer.name}</span>
                         <div className="flex gap-1 shrink-0">
-                          <Button variant="outline" size="sm" onClick={() => handleLoadInfluencer(influencer)}>Load</Button>
+                          <Button variant="outline" size="sm" onClick={() => handleLoadInfluencer(influencer)}>Carregar</Button>
                           <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-destructive hover:bg-destructive/10 h-8 w-8" onClick={() => handleDeleteInfluencer(influencer.id, influencer.name)}>
                             <Trash2 className="h-4 w-4" />
                           </Button>
@@ -208,16 +300,16 @@ export default function AvatarForgePage() {
                   {isPending ? (
                     <div className="text-center space-y-4 text-muted-foreground p-4">
                       <Loader className="h-12 w-12 animate-spin mx-auto text-accent" />
-                      <p className="font-headline text-lg">Generating your avatar...</p>
-                      <p className="text-sm">This may take up to a minute. Please wait.</p>
+                      <p className="font-headline text-lg">Gerando seu avatar...</p>
+                      <p className="text-sm">Isso pode levar até um minuto. Por favor, aguarde.</p>
                     </div>
                   ) : videoUrl ? (
                     <video src={videoUrl} controls autoPlay loop className="w-full h-full object-cover" />
                   ) : (
                     <div className="text-center space-y-4 text-muted-foreground p-4">
-                       <Clapperboard className="h-16 w-16 mx-auto" />
-                      <p className="font-headline text-lg">Your video will appear here</p>
-                      <p className="text-sm">Fill out the prompts and click "Generate Video".</p>
+                      <Clapperboard className="h-16 w-16 mx-auto" />
+                      <p className="font-headline text-lg">Seu vídeo aparecerá aqui</p>
+                      <p className="text-sm">Preencha os campos e clique em "Gerar Vídeo".</p>
                     </div>
                   )}
                 </div>

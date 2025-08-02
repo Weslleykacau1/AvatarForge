@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import type { Influencer } from '@/app/types';
 
-const GALLERY_KEY = 'avatar-forge-gallery';
+const GALLERY_KEY = 'avatar-forge-gallery-scenes';
 
 export function useGallery() {
   const [gallery, setGallery] = useState<Influencer[]>([]);
