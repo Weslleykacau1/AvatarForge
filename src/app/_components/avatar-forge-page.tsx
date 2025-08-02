@@ -629,12 +629,12 @@ export default function AvatarForgePage() {
 
       <main className="container mx-auto p-4 md:p-8">
        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="grid w-full grid-cols-2 md:grid-cols-5 gap-2 mx-auto max-w-4xl">
-              <TabsTrigger value="creator"><Film className="mr-2" />Criador</TabsTrigger>
-              <TabsTrigger value="influencer-gallery"><Users className="mr-2" />Personagens</TabsTrigger>
-              <TabsTrigger value="scene-gallery"><LayoutGrid className="mr-2" />Cenas</TabsTrigger>
-              <TabsTrigger value="product-gallery"><Package className="mr-2" />Produtos</TabsTrigger>
-              <TabsTrigger value="script-video"><BookText className="mr-2" />Roteiro</TabsTrigger>
+            <TabsList className="grid w-full grid-cols-5 gap-2 mx-auto max-w-4xl">
+               <TabsTrigger value="creator" className="flex items-center justify-center"><Film className="h-5 w-5 md:mr-2" /><span className="hidden md:inline">Criador</span></TabsTrigger>
+               <TabsTrigger value="influencer-gallery" className="flex items-center justify-center"><Users className="h-5 w-5 md:mr-2" /><span className="hidden md:inline">Personagens</span></TabsTrigger>
+               <TabsTrigger value="scene-gallery" className="flex items-center justify-center"><LayoutGrid className="h-5 w-5 md:mr-2" /><span className="hidden md:inline">Cenas</span></TabsTrigger>
+               <TabsTrigger value="product-gallery" className="flex items-center justify-center"><Package className="h-5 w-5 md:mr-2" /><span className="hidden md:inline">Produtos</span></TabsTrigger>
+               <TabsTrigger value="script-video" className="flex items-center justify-center"><BookText className="h-5 w-5 md:mr-2" /><span className="hidden md:inline">Roteiro</span></TabsTrigger>
             </TabsList>
 
             <TabsContent value="creator">
