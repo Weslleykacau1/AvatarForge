@@ -32,20 +32,26 @@ export function useGallery() {
   }, []);
 
   const addOrUpdateScene = useCallback((scene: Scene) => {
-    const newGallery = [...gallery];
-    const existingIndex = newGallery.findIndex(item => item.id === scene.id);
-    if (existingIndex > -1) {
-      newGallery[existingIndex] = scene;
-    } else {
-      newGallery.unshift(scene);
-    }
-    saveGallery(newGallery);
-  }, [gallery, saveGallery]);
+    setGallery(prevGallery => {
+      const newGallery = [...prevGallery];
+      const existingIndex = newGallery.findIndex(item => item.id === scene.id);
+      if (existingIndex > -1) {
+        newGallery[existingIndex] = scene;
+      } else {
+        newGallery.unshift(scene);
+      }
+      saveGallery(newGallery);
+      return newGallery.sort((a, b) => a.name.localeCompare(b.name));
+    });
+  }, [saveGallery]);
 
   const removeScene = useCallback((id: string) => {
-    const newGallery = gallery.filter(item => item.id !== id);
-    saveGallery(newGallery);
-  }, [gallery, saveGallery]);
+    setGallery(prevGallery => {
+      const newGallery = prevGallery.filter(item => item.id !== id);
+      saveGallery(newGallery);
+      return newGallery;
+    });
+  }, [saveGallery]);
 
   return { gallery, addOrUpdateScene, removeScene, isLoaded };
 }

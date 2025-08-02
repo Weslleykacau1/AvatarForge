@@ -32,20 +32,26 @@ export function useAvatars() {
   }, []);
 
   const addOrUpdateAvatar = useCallback((avatar: Avatar) => {
-    const newAvatars = [...avatars];
-    const existingIndex = newAvatars.findIndex(item => item.id === avatar.id);
-    if (existingIndex > -1) {
-      newAvatars[existingIndex] = avatar;
-    } else {
-      newAvatars.unshift(avatar);
-    }
-    saveAvatars(newAvatars);
-  }, [avatars, saveAvatars]);
+    setAvatars(prevAvatars => {
+      const newAvatars = [...prevAvatars];
+      const existingIndex = newAvatars.findIndex(item => item.id === avatar.id);
+      if (existingIndex > -1) {
+        newAvatars[existingIndex] = avatar;
+      } else {
+        newAvatars.unshift(avatar);
+      }
+      saveAvatars(newAvatars);
+      return newAvatars.sort((a, b) => a.name.localeCompare(b.name));
+    });
+  }, [saveAvatars]);
 
   const removeAvatar = useCallback((id: string) => {
-    const newAvatars = avatars.filter(item => item.id !== id);
-    saveAvatars(newAvatars);
-  }, [avatars, saveAvatars]);
+    setAvatars(prevAvatars => {
+      const newAvatars = prevAvatars.filter(item => item.id !== id);
+      saveAvatars(newAvatars);
+      return newAvatars;
+    });
+  }, [saveAvatars]);
 
   return { avatars, addOrUpdateAvatar, removeAvatar, isLoaded };
 }

@@ -32,20 +32,26 @@ export function useProducts() {
   }, []);
 
   const addOrUpdateProduct = useCallback((product: Product) => {
-    const newProducts = [...products];
-    const existingIndex = newProducts.findIndex(item => item.id === product.id);
-    if (existingIndex > -1) {
-      newProducts[existingIndex] = product;
-    } else {
-      newProducts.unshift(product);
-    }
-    saveProducts(newProducts);
-  }, [products, saveProducts]);
+    setProducts(prevProducts => {
+        const newProducts = [...prevProducts];
+        const existingIndex = newProducts.findIndex(item => item.id === product.id);
+        if (existingIndex > -1) {
+            newProducts[existingIndex] = product;
+        } else {
+            newProducts.unshift(product);
+        }
+        saveProducts(newProducts);
+        return newProducts.sort((a, b) => a.productName.localeCompare(b.productName));
+    });
+  }, [saveProducts]);
 
   const removeProduct = useCallback((id: string) => {
-    const newProducts = products.filter(item => item.id !== id);
-    saveProducts(newProducts);
-  }, [products, saveProducts]);
+    setProducts(prevProducts => {
+      const newProducts = prevProducts.filter(item => item.id !== id);
+      saveProducts(newProducts);
+      return newProducts;
+    });
+  }, [saveProducts]);
 
   return { products, addOrUpdateProduct, removeProduct, isLoaded };
 }
