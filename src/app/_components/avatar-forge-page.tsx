@@ -904,7 +904,7 @@ export default function AvatarForgePage() {
                 </div>
 
                 <div className="lg:col-span-3 flex flex-col gap-8">
-                  <Card className="sticky top-24 bg-card/80">
+                  <Card className="bg-card/80">
                     <CardHeader>
                       <CardTitle className="font-headline">Preview</CardTitle>
                     </CardHeader>
