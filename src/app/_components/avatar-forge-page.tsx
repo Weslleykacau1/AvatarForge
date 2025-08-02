@@ -536,7 +536,7 @@ export default function AvatarForgePage() {
        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
             <TabsList className="grid w-full grid-cols-2 sm:grid-cols-4 mx-auto max-w-2xl">
               <TabsTrigger value="creator"><Film className="mr-2" />Criador</TabsTrigger>
-              <TabsTrigger value="influencer-gallery"><Palette className="mr-2" />Galeria de Personagens</TabsTrigger>
+              <TabsTrigger value="influencer-gallery"><Users className="mr-2" />Galeria de Personagens</TabsTrigger>
               <TabsTrigger value="scene-gallery"><LayoutGrid className="mr-2" />Galeria de Cenas</TabsTrigger>
               <TabsTrigger value="product-gallery"><Package className="mr-2" />Galeria de Produtos</TabsTrigger>
             </TabsList>
