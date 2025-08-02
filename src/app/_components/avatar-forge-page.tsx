@@ -4,7 +4,7 @@ import { useEffect, useState, useTransition, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Bot, Save, Trash2, Plus, Loader, Clapperboard, Edit, User, Shirt, Sparkles, Film, Wand2, FileImage, UploadCloud, FileText, Search, MessageSquare, Briefcase, Users, Camera, Package, Code, Palette, LayoutGrid, Zap, Upload, Download, FileJson, RectangleVertical, RectangleHorizontal, Square, BookText, Link } from "lucide-react";
+import { Bot, Save, Trash2, Plus, Loader, Clapperboard, Edit, User, Shirt, Sparkles, Film, Wand2, FileImage, UploadCloud, FileText, Search, MessageSquare, Briefcase, Users, Camera, Package, Code, Palette, LayoutGrid, Zap, Upload, Download, FileJson, RectangleVertical, RectangleHorizontal, Square, BookText, Link, Video } from "lucide-react";
 import Image from "next/image";
 
 import { Button } from "@/components/ui/button";
@@ -565,7 +565,7 @@ export default function AvatarForgePage() {
         <div className="container mx-auto flex items-center justify-between">
           <div className="flex items-center gap-3">
             <Clapperboard className="h-8 w-8 text-accent" />
-            <h1 className="text-2xl font-bold font-headline text-foreground">AvatarForge</h1>
+            <h1 className="text-2xl font-bold font-headline text-white">AvatarForge</h1>
           </div>
         </div>
       </header>
@@ -1268,14 +1268,10 @@ export default function AvatarForgePage() {
                                 className="font-mono text-sm"
                             />
                             <div className="flex gap-2">
-                                <Button onClick={handleGenerateFromScript} disabled={isGeneratingFromScript}>
-                                    {isGeneratingFromScript ? <Loader className="animate-spin mr-2" /> : <Bot />}
-                                    Gerar Vídeo (Primeira Cena)
-                                </Button>
-                                <Button asChild variant="secondary">
-                                  <a href="https://labs.google/fx/tools/flow" target="_blank" rel="noopener noreferrer">
-                                    <Link className="mr-2" />
-                                    Abrir no Flow
+                                <Button asChild>
+                                  <a href="https://docs.google.com/videos/u/0/" target="_blank" rel="noopener noreferrer">
+                                    <Video className="mr-2" />
+                                    Google Vids
                                   </a>
                                 </Button>
                             </div>
