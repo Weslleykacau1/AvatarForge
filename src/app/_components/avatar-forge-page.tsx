@@ -627,7 +627,7 @@ export default function AvatarForgePage() {
                                     </CardTitle>
                                 </CardHeader>
                                 <CardContent className="flex flex-col items-center gap-4">
-                                    <Button type="button" variant="outline" size="lg" onClick={() => referenceFileInputRef.current?.click()}>
+                                    <Button type="button" size="lg" onClick={() => referenceFileInputRef.current?.click()} className={cn("text-white bg-gradient-to-r from-gradient-purple to-gradient-orange hover:from-gradient-purple/90 hover:to-gradient-orange/90")}>
                                         <FileImage className="mr-2" />
                                         Escolher
                                     </Button>
@@ -816,7 +816,7 @@ export default function AvatarForgePage() {
                                   <FormControl>
                                     <div>
                                       <input type="file" accept="image/*" ref={fileInputRef} onChange={handleSceneFileChange} className="hidden" />
-                                      <Button type="button" variant="outline" onClick={() => fileInputRef.current?.click()} disabled={isAnalyzingImage}>
+                                      <Button type="button" onClick={() => fileInputRef.current?.click()} disabled={isAnalyzingImage} className={cn("text-white bg-gradient-to-r from-gradient-purple to-gradient-orange hover:from-gradient-purple/90 hover:to-gradient-orange/90")}>
                                         {isAnalyzingImage ? <Loader className="animate-spin mr-2" /> : <FileImage className="mr-2" />}
                                         {isAnalyzingImage ? 'Analisando...' : 'Escolher ficheiro'}
                                       </Button>
@@ -1011,7 +1011,7 @@ export default function AvatarForgePage() {
                                           <FormControl>
                                           <div>
                                               <input type="file" accept="image/*" ref={productFileInputRef} onChange={handleProductFileChange} className="hidden" />
-                                              <Button type="button" variant="outline" onClick={() => productFileInputRef.current?.click()} disabled={isAnalyzingProduct}>
+                                              <Button type="button" onClick={() => productFileInputRef.current?.click()} disabled={isAnalyzingProduct} className={cn("text-white bg-gradient-to-r from-gradient-purple to-gradient-orange hover:from-gradient-purple/90 hover:to-gradient-orange/90")}>
                                                   {isAnalyzingProduct ? <Loader className="animate-spin mr-2" /> : <FileImage className="mr-2" />}
                                                   {isAnalyzingProduct ? 'Analisando...' : 'Escolher ficheiro'}
                                               </Button>
