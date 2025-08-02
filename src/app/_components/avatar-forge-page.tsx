@@ -924,7 +924,7 @@ export default function AvatarForgePage() {
                                                 <FormControl>
                                                     <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="flex gap-4">
                                                         <FormItem className="flex items-center space-x-2"><FormControl><RadioGroupItem value="true" /></FormControl><FormLabel className="font-normal">Sim</FormLabel></FormItem>
-                                                        <FormItem className="flex items-center space-x-2"><FormControl><RadioGroupItem value="false" /></FormControl><FormLabel className="font-normal">Não</FormLabel></FormItem>
+                                                        <FormItem className="flex items-center space-x-2"><FormControl><RadioGroupItem value="false" /></FormControl><FormLabel className="font-normal text-destructive">Não</FormLabel></FormItem>
                                                     </RadioGroup>
                                                 </FormControl>
                                             </FormItem>
@@ -935,7 +935,7 @@ export default function AvatarForgePage() {
                                                 <FormControl>
                                                     <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="flex gap-4">
                                                         <FormItem className="flex items-center space-x-2"><FormControl><RadioGroupItem value="true" /></FormControl><FormLabel className="font-normal">Sim</FormLabel></FormItem>
-                                                        <FormItem className="flex items-center space-x-2"><FormControl><RadioGroupItem value="false" /></FormControl><FormLabel className="font-normal">Não</FormLabel></FormItem>
+                                                        <FormItem className="flex items-center space-x-2"><FormControl><RadioGroupItem value="false" /></FormControl><FormLabel className="font-normal text-destructive">Não</FormLabel></FormItem>
                                                     </RadioGroup>
                                                 </FormControl>
                                             </FormItem>
@@ -1330,6 +1330,3 @@ export default function AvatarForgePage() {
   );
 }
 
-    
-
-    
