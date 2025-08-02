@@ -4,6 +4,9 @@ import { z } from "zod";
 import { generateAvatarVideo } from "@/ai/flows/generate-avatar-video";
 import { generateTitle } from "@/ai/flows/generate-title-flow";
 import { generateAction } from "@/ai/flows/generate-action-flow";
+import { analyzeImage } from "@/ai/flows/analyze-image-flow";
+import { analyzeText } from "@/ai/flows/analyze-text-flow";
+
 
 const generateVideoSchema = z.object({
   sceneTitle: z.string().min(1, "Título da cena é obrigatório."),
@@ -94,4 +97,57 @@ export async function generateActionAction(
     const errorMessage = error instanceof Error ? error.message : "An unknown error occurred.";
     return { success: false, error: `Action generation failed: ${errorMessage}` };
   }
+}
+
+const analyzeImageSchema = z.object({
+    photoDataUri: z.string(),
+});
+
+type AnalyzeImageState = {
+    success: boolean;
+    description?: string;
+    error?: string;
+};
+
+export async function analyzeImageAction(
+    data: z.infer<typeof analyzeImageSchema>
+): Promise<AnalyzeImageState> {
+    const validatedFields = analyzeImageSchema.safeParse(data);
+    if (!validatedFields.success) {
+        return { success: false, error: 'Invalid input' };
+    }
+    try {
+        const result = await analyzeImage(validatedFields.data);
+        return { success: true, description: result.description };
+    } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : "An unknown error occurred.";
+        return { success: false, error: `Image analysis failed: ${errorMessage}` };
+    }
+}
+
+const analyzeTextSchema = z.object({
+    text: z.string(),
+});
+
+type AnalyzeTextState = {
+    success: boolean;
+    name?: string;
+    niche?: string;
+    error?: string;
+};
+
+export async function analyzeTextAction(
+    data: z.infer<typeof analyzeTextSchema>
+): Promise<AnalyzeTextState> {
+    const validatedFields = analyzeTextSchema.safeParse(data);
+    if (!validatedFields.success) {
+        return { success: false, error: 'Invalid input' };
+    }
+    try {
+        const result = await analyzeText(validatedFields.data);
+        return { success: true, name: result.name, niche: result.niche };
+    } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : "An unknown error occurred.";
+        return { success: false, error: `Text analysis failed: ${errorMessage}` };
+    }
 }

@@ -4,7 +4,8 @@ import { useEffect, useState, useTransition, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Bot, Save, Trash2, Plus, Loader, Clapperboard, Edit, User, Shirt, Sparkles, Film, Wand2, FileImage } from "lucide-react";
+import { Bot, Save, Trash2, Plus, Loader, Clapperboard, Edit, User, Shirt, Sparkles, Film, Wand2, FileImage, UploadCloud, FileText, Search } from "lucide-react";
+import Image from "next/image";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -14,15 +15,18 @@ import { Textarea } from "@/components/ui/textarea";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
 import { useGallery } from "@/hooks/use-gallery";
-import { generateVideoAction, generateTitleAction, generateActionAction } from "@/app/actions";
+import { generateVideoAction, generateTitleAction, generateActionAction, analyzeImageAction, analyzeTextAction } from "@/app/actions";
 import type { Influencer } from "@/app/types";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
 const influencerSchema = z.object({
-  name: z.string().min(1, "Título da Cena é obrigatório.").max(100, "Título muito longo."),
+  name: z.string().min(1, "Nome é obrigatório.").max(100, "Nome muito longo."),
+  niche: z.string().min(1, "Nicho é obrigatório.").max(100, "Nicho muito longo."),
   scenarioPrompt: z.string().min(1, "Descrição do cenário é obrigatória.").max(1000, "Descrição muito longa."),
   actionPrompt: z.string().min(1, "Ação principal é obrigatória.").max(1000, "Descrição muito longa."),
   sceneImage: z.string().optional(),
+  referenceImage: z.string().optional(),
+  characteristics: z.string().optional(),
 });
 
 type InfluencerFormData = z.infer<typeof influencerSchema>;
@@ -35,17 +39,25 @@ export default function AvatarForgePage() {
   const [isPending, startTransition] = useTransition();
   const [isGeneratingTitle, startTitleTransition] = useTransition();
   const [isGeneratingAction, startActionTransition] = useTransition();
+  const [isAnalyzingImage, startImageAnalysisTransition] = useTransition();
+  const [isAnalyzingText, startTextAnalysisTransition] = useTransition();
+  const [referenceImagePreview, setReferenceImagePreview] = useState<string | null>(null);
+
 
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const referenceFileInputRef = useRef<HTMLInputElement>(null);
 
   const form = useForm<InfluencerFormData>({
     resolver: zodResolver(influencerSchema),
     mode: 'onChange',
     defaultValues: {
       name: "",
+      niche: "",
       scenarioPrompt: "",
       actionPrompt: "",
       sceneImage: "",
+      referenceImage: "",
+      characteristics: "",
     },
   });
 
@@ -117,7 +129,7 @@ export default function AvatarForgePage() {
     });
   };
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleSceneFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
       const reader = new FileReader();
@@ -128,6 +140,55 @@ export default function AvatarForgePage() {
       reader.readAsDataURL(file);
     }
   };
+  
+  const handleReferenceFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const result = reader.result as string;
+        form.setValue("referenceImage", result, { shouldValidate: true });
+        setReferenceImagePreview(result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleAnalyzeImage = () => {
+    const referenceImage = form.getValues("referenceImage");
+    if (!referenceImage) {
+      toast({ variant: "destructive", title: "Nenhuma imagem selecionada", description: "Por favor, carregue uma foto de referência." });
+      return;
+    }
+    startImageAnalysisTransition(async () => {
+      const result = await analyzeImageAction({ photoDataUri: referenceImage });
+      if (result.success && result.description) {
+        form.setValue("characteristics", result.description, { shouldValidate: true });
+        toast({ title: "Análise de Imagem Concluída", description: "As características foram preenchidas." });
+      } else {
+        toast({ variant: "destructive", title: "Falha na Análise de Imagem", description: result.error });
+      }
+    });
+  };
+  
+  const handleAnalyzeText = () => {
+    const characteristics = form.getValues("characteristics");
+    if (!characteristics) {
+      toast({ variant: "destructive", title: "Nenhum texto para analisar", description: "Por favor, cole as características do influenciador." });
+      return;
+    }
+    startTextAnalysisTransition(async () => {
+      const result = await analyzeTextAction({ text: characteristics });
+      if (result.success && result.name && result.niche) {
+        form.setValue("name", result.name, { shouldValidate: true });
+        form.setValue("niche", result.niche, { shouldValidate: true });
+        toast({ title: "Análise de Texto Concluída", description: "O nome e o nicho foram preenchidos." });
+      } else {
+        toast({ variant: "destructive", title: "Falha na Análise de Texto", description: result.error });
+      }
+    });
+  };
+
 
   const handleSaveToGallery = (data: InfluencerFormData) => {
     const id = currentId || crypto.randomUUID();
@@ -143,6 +204,7 @@ export default function AvatarForgePage() {
     form.reset(influencer);
     setCurrentId(influencer.id);
     setVideoUrl(null);
+    setReferenceImagePreview(influencer.referenceImage || null);
     toast({
       title: "Cena Carregada",
       description: `Carregado "${influencer.name}" no editor.`,
@@ -150,9 +212,10 @@ export default function AvatarForgePage() {
   };
 
   const handleNewInfluencer = () => {
-    form.reset({ name: "", scenarioPrompt: "", actionPrompt: "", sceneImage: "" });
+    form.reset({ name: "", niche: "", scenarioPrompt: "", actionPrompt: "", sceneImage: "", referenceImage: "", characteristics: "" });
     setCurrentId(null);
     setVideoUrl(null);
+    setReferenceImagePreview(null);
   };
 
   const handleDeleteInfluencer = (id: string, name: string) => {
@@ -182,6 +245,36 @@ export default function AvatarForgePage() {
 
           <div className="lg:col-span-2 flex flex-col gap-8">
             <Card className="bg-card/80">
+                <CardHeader>
+                    <CardTitle className="flex items-center gap-2 font-headline text-xl">
+                        <UploadCloud className="text-accent"/>
+                        1. Carregar Foto de Referência
+                    </CardTitle>
+                </CardHeader>
+                <CardContent className="flex flex-col items-center gap-4">
+                    <Button type="button" variant="outline" size="lg" onClick={() => referenceFileInputRef.current?.click()}>
+                        <FileImage className="mr-2" />
+                        Escolher
+                    </Button>
+                    <input type="file" accept="image/*" ref={referenceFileInputRef} onChange={handleReferenceFileChange} className="hidden" />
+                    
+                    <div className="w-full aspect-square rounded-lg bg-black/20 flex items-center justify-center">
+                      {referenceImagePreview ? (
+                        <Image src={referenceImagePreview} alt="Prévia da referência" width={200} height={200} className="object-cover rounded-md" />
+                      ) : (
+                        <p className="text-muted-foreground">Prévia</p>
+                      )}
+                    </div>
+                    
+                    <Button type="button" className="w-full" onClick={handleAnalyzeImage} disabled={isAnalyzingImage || !form.getValues("referenceImage")}>
+                        {isAnalyzingImage ? <Loader className="animate-spin mr-2"/> : <Bot />}
+                        Analisar Imagem
+                    </Button>
+                    <p className="text-xs text-muted-foreground text-center">Dica: A análise será detalhada, incluindo características faciais, cabelo, estilo e personalidade.</p>
+                </CardContent>
+            </Card>
+
+            <Card className="bg-card/80">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 font-headline text-xl">
                   <Film className="text-accent" />
@@ -191,30 +284,30 @@ export default function AvatarForgePage() {
               <CardContent>
                 <Form {...form}>
                   <form onSubmit={onGenerateSubmit} className="space-y-6">
-                    <FormField control={form.control} name="name" render={({ field }) => (
+
+                    <FormField control={form.control} name="characteristics" render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Título da Cena</FormLabel>
-                        <FormControl><Input placeholder="Ex: Unboxing do Produto X" {...field} /></FormControl>
+                        <FormLabel className="flex items-center gap-2"><FileText /> Cole as Características</FormLabel>
+                        <FormControl><Textarea placeholder="Cole aqui um texto com as características do influenciador..." {...field} rows={5} /></FormControl>
                         <FormMessage />
                       </FormItem>
                     )} />
-                    <Button type="button" variant="outline" size="sm" onClick={handleGenerateTitle} disabled={isGeneratingTitle}>
-                      {isGeneratingTitle ? <Loader className="animate-spin mr-2" /> : <Wand2 />} Gerar Título com IA
+                    <Button type="button" className="w-full" onClick={handleAnalyzeText} disabled={isAnalyzingText}>
+                      {isAnalyzingText ? <Loader className="animate-spin mr-2" /> : <Search />} Analisar Texto e Preencher
                     </Button>
-
-                    <FormField control={form.control} name="sceneImage" render={({ field }) => (
+                    
+                    <FormField control={form.control} name="name" render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Referência de Cenário (Opcional)</FormLabel>
-                        <FormControl>
-                          <>
-                            <input type="file" accept="image/*" ref={fileInputRef} onChange={handleFileChange} className="hidden" />
-                            <Button type="button" variant="outline" onClick={() => fileInputRef.current?.click()}>
-                              <FileImage className="mr-2" />
-                              Escolher ficheiro
-                            </Button>
-                          </>
-                        </FormControl>
-                        {field.value && <p className="text-sm text-muted-foreground">Imagem selecionada.</p>}
+                        <FormLabel>Nome</FormLabel>
+                        <FormControl><Input placeholder="Ex: Luna Silva" {...field} /></FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )} />
+
+                    <FormField control={form.control} name="niche" render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Nicho</FormLabel>
+                        <FormControl><Input placeholder="Ex: Moda, Jogos" {...field} /></FormControl>
                         <FormMessage />
                       </FormItem>
                     )} />
@@ -227,6 +320,10 @@ export default function AvatarForgePage() {
                         <FormMessage />
                       </FormItem>
                     )} />
+                    
+                    <Button type="button" variant="outline" size="sm" onClick={handleGenerateTitle} disabled={isGeneratingTitle}>
+                      {isGeneratingTitle ? <Loader className="animate-spin mr-2" /> : <Wand2 />} Gerar Título com IA
+                    </Button>
 
                     <FormField control={form.control} name="actionPrompt" render={({ field }) => (
                       <FormItem>
@@ -238,6 +335,23 @@ export default function AvatarForgePage() {
                     <Button type="button" variant="outline" size="sm" onClick={handleGenerateAction} disabled={isGeneratingAction}>
                       {isGeneratingAction ? <Loader className="animate-spin mr-2" /> : <Wand2 />} Gerar Ação com IA
                     </Button>
+
+                    <FormField control={form.control} name="sceneImage" render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Referência de Cenário (Opcional)</FormLabel>
+                        <FormControl>
+                          <>
+                            <input type="file" accept="image/*" ref={fileInputRef} onChange={handleSceneFileChange} className="hidden" />
+                            <Button type="button" variant="outline" onClick={() => fileInputRef.current?.click()}>
+                              <FileImage className="mr-2" />
+                              Escolher ficheiro
+                            </Button>
+                          </>
+                        </FormControl>
+                        {field.value && <p className="text-sm text-muted-foreground">Imagem selecionada.</p>}
+                        <FormMessage />
+                      </FormItem>
+                    )} />
 
                     <div className="flex flex-wrap gap-2 pt-4">
                       <Button type="submit" disabled={isPending || !form.formState.isValid} className="flex-grow">
