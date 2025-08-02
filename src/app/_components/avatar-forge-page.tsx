@@ -381,7 +381,8 @@ export default function AvatarForgePage() {
   };
 
 
-  const handleSaveScene = (data: FormData) => {
+  const handleSaveScene = () => {
+    const data = form.getValues();
     const id = currentSceneId || crypto.randomUUID();
     addOrUpdateScene({ id, ...data });
     if (!currentSceneId) setCurrentSceneId(id);
@@ -550,8 +551,8 @@ export default function AvatarForgePage() {
                         <form onSubmit={onGenerateSubmit} className="space-y-6">
                           <Tabs defaultValue="scene" className="w-full">
                             <TabsList className="grid w-full grid-cols-2">
-                              <TabsTrigger value="scene"><Camera className="mr-2" />Cena</TabsTrigger>
                               <TabsTrigger value="avatar"><Users className="mr-2" />Avatar</TabsTrigger>
+                              <TabsTrigger value="scene"><Camera className="mr-2" />Cena</TabsTrigger>
                             </TabsList>
                             <TabsContent value="avatar" className="space-y-6 pt-4">
                               <Card className="bg-muted/30">
@@ -699,6 +700,12 @@ export default function AvatarForgePage() {
                             </TabsContent>
 
                             <TabsContent value="scene" className="space-y-6 pt-4">
+                              <div className="space-y-2">
+                                <Button type="button" variant="outline" size="sm" onClick={handleGenerateTitle} disabled={isGeneratingTitle}>
+                                  {isGeneratingTitle ? <Loader className="animate-spin mr-2" /> : <Wand2 />} Gerar Título da Cena com IA
+                                </Button>
+                              </div>
+
                               <FormField control={form.control} name="scenarioPrompt" render={({ field }) => (
                                 <FormItem>
                                   <FormLabel>Cenário</FormLabel>
@@ -725,10 +732,6 @@ export default function AvatarForgePage() {
                                   <FormMessage />
                                 </FormItem>
                               )} />
-
-                              <Button type="button" variant="outline" size="sm" onClick={handleGenerateTitle} disabled={isGeneratingTitle}>
-                                {isGeneratingTitle ? <Loader className="animate-spin mr-2" /> : <Wand2 />} Gerar Título da Cena com IA
-                              </Button>
 
                               <FormField control={form.control} name="actionPrompt" render={({ field }) => (
                                 <FormItem>
@@ -901,7 +904,7 @@ export default function AvatarForgePage() {
                               {isPending ? <Loader className="animate-spin mr-2 h-4 w-4" /> : <Bot className="mr-2 h-4 w-4" />}
                               {isPending ? "Gerando..." : "Gerar Vídeo"}
                             </Button>
-                            <Button type="button" variant="secondary" onClick={form.handleSubmit(handleSaveScene)} className="flex-grow">
+                            <Button type="button" variant="secondary" onClick={handleSaveScene} className="flex-grow">
                               <Save className="mr-2 h-4 w-4" />
                               Salvar Cena
                             </Button>
@@ -1163,5 +1166,3 @@ export default function AvatarForgePage() {
     </div>
   );
 }
-
-    
