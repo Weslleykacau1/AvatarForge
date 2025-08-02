@@ -15,9 +15,6 @@ export default {
         code: ['monospace'],
       },
       colors: {
-        'gradient-purple': '#A259FF',
-        'gradient-orange': '#FF6A00',
-        'neon-pink': '#FF4FB2',
         background: 'hsl(var(--background))',
         foreground: 'hsl(var(--foreground))',
         card: {
@@ -100,5 +97,3 @@ export default {
   },
   plugins: [require('tailwindcss-animate')],
 } satisfies Config;
-
-    

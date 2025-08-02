@@ -121,7 +121,7 @@ const exampleScript = `{
 }`;
 
 const GradientPlayIcon = () => (
-    <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-neon-pink">
+    <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-primary">
         <path d="M13.5999 23.4667C12.7999 23.9333 11.8666 23.3333 11.8666 22.4V9.6C11.8666 8.66667 12.7999 8.06667 13.5999 8.53334L24.5332 14.9333C25.3332 15.4 25.3332 16.6 24.5332 17.0667L13.5999 23.4667Z" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
         <path d="M12 4H20C24.4183 4 28 7.58172 28 12V20C28 24.4183 24.4183 28 20 28H12C7.58172 28 4 24.4183 4 20V12C4 7.58172 7.58172 4 12 4Z" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
     </svg>
@@ -618,7 +618,7 @@ export default function AvatarForgePage() {
                     <Card className="bg-card/80">
                       <CardHeader>
                         <CardTitle className="flex items-center gap-2 font-headline text-xl">
-                          <Film className="text-accent" />
+                          <Film className="text-primary" />
                           Editor
                         </CardTitle>
                         <CardDescription>Crie seu avatar, defina a cena e gere o vídeo.</CardDescription>
@@ -634,12 +634,12 @@ export default function AvatarForgePage() {
                                 <Card className="bg-muted/30">
                                   <CardHeader>
                                       <CardTitle className="flex items-center gap-2 font-headline text-base">
-                                          <UploadCloud className="text-accent"/>
+                                          <UploadCloud className="text-primary"/>
                                           1. Comece com uma Imagem
                                       </CardTitle>
                                   </CardHeader>
                                   <CardContent className="flex flex-col items-center gap-4">
-                                      <Button type="button" size="lg" onClick={() => referenceFileInputRef.current?.click()} className="text-white bg-gradient-to-r from-gradient-purple to-gradient-orange hover:from-gradient-purple/90 hover:to-gradient-orange/90">
+                                      <Button type="button" size="lg" onClick={() => referenceFileInputRef.current?.click()}>
                                           <FileImage className="mr-2" />
                                           Escolher
                                       </Button>
@@ -654,7 +654,7 @@ export default function AvatarForgePage() {
                                       </div>
                                       
                                       <Button type="button" className="w-full" onClick={handleAnalyzeAndFill} disabled={isAnalyzingAvatar || !form.getValues("referenceImage")}>
-                                          {isAnalyzingAvatar ? <Loader className="animate-spin mr-2"/> : <Bot className="text-accent"/>}
+                                          {isAnalyzingAvatar ? <Loader className="animate-spin mr-2"/> : <Bot className="text-primary"/>}
                                           Analisar Imagem e Preencher Campos
                                       </Button>
                                       <p className="text-xs text-muted-foreground text-center">Dica: A análise preencherá todos os campos do avatar com base na imagem.</p>
@@ -664,7 +664,7 @@ export default function AvatarForgePage() {
                                 <Card className="bg-muted/30">
                                   <CardHeader>
                                       <CardTitle className="flex items-center gap-2 font-headline text-base">
-                                          <FileText className="text-accent"/>
+                                          <FileText className="text-primary"/>
                                           2. Ou Comece com Texto
                                       </CardTitle>
                                   </CardHeader>
@@ -828,7 +828,7 @@ export default function AvatarForgePage() {
                                     <FormControl>
                                       <div>
                                         <input type="file" accept="image/*" ref={fileInputRef} onChange={handleSceneFileChange} className="hidden" />
-                                        <Button type="button" onClick={() => fileInputRef.current?.click()} disabled={isAnalyzingImage} className="text-white bg-gradient-to-r from-gradient-purple to-gradient-orange hover:from-gradient-purple/90 hover:to-gradient-orange/90">
+                                        <Button type="button" onClick={() => fileInputRef.current?.click()} disabled={isAnalyzingImage}>
                                           {isAnalyzingImage ? <Loader className="animate-spin mr-2" /> : <FileImage className="mr-2" />}
                                           {isAnalyzingImage ? 'Analisando...' : 'Escolher ficheiro'}
                                         </Button>
@@ -1057,7 +1057,7 @@ export default function AvatarForgePage() {
                     <Card className="bg-card/80">
                         <CardHeader>
                             <CardTitle className="flex items-center gap-2 font-headline text-xl">
-                                <Edit className="text-accent" />
+                                <Edit className="text-primary" />
                                 Gere o Roteiro Detalhado
                             </CardTitle>
                             <CardDescription>Use o influenciador e a cena definidos para gerar um roteiro detalhado para um vídeo.</CardDescription>
@@ -1068,7 +1068,6 @@ export default function AvatarForgePage() {
                                     type="button"
                                     onClick={() => handleGenerateScript('markdown')}
                                     disabled={isGeneratingScript || !getInfluencerDescription(form.getValues()) || !form.getValues("scenarioPrompt")}
-                                    className="text-white bg-gradient-to-r from-gradient-purple to-gradient-orange hover:from-gradient-purple/90 hover:to-gradient-orange/90"
                                 >
                                     {isGeneratingScript ? <Loader className="animate-spin mr-2" /> : <Bot />}
                                     Gerar Roteiro (Markdown)
@@ -1112,7 +1111,7 @@ export default function AvatarForgePage() {
                       <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
                           <div>
                               <CardTitle className="flex items-center gap-2 font-headline text-xl">
-                                  <Palette className="text-accent" />
+                                  <Palette className="text-primary" />
                                   Personagens
                               </CardTitle>
                               <CardDescription>Personagens que você criou. Carregue um para editar ou gerar roteiros.</CardDescription>
@@ -1173,7 +1172,7 @@ export default function AvatarForgePage() {
                         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
                             <div>
                                 <CardTitle className="flex items-center gap-2 font-headline text-xl">
-                                    <LayoutGrid className="text-accent" />
+                                    <LayoutGrid className="text-primary" />
                                     Cenas
                                 </CardTitle>
                                 <CardDescription>Cenas que você salvou. Carregue uma para editar ou use-a com um influenciador para gerar um roteiro.</CardDescription>
@@ -1228,7 +1227,7 @@ export default function AvatarForgePage() {
                        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
                           <div>
                               <CardTitle className="flex items-center gap-2 font-headline text-xl">
-                                  <Package className="text-accent" />
+                                  <Package className="text-primary" />
                                   Produtos
                               </CardTitle>
                               <CardDescription>Produtos que você salvou. Carregue um para usar em uma cena.</CardDescription>
@@ -1280,7 +1279,7 @@ export default function AvatarForgePage() {
                 <Card className="mt-6">
                     <CardHeader>
                         <CardTitle className="flex items-center gap-2 font-headline text-xl">
-                            <BookText className="text-accent" />
+                            <BookText className="text-primary" />
                             Gerar Vídeo a partir de Roteiro
                         </CardTitle>
                         <CardDescription>Cole um roteiro JSON para gerar um vídeo cena por cena.</CardDescription>
