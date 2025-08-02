@@ -284,22 +284,30 @@ export default function AvatarForgePage() {
       reader.onloadend = () => {
         const dataUri = reader.result as string;
         form.setValue("sceneImage", dataUri, { shouldValidate: true });
-        toast({ title: "Imagem da Cena Carregada", description: "Analisando imagem para preencher o cenário..." });
-
-        startImageAnalysisTransition(async () => {
-            const result = await analyzeImageAction({ photoDataUri: dataUri });
-            if (result.success && result.description) {
-                form.setValue("scenarioPrompt", result.description, { shouldValidate: true });
-                toast({ title: "Análise da Cena Concluída", description: "O campo 'Cenário' foi preenchido." });
-            } else {
-                toast({ variant: "destructive", title: "Falha na Análise da Cena", description: result.error });
-            }
-        });
+        toast({ title: "Imagem da Cena Carregada", description: "Imagem pronta para análise." });
       };
       reader.readAsDataURL(file);
     }
   };
   
+  const handleAnalyzeSceneImage = () => {
+    const sceneImage = form.getValues("sceneImage");
+    if (!sceneImage) {
+        toast({ variant: "destructive", title: "Nenhuma imagem de cena", description: "Carregue uma imagem para a cena primeiro." });
+        return;
+    }
+
+    startImageAnalysisTransition(async () => {
+        const result = await analyzeImageAction({ photoDataUri: sceneImage });
+        if (result.success && result.description) {
+            form.setValue("scenarioPrompt", result.description, { shouldValidate: true });
+            toast({ title: "Análise da Cena Concluída", description: "O campo 'Cenário' foi preenchido." });
+        } else {
+            toast({ variant: "destructive", title: "Falha na Análise da Cena", description: result.error });
+        }
+    });
+  };
+
   const handleReferenceFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
@@ -840,11 +848,15 @@ export default function AvatarForgePage() {
                                   <FormItem>
                                     <FormLabel>Gerar a partir de uma imagem de referência</FormLabel>
                                     <FormControl>
-                                      <div>
+                                      <div className="flex items-center gap-2">
                                         <input type="file" accept="image/*" ref={fileInputRef} onChange={handleSceneFileChange} className="hidden" />
-                                        <Button type="button" onClick={() => fileInputRef.current?.click()} disabled={isAnalyzingImage}>
-                                          {isAnalyzingImage ? <Loader className="animate-spin mr-2" /> : <FileImage className="mr-2" />}
-                                          {isAnalyzingImage ? 'Analisando...' : 'Escolher ficheiro'}
+                                        <Button type="button" onClick={() => fileInputRef.current?.click()}>
+                                          <FileImage className="mr-2" />
+                                          Escolher ficheiro
+                                        </Button>
+                                        <Button type="button" variant="secondary" onClick={handleAnalyzeSceneImage} disabled={!field.value || isAnalyzingImage}>
+                                            {isAnalyzingImage ? <Loader className="animate-spin mr-2" /> : <Bot />}
+                                            Analisar Imagem
                                         </Button>
                                       </div>
                                     </FormControl>
