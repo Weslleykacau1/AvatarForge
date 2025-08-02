@@ -17,6 +17,8 @@ export default {
       colors: {
         'gradient-purple': '#8E2DE2',
         'gradient-orange': '#F27121',
+        'neon-red': '#FF4F5E',
+        'ice-blue': '#7AB0FF',
         background: 'hsl(var(--background))',
         foreground: 'hsl(var(--foreground))',
         card: {
@@ -99,3 +101,5 @@ export default {
   },
   plugins: [require('tailwindcss-animate')],
 } satisfies Config;
+
+    

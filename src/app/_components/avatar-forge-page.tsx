@@ -122,8 +122,8 @@ const GradientPlayIcon = () => (
     <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" className="h-8 w-8">
         <defs>
             <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stopColor="#8E2DE2" />
-                <stop offset="100%" stopColor="#F27121" />
+                <stop offset="0%" stopColor="hsl(var(--primary))" />
+                <stop offset="100%" stopColor="hsl(var(--accent))" />
             </linearGradient>
         </defs>
         <circle cx="16" cy="16" r="15" stroke="url(#grad1)" strokeWidth="2"/>
@@ -642,7 +642,7 @@ export default function AvatarForgePage() {
                                   </CardHeader>
                                   <CardContent className="flex flex-col items-center gap-4">
                                       <Button type="button" size="lg" onClick={() => referenceFileInputRef.current?.click()} className="text-white bg-gradient-to-r from-gradient-purple to-gradient-orange hover:from-gradient-purple/90 hover:to-gradient-orange/90">
-                                          <FileImage className="mr-2" />
+                                          <FileImage className="mr-2 text-neon-red" />
                                           Escolher
                                       </Button>
                                       <input type="file" accept="image/*" ref={referenceFileInputRef} onChange={handleReferenceFileChange} className="hidden" />
@@ -656,7 +656,7 @@ export default function AvatarForgePage() {
                                       </div>
                                       
                                       <Button type="button" className="w-full" onClick={handleAnalyzeAndFill} disabled={isAnalyzingAvatar || !form.getValues("referenceImage")}>
-                                          {isAnalyzingAvatar ? <Loader className="animate-spin mr-2"/> : <Bot />}
+                                          {isAnalyzingAvatar ? <Loader className="animate-spin mr-2"/> : <Bot className="text-ice-blue"/>}
                                           Analisar Imagem e Preencher Campos
                                       </Button>
                                       <p className="text-xs text-muted-foreground text-center">Dica: A análise preencherá todos os campos do avatar com base na imagem.</p>
@@ -831,7 +831,7 @@ export default function AvatarForgePage() {
                                       <div>
                                         <input type="file" accept="image/*" ref={fileInputRef} onChange={handleSceneFileChange} className="hidden" />
                                         <Button type="button" onClick={() => fileInputRef.current?.click()} disabled={isAnalyzingImage} className="text-white bg-gradient-to-r from-gradient-purple to-gradient-orange hover:from-gradient-purple/90 hover:to-gradient-orange/90">
-                                          {isAnalyzingImage ? <Loader className="animate-spin mr-2" /> : <FileImage className="mr-2" />}
+                                          {isAnalyzingImage ? <Loader className="animate-spin mr-2" /> : <FileImage className="mr-2 text-neon-red" />}
                                           {isAnalyzingImage ? 'Analisando...' : 'Escolher ficheiro'}
                                         </Button>
                                       </div>
@@ -1027,7 +1027,7 @@ export default function AvatarForgePage() {
                                 <div>
                                     <input type="file" accept="image/*" ref={productFileInputRef} onChange={handleProductFileChange} className="hidden" />
                                     <Button type="button" onClick={() => productFileInputRef.current?.click()} disabled={isAnalyzingProduct} className="text-white bg-gradient-to-r from-gradient-purple to-gradient-orange hover:from-gradient-purple/90 hover:to-gradient-orange/90">
-                                        {isAnalyzingProduct ? <Loader className="animate-spin mr-2" /> : <FileImage className="mr-2" />}
+                                        {isAnalyzingProduct ? <Loader className="animate-spin mr-2" /> : <FileImage className="mr-2 text-neon-red" />}
                                         {isAnalyzingProduct ? 'Analisando...' : 'Escolher ficheiro'}
                                     </Button>
                                 </div>
@@ -1335,3 +1335,5 @@ export default function AvatarForgePage() {
     </div>
   );
 }
+
+    
