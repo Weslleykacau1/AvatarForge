@@ -11,7 +11,7 @@
     --popover: 0 0% 3%;
     --popover-foreground: 0 0% 100%;
     --primary: 340 100% 70%; /* Rosa */
-    --primary-foreground: 0 0% 0%; /* Preto para texto no botão primário */
+    --primary-foreground: 0 0% 100%; /* Branco para texto no botão primário */
     --secondary: 0 0% 100%; /* Branco para botões secundários */
     --secondary-foreground: 0 0% 0%; /* Preto para texto em botões secundários */
     --muted: 0 0% 10%;
