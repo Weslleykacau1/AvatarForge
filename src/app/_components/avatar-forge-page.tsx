@@ -117,6 +117,34 @@ const exampleScript = `{
   }
 }`;
 
+const GradientClapperboard = () => (
+    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="h-8 w-8">
+      <defs>
+        <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" style={{ stopColor: '#8E2DE2', stopOpacity: 1 }} />
+          <stop offset="100%" style={{ stopColor: '#F27121', stopOpacity: 1 }} />
+        </linearGradient>
+      </defs>
+      <path d="m2.1 14.9 1.5 1.5M5.1 11.9 6.6 13.4" stroke="url(#grad1)" strokeWidth="2" strokeLinecap="round"/>
+      <path d="M10.1 2.9 8.6 4.4" stroke="url(#grad1)" strokeWidth="2" strokeLinecap="round"/>
+      <path d="m2.1 5.9 1.5-1.5" stroke="url(#grad1)" strokeWidth="2" strokeLinecap="round"/>
+      <path d="m14.1 2.9 1.5 1.5M17.1 11.9 18.6 13.4" stroke="url(#grad1)" strokeWidth="2" strokeLinecap="round"/>
+      <path d="m21.1 5.9-1.5-1.5" stroke="url(#grad1)" strokeWidth="2" strokeLinecap="round"/>
+      <path d="M12.1 14.9 13.6 16.4" stroke="url(#grad1)" strokeWidth="2" strokeLinecap="round"/>
+      <path d="M22 7 2 7" stroke="url(#grad1)" strokeWidth="2" strokeLinecap="round"/>
+      <path d="M15 2 9 2" stroke="url(#grad1)" strokeWidth="2" strokeLinecap="round"/>
+      <path d="M22 12 2 12" stroke="url(#grad1)" strokeWidth="2" strokeLinecap="round"/>
+      <path d="M15 17 9 17" stroke="url(#grad1)" strokeWidth="2" strokeLinecap="round"/>
+      <path d="M22 22 2 22" stroke="url(#grad1)" strokeWidth="2" strokeLinecap="round"/>
+      <path d="M15 7 9 7" stroke="url(#grad1)" strokeWidth="2" strokeLinecap="round"/>
+      <path d="M22 17 2 17" stroke="url(#grad1)" strokeWidth="2" strokeLinecap="round"/>
+      <path d="M15 22 9 22" stroke="url(#grad1)" strokeWidth="2" strokeLinecap="round"/>
+      <path d="M17 2 17 22" stroke="url(#grad1)" strokeWidth="2" strokeLinecap="round"/>
+      <path d="M7 2 7 22" stroke="url(#grad1)" strokeWidth="2" strokeLinecap="round"/>
+    </svg>
+);
+
+
 export default function AvatarForgePage() {
   const [currentSceneId, setCurrentSceneId] = useState<string | null>(null);
   const [currentAvatarId, setCurrentAvatarId] = useState<string | null>(null);
@@ -582,7 +610,7 @@ export default function AvatarForgePage() {
       <header className="p-4 border-b border-border/50 bg-background/50 backdrop-blur-sm sticky top-0 z-10">
         <div className="container mx-auto flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <Clapperboard className="h-8 w-8 text-accent" />
+            <GradientClapperboard />
             <h1 className="text-2xl font-bold font-headline text-white">AvatarForge</h1>
           </div>
         </div>
@@ -933,72 +961,6 @@ export default function AvatarForgePage() {
                                         )} />
                                     </div>
                                 </Card>
-                                
-                                <Card className="p-4 bg-accent/10 border border-accent">
-                                  <CardHeader className="p-0 pb-4 flex flex-row items-center justify-between">
-                                    <CardTitle className="flex items-center gap-2 font-headline text-base text-accent">
-                                        <Package className="text-accent"/>
-                                        Integração de Produto (Opcional)
-                                    </CardTitle>
-                                     <Button type="button" variant="secondary" size="sm" onClick={handleSaveProduct}>
-                                        <Save className="mr-2 h-4 w-4" />
-                                        Salvar Produto
-                                    </Button>
-                                  </CardHeader>
-                                  <CardContent className="p-0 space-y-4">
-                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                      <FormField control={form.control} name="productName" render={({ field }) => (
-                                          <FormItem>
-                                              <FormLabel>Nome do Produto</FormLabel>
-                                              <FormControl><Input placeholder="Nome do produto..." {...field} disabled={isAnalyzingProduct} /></FormControl>
-                                              <FormMessage />
-                                          </FormItem>
-                                      )} />
-                                      <FormField control={form.control} name="partnerBrand" render={({ field }) => (
-                                          <FormItem>
-                                              <FormLabel>Marca Parceira</FormLabel>
-                                              <FormControl><Input placeholder="Marca parceira..." {...field} disabled={isAnalyzingProduct} /></FormControl>
-                                              <FormMessage />
-                                          </FormItem>
-                                      )} />
-                                    </div>
-                                     <FormField control={form.control} name="productImage" render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>Carregue a imagem do produto</FormLabel>
-                                            <FormControl>
-                                            <div>
-                                                <input type="file" accept="image/*" ref={productFileInputRef} onChange={handleProductFileChange} className="hidden" />
-                                                <Button type="button" onClick={() => productFileInputRef.current?.click()} disabled={isAnalyzingProduct} className="text-white bg-gradient-to-r from-gradient-purple to-gradient-orange hover:from-gradient-purple/90 hover:to-gradient-orange/90">
-                                                    {isAnalyzingProduct ? <Loader className="animate-spin mr-2" /> : <FileImage className="mr-2" />}
-                                                    {isAnalyzingProduct ? 'Analisando...' : 'Escolher ficheiro'}
-                                                </Button>
-                                            </div>
-                                            </FormControl>
-                                            <p className="text-xs text-muted-foreground">Preenche as informações do produto ao carregar a imagem.</p>
-                                            {field.value && !isAnalyzingProduct && <p className="text-sm text-muted-foreground">Ficheiro selecionado.</p>}
-                                            <FormMessage />
-                                        </FormItem>
-                                    )} />
-                                    <FormField control={form.control} name="productDescription" render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>Descrição do Produto</FormLabel>
-                                            <FormControl><Textarea placeholder="Descrição detalhada do produto..." {...field} rows={3} disabled={isAnalyzingProduct} /></FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )} />
-                                    <FormField control={form.control} name="isPartnership" render={({ field }) => (
-                                        <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
-                                            <FormControl>
-                                                <Checkbox checked={field.value} onCheckedChange={field.onChange} />
-                                            </FormControl>
-                                            <div className="space-y-1 leading-none">
-                                                <FormLabel>É uma parceria / conteúdo patrocinado.</FormLabel>
-                                            </div>
-                                        </FormItem>
-                                    )} />
-                                  </CardContent>
-                                </Card>
-
                               </TabsContent>
                             </Tabs>
                           </form>
@@ -1007,7 +969,7 @@ export default function AvatarForgePage() {
                   </div>
 
                   <div className="lg:col-span-3 flex flex-col gap-8">
-                    <Card className="p-4 bg-gradient-orange/10 border border-gradient-orange">
+                     <Card className="p-4 bg-gradient-orange/10 border border-gradient-orange">
                         <CardHeader className="p-0 mb-4">
                             <CardTitle className="flex items-center text-base gap-2 text-gradient-orange">
                                 <Sparkles className="text-gradient-orange" />
@@ -1018,10 +980,7 @@ export default function AvatarForgePage() {
                             <div className="space-y-4 text-foreground">
                               <FormField control={form.control} name="hyperrealism" render={({ field }) => (
                                   <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm bg-card/80">
-                                      <div className="space-y-0.5">
-                                          <FormLabel>Hiper-realismo</FormLabel>
-                                          <FormMessage />
-                                      </div>
+                                      <FormLabel>Hiper-realismo</FormLabel>
                                       <FormControl>
                                           <Switch checked={field.value} onCheckedChange={field.onChange} />
                                       </FormControl>
@@ -1029,10 +988,7 @@ export default function AvatarForgePage() {
                               )} />
                               <FormField control={form.control} name="fourK" render={({ field }) => (
                                   <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm bg-card/80">
-                                      <div className="space-y-0.5">
-                                          <FormLabel>4K</FormLabel>
-                                          <FormMessage />
-                                      </div>
+                                      <FormLabel>4K</FormLabel>
                                       <FormControl>
                                           <Switch checked={field.value} onCheckedChange={field.onChange} />
                                       </FormControl>
@@ -1040,10 +996,7 @@ export default function AvatarForgePage() {
                               )} />
                               <FormField control={form.control} name="professionalCamera" render={({ field }) => (
                                   <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm bg-card/80">
-                                      <div className="space-y-0.5">
-                                          <FormLabel>Câmera Profissional</FormLabel>
-                                          <FormMessage />
-                                      </div>
+                                      <FormLabel>Câmera Profissional</FormLabel>
                                       <FormControl>
                                           <Switch checked={field.value} onCheckedChange={field.onChange} />
                                       </FormControl>
@@ -1051,6 +1004,70 @@ export default function AvatarForgePage() {
                               )} />
                             </div>
                         </CardContent>
+                    </Card>
+                    <Card className="p-4 bg-accent/10 border border-accent">
+                      <CardHeader className="p-0 pb-4 flex flex-row items-center justify-between">
+                        <CardTitle className="flex items-center gap-2 font-headline text-base text-accent">
+                            <Package className="text-accent"/>
+                            Integração de Produto (Opcional)
+                        </CardTitle>
+                          <Button type="button" variant="secondary" size="sm" onClick={handleSaveProduct}>
+                            <Save className="mr-2 h-4 w-4" />
+                            Salvar Produto
+                        </Button>
+                      </CardHeader>
+                      <CardContent className="p-0 space-y-4">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                          <FormField control={form.control} name="productName" render={({ field }) => (
+                              <FormItem>
+                                  <FormLabel>Nome do Produto</FormLabel>
+                                  <FormControl><Input placeholder="Nome do produto..." {...field} disabled={isAnalyzingProduct} /></FormControl>
+                                  <FormMessage />
+                              </FormItem>
+                          )} />
+                          <FormField control={form.control} name="partnerBrand" render={({ field }) => (
+                              <FormItem>
+                                  <FormLabel>Marca Parceira</FormLabel>
+                                  <FormControl><Input placeholder="Marca parceira..." {...field} disabled={isAnalyzingProduct} /></FormControl>
+                                  <FormMessage />
+                              </FormItem>
+                          )} />
+                        </div>
+                          <FormField control={form.control} name="productImage" render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Carregue a imagem do produto</FormLabel>
+                                <FormControl>
+                                <div>
+                                    <input type="file" accept="image/*" ref={productFileInputRef} onChange={handleProductFileChange} className="hidden" />
+                                    <Button type="button" onClick={() => productFileInputRef.current?.click()} disabled={isAnalyzingProduct} className="text-white bg-gradient-to-r from-gradient-purple to-gradient-orange hover:from-gradient-purple/90 hover:to-gradient-orange/90">
+                                        {isAnalyzingProduct ? <Loader className="animate-spin mr-2" /> : <FileImage className="mr-2" />}
+                                        {isAnalyzingProduct ? 'Analisando...' : 'Escolher ficheiro'}
+                                    </Button>
+                                </div>
+                                </FormControl>
+                                <p className="text-xs text-muted-foreground">Preenche as informações do produto ao carregar a imagem.</p>
+                                {field.value && !isAnalyzingProduct && <p className="text-sm text-muted-foreground">Ficheiro selecionado.</p>}
+                                <FormMessage />
+                            </FormItem>
+                        )} />
+                        <FormField control={form.control} name="productDescription" render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Descrição do Produto</FormLabel>
+                                <FormControl><Textarea placeholder="Descrição detalhada do produto..." {...field} rows={3} disabled={isAnalyzingProduct} /></FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )} />
+                        <FormField control={form.control} name="isPartnership" render={({ field }) => (
+                            <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+                                <FormControl>
+                                    <Checkbox checked={field.value} onCheckedChange={field.onChange} />
+                                </FormControl>
+                                <div className="space-y-1 leading-none">
+                                    <FormLabel>É uma parceria / conteúdo patrocinado.</FormLabel>
+                                </div>
+                            </FormItem>
+                        )} />
+                      </CardContent>
                     </Card>
                     <Card className="bg-card/80">
                         <CardHeader>
