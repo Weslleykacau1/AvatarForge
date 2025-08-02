@@ -8,7 +8,7 @@ import { Bot, Save, Trash2, Plus, Loader, Clapperboard, Edit, User, Shirt, Spark
 import Image from "next/image";
 
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -1028,37 +1028,58 @@ export default function AvatarForgePage() {
 
             <TabsContent value="scene-gallery">
                 <Card className="mt-6">
-                  <CardHeader>
-                      <CardTitle className="flex items-center justify-between font-headline text-xl">
-                          <span className="flex items-center gap-2">Galeria de Cenas</span>
-                           <Button variant="ghost" size="sm" onClick={handleNewScene}>
-                              <Plus className="mr-2 h-4 w-4" /> Nova Cena
-                          </Button>
-                      </CardTitle>
-                      <CardDescription>Carregue ou delete suas cenas salvas.</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                      <ScrollArea className="h-96 pr-4">
-                          <div className="space-y-3">
-                              {!isSceneGalleryLoaded && Array.from({ length: 3 }).map((_, i) => <Skeleton key={i} className="h-10 w-full rounded-md" />)}
-                              {isSceneGalleryLoaded && sceneGallery.length === 0 && (
-                                  <div className="text-center text-muted-foreground py-10"><p>Sua galeria de cenas está vazia.</p></div>
-                              )}
-                              {isSceneGalleryLoaded && sceneGallery.map((scene) => (
-                                  <div key={scene.id} className="flex items-center justify-between p-2 rounded-md hover:bg-accent/10 transition-colors">
-                                      <span className="font-medium truncate pr-2">{scene.name}</span>
-                                      <div className="flex gap-1 shrink-0">
-                                          <Button variant="outline" size="sm" onClick={() => handleLoadScene(scene)}>Carregar</Button>
-                                          <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-destructive hover:bg-destructive/10 h-8 w-8" onClick={() => handleDeleteScene(scene.id, scene.name)}>
-                                              <Trash2 className="h-4 w-4" />
-                                          </Button>
-                                      </div>
-                                  </div>
-                              ))}
-                          </div>
-                      </ScrollArea>
-                  </CardContent>
-              </Card>
+                    <CardHeader>
+                        <div className="flex items-center justify-between">
+                            <div>
+                                <CardTitle className="flex items-center gap-2 font-headline text-xl">
+                                    <LayoutGrid className="text-accent" />
+                                    Galeria de Cenas
+                                </CardTitle>
+                                <CardDescription>Cenas que você salvou. Carregue uma para editar ou use-a com um influenciador para gerar um roteiro.</CardDescription>
+                            </div>
+                            <div className="flex gap-2">
+                                <Button onClick={handleNewScene}>
+                                  <Plus className="mr-2" /> Nova Cena
+                                </Button>
+                                <Button variant="outline" onClick={showNotImplementedToast}>
+                                  <Download className="mr-2" /> Exportar para CSV
+                                </Button>
+                            </div>
+                        </div>
+                    </CardHeader>
+                    <CardContent>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                            {!isSceneGalleryLoaded && Array.from({ length: 4 }).map((_, i) => <Skeleton key={i} className="h-64 w-full rounded-lg" />)}
+                            {isSceneGalleryLoaded && sceneGallery.length === 0 && (
+                                <div className="text-center text-muted-foreground py-10 col-span-full"><p>Sua galeria de cenas está vazia.</p></div>
+                            )}
+                            {isSceneGalleryLoaded && sceneGallery.map((scene) => (
+                                <Card key={scene.id} className="flex flex-col">
+                                    <CardHeader className="flex-1 pb-4">
+                                        <CardTitle className="truncate">{scene.name || 'Cena Sem Título'}</CardTitle>
+                                        <CardDescription className="line-clamp-3 h-[60px]">{scene.scenarioPrompt}</CardDescription>
+                                    </CardHeader>
+                                    <CardContent className="pb-4">
+                                        <div className="text-sm text-muted-foreground">{scene.duration || 8} seg</div>
+                                    </CardContent>
+                                    <CardFooter className="flex flex-col items-stretch gap-2 pt-0">
+                                        <Button onClick={() => handleLoadScene(scene)}><Upload className="mr-2 h-4 w-4" /> Carregar</Button>
+                                        <div className="flex justify-end gap-1">
+                                            <Button variant="ghost" size="icon" className="text-muted-foreground h-8 w-8" onClick={showNotImplementedToast}>
+                                                <FileJson className="h-4 w-4" />
+                                                <span className="sr-only">Exportar</span>
+                                            </Button>
+                                            <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-destructive hover:bg-destructive/10 h-8 w-8" onClick={() => handleDeleteScene(scene.id, scene.name)}>
+                                                <Trash2 className="h-4 w-4" />
+                                                <span className="sr-only">Deletar</span>
+                                            </Button>
+                                        </div>
+                                    </CardFooter>
+                                </Card>
+                            ))}
+                        </div>
+                    </CardContent>
+                </Card>
             </TabsContent>
 
              <TabsContent value="viral-video">
