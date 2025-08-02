@@ -461,7 +461,7 @@ export default function AvatarForgePage() {
               <CardContent>
                 <Form {...form}>
                   <form onSubmit={onGenerateSubmit} className="space-y-6">
-                    <Tabs defaultValue="avatar" className="w-full">
+                    <Tabs defaultValue="scene" className="w-full">
                       <TabsList className="grid w-full grid-cols-2">
                         <TabsTrigger value="avatar"><Users className="mr-2" />Avatar</TabsTrigger>
                         <TabsTrigger value="scene"><Camera className="mr-2" />Cena</TabsTrigger>
