@@ -20,4 +20,9 @@ export type Influencer = {
   videoFormat?: string;
   allowDigitalText?: string; // "true" or "false"
   allowPhysicalText?: string; // "true" or "false"
+  productName?: string;
+  partnerBrand?: string;
+  productImage?: string;
+  productDescription?: string;
+  isPartnership?: boolean;
 };

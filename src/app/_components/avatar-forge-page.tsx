@@ -4,7 +4,7 @@ import { useEffect, useState, useTransition, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Bot, Save, Trash2, Plus, Loader, Clapperboard, Edit, User, Shirt, Sparkles, Film, Wand2, FileImage, UploadCloud, FileText, Search, MessageSquare, Briefcase, Users, Camera } from "lucide-react";
+import { Bot, Save, Trash2, Plus, Loader, Clapperboard, Edit, User, Shirt, Sparkles, Film, Wand2, FileImage, UploadCloud, FileText, Search, MessageSquare, Briefcase, Users, Camera, Package } from "lucide-react";
 import Image from "next/image";
 
 import { Button } from "@/components/ui/button";
@@ -21,6 +21,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Checkbox } from "@/components/ui/checkbox";
 
 const influencerSchema = z.object({
   name: z.string().min(1, "Nome é obrigatório.").max(100, "Nome muito longo."),
@@ -43,6 +44,11 @@ const influencerSchema = z.object({
   videoFormat: z.string().optional(),
   allowDigitalText: z.string().optional(),
   allowPhysicalText: z.string().optional(),
+  productName: z.string().optional(),
+  partnerBrand: z.string().optional(),
+  productImage: z.string().optional(),
+  productDescription: z.string().optional(),
+  isPartnership: z.boolean().optional(),
 });
 
 type InfluencerFormData = z.infer<typeof influencerSchema>;
@@ -64,6 +70,7 @@ export default function AvatarForgePage() {
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const referenceFileInputRef = useRef<HTMLInputElement>(null);
+  const productFileInputRef = useRef<HTMLInputElement>(null);
 
   const form = useForm<InfluencerFormData>({
     resolver: zodResolver(influencerSchema),
@@ -89,12 +96,23 @@ export default function AvatarForgePage() {
       videoFormat: "9:16",
       allowDigitalText: "false",
       allowPhysicalText: "false",
+      productName: "",
+      partnerBrand: "",
+      productImage: "",
+      productDescription: "",
+      isPartnership: false,
     },
   });
 
   const onGenerateSubmit = form.handleSubmit((data) => {
     setVideoUrl(null);
     startTransition(async () => {
+      let scenarioPrompt = `${data.scenarioPrompt}`;
+
+      if (data.productName && data.productDescription) {
+        scenarioPrompt += `\n\n**Integração de Produto:**\n- Produto: ${data.productName}\n- Marca: ${data.partnerBrand || 'N/A'}\n- Descrição: ${data.productDescription}\n- Parceria: ${data.isPartnership ? 'Sim' : 'Não'}`;
+      }
+
       const influencerDescription = `
         **Nome:** ${data.name}
         **Nicho:** ${data.niche}
@@ -110,9 +128,9 @@ export default function AvatarForgePage() {
 
       const result = await generateVideoAction({
         sceneTitle: data.name,
-        scenarioPrompt: `${influencerDescription}\n\n**Cenário:** ${data.scenarioPrompt}`,
+        scenarioPrompt: `${influencerDescription}\n\n**Cenário:** ${scenarioPrompt}`,
         actionPrompt: data.actionPrompt,
-        sceneImageDataUri: data.sceneImage,
+        sceneImageDataUri: data.productImage || data.sceneImage, // Prioritize product image if available
         dialogue: data.dialogue,
         cameraAngle: data.cameraAngle,
         duration: data.duration,
@@ -242,6 +260,18 @@ export default function AvatarForgePage() {
     }
   };
 
+  const handleProductFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+            form.setValue("productImage", reader.result as string, { shouldValidate: true });
+            toast({ title: "Imagem do Produto Carregada" });
+        };
+        reader.readAsDataURL(file);
+    }
+  };
+
   const handleAnalyzeImage = () => {
     const referenceImage = form.getValues("referenceImage");
     if (!referenceImage) {
@@ -300,7 +330,7 @@ export default function AvatarForgePage() {
   };
 
   const handleNewInfluencer = () => {
-    form.reset({ name: "", niche: "", scenarioPrompt: "", actionPrompt: "", sceneImage: "", referenceImage: "", characteristics: "", personalityTraits: "", appearanceDetails: "", clothing: "", shortBio: "", uniqueTrait: "", age: "", gender: "", dialogue: "", cameraAngle: "dynamic", duration: 8, videoFormat: "9:16", allowDigitalText: "false", allowPhysicalText: "false" });
+    form.reset({ name: "", niche: "", scenarioPrompt: "", actionPrompt: "", sceneImage: "", referenceImage: "", characteristics: "", personalityTraits: "", appearanceDetails: "", clothing: "", shortBio: "", uniqueTrait: "", age: "", gender: "", dialogue: "", cameraAngle: "dynamic", duration: 8, videoFormat: "9:16", allowDigitalText: "false", allowPhysicalText: "false", productName: "", partnerBrand: "", productImage: "", productDescription: "", isPartnership: false });
     setCurrentId(null);
     setVideoUrl(null);
     setReferenceImagePreview(null);
@@ -597,6 +627,64 @@ export default function AvatarForgePage() {
                                     </FormItem>
                                 )} />
                             </div>
+                        </Card>
+                        
+                        <Card className="p-4 bg-muted/30">
+                          <CardHeader className="p-0 pb-4">
+                            <CardTitle className="flex items-center gap-2 font-headline text-base">
+                                <Package className="text-accent"/>
+                                Integração de Produto (Opcional)
+                            </CardTitle>
+                          </CardHeader>
+                          <CardContent className="p-0 space-y-4">
+                            <FormField control={form.control} name="productName" render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Nome do Produto</FormLabel>
+                                    <FormControl><Input placeholder="Nome do produto..." {...field} /></FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )} />
+                            <FormField control={form.control} name="partnerBrand" render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Marca Parceira</FormLabel>
+                                    <FormControl><Input placeholder="Marca parceira..." {...field} /></FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )} />
+                             <FormField control={form.control} name="productImage" render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Carregue o vídeo ou a imagem do produto</FormLabel>
+                                    <FormControl>
+                                    <>
+                                        <input type="file" accept="image/*,video/*" ref={productFileInputRef} onChange={handleProductFileChange} className="hidden" />
+                                        <Button type="button" variant="outline" onClick={() => productFileInputRef.current?.click()}>
+                                            <FileImage className="mr-2" />
+                                            Escolher ficheiro
+                                        </Button>
+                                    </>
+                                    </FormControl>
+                                    {field.value && <p className="text-sm text-muted-foreground">Ficheiro selecionado.</p>}
+                                    <FormMessage />
+                                </FormItem>
+                            )} />
+                            <FormField control={form.control} name="productDescription" render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Descrição do Produto</FormLabel>
+                                    <FormControl><Textarea placeholder="Descrição detalhada do produto..." {...field} rows={3} /></FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )} />
+                            <FormField control={form.control} name="isPartnership" render={({ field }) => (
+                                <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+                                    <FormControl>
+                                        <Checkbox checked={field.value} onCheckedChange={field.onChange} />
+                                    </FormControl>
+                                    <div className="space-y-1 leading-none">
+                                        <FormLabel>É uma parceria / conteúdo patrocinado.</FormLabel>
+                                    </div>
+                                </FormItem>
+                            )} />
+                          </CardContent>
                         </Card>
 
                         <FormField control={form.control} name="sceneImage" render={({ field }) => (
