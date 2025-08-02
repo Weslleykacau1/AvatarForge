@@ -551,8 +551,8 @@ export default function AvatarForgePage() {
                         <form onSubmit={onGenerateSubmit} className="space-y-6">
                           <Tabs defaultValue="scene" className="w-full">
                             <TabsList className="grid w-full grid-cols-2">
-                              <TabsTrigger value="avatar"><Users className="mr-2" />Avatar</TabsTrigger>
                               <TabsTrigger value="scene"><Camera className="mr-2" />Cena</TabsTrigger>
+                              <TabsTrigger value="avatar"><Users className="mr-2" />Avatar</TabsTrigger>
                             </TabsList>
                             <TabsContent value="avatar" className="space-y-6 pt-4">
                               <Card className="bg-muted/30">
@@ -805,11 +805,14 @@ export default function AvatarForgePage() {
                                   </FormItem>
                               )} />
 
-                              <Card className="p-4 bg-muted/30">
-                                  <CardTitle className="text-base mb-2">Controle de Texto no Ecrã</CardTitle>
-                                  <div className="space-y-4">
+                              <Card className="p-4 bg-card border-destructive/50">
+                                  <CardTitle className="flex items-center text-base mb-2 gap-2 text-red-200">
+                                      <FileText className="text-red-200" />
+                                      Controle de Texto no Ecrã
+                                  </CardTitle>
+                                  <div className="space-y-4 text-foreground">
                                       <FormField control={form.control} name="allowDigitalText" render={({ field }) => (
-                                          <FormItem className="space-y-2">
+                                          <FormItem className="space-y-2 flex justify-between items-center">
                                               <FormLabel>Permite textos digitais na tela?</FormLabel>
                                               <FormControl>
                                                   <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="flex gap-4">
@@ -820,7 +823,7 @@ export default function AvatarForgePage() {
                                           </FormItem>
                                       )} />
                                       <FormField control={form.control} name="allowPhysicalText" render={({ field }) => (
-                                          <FormItem className="space-y-2">
+                                          <FormItem className="space-y-2 flex justify-between items-center">
                                               <FormLabel>Apenas textos físicos como rótulos e placas reais?</FormLabel>
                                               <FormControl>
                                                   <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="flex gap-4">
