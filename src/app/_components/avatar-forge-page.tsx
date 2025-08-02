@@ -766,20 +766,22 @@ export default function AvatarForgePage() {
                               </div>
 
                               <FormField control={form.control} name="cameraAngle" render={({ field }) => (
-                                  <FormItem>
-                                      <FormLabel>Ângulo da Câmera</FormLabel>
-                                      <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                          <FormControl><SelectTrigger><SelectValue placeholder="Selecione..." /></SelectTrigger></FormControl>
-                                          <SelectContent>
-                                              <SelectItem value="dynamic">Câmera Dinâmica (Criatividade da IA)</SelectItem>
-                                              <SelectItem value="close-up">Close-up</SelectItem>
-                                              <SelectItem value="medium-shot">Plano Médio</SelectItem>
-                                              <SelectItem value="full-shot">Plano Americano</SelectItem>
-                                          </SelectContent>
-                                      </Select>
-                                      <FormMessage />
-                                  </FormItem>
-                              )} />
+                                <FormItem>
+                                    <FormLabel>Ângulo da Câmera</FormLabel>
+                                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                        <FormControl><SelectTrigger><SelectValue placeholder="Selecione..." /></SelectTrigger></FormControl>
+                                        <SelectContent>
+                                            <SelectItem value="dynamic">Câmera Dinâmica (Criatividade da IA)</SelectItem>
+                                            <SelectItem value="vlog">Vlog (Conversacional)</SelectItem>
+                                            <SelectItem value="selfie">Selfie</SelectItem>
+                                            <SelectItem value="pov">Ponto de Vista</SelectItem>
+                                            <SelectItem value="medium">Médio</SelectItem>
+                                            <SelectItem value="wide">Plano Geral</SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                    <FormMessage />
+                                </FormItem>
+                            )} />
 
                               <FormField control={form.control} name="duration" render={({ field }) => (
                                   <FormItem>
