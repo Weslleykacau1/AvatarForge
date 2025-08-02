@@ -1044,13 +1044,6 @@ export default function AvatarForgePage() {
 
                             </TabsContent>
                           </Tabs>
-
-                          <div className="flex flex-wrap gap-2 pt-4">
-                            <Button type="submit" disabled={isPending || !form.formState.isValid} className={cn("flex-grow", !isPending && "text-white bg-gradient-to-r from-gradient-purple to-gradient-orange hover:from-gradient-purple/90 hover:to-gradient-orange/90")}>
-                              {isPending ? <Loader className="animate-spin mr-2 h-4 w-4" /> : <Bot className="mr-2 h-4 w-4" />}
-                              {isPending ? "Gerando..." : "Gerar Vídeo"}
-                            </Button>
-                          </div>
                         </form>
                       </Form>
                     </CardContent>
