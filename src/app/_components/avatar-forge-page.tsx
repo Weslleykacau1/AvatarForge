@@ -4,7 +4,7 @@ import { useEffect, useState, useTransition, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Bot, Save, Trash2, Plus, Loader, Clapperboard, Edit, User, Shirt, Sparkles, Film, Wand2, FileImage, UploadCloud, FileText, Search, MessageSquare, Briefcase, Users, Camera, Package, Code, Palette, LayoutGrid, Zap } from "lucide-react";
+import { Bot, Save, Trash2, Plus, Loader, Clapperboard, Edit, User, Shirt, Sparkles, Film, Wand2, FileImage, UploadCloud, FileText, Search, MessageSquare, Briefcase, Users, Camera, Package, Code, Palette, LayoutGrid, Zap, Upload, Download, FileJson } from "lucide-react";
 import Image from "next/image";
 
 import { Button } from "@/components/ui/button";
@@ -59,6 +59,7 @@ export default function AvatarForgePage() {
   const [currentSceneId, setCurrentSceneId] = useState<string | null>(null);
   const [currentAvatarId, setCurrentAvatarId] = useState<string | null>(null);
   const [currentProductId, setCurrentProductId] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState("creator");
   const [videoUrl, setVideoUrl] = useState<string | null>(null);
   const [scriptContent, setScriptContent] = useState<string | null>(null);
   const { toast } = useToast();
@@ -369,6 +370,7 @@ export default function AvatarForgePage() {
     setCurrentSceneId(scene.id);
     setVideoUrl(null);
     setReferenceImagePreview(scene.referenceImage || null);
+    setActiveTab("creator");
     toast({
       title: "Cena Carregada",
       description: `Carregado "${scene.name}" no editor.`,
@@ -382,6 +384,7 @@ export default function AvatarForgePage() {
     setCurrentProductId(null);
     setVideoUrl(null);
     setReferenceImagePreview(null);
+    setActiveTab("creator");
   };
 
   const handleDeleteScene = (id: string, name: string) => {
@@ -431,6 +434,7 @@ export default function AvatarForgePage() {
     form.setValue("gender", avatar.gender);
     setReferenceImagePreview(avatar.referenceImage || null);
     setCurrentAvatarId(avatar.id);
+    setActiveTab("creator");
     toast({ title: "Avatar Carregado", description: `Avatar "${avatar.name}" carregado.`});
   };
   
@@ -466,12 +470,20 @@ export default function AvatarForgePage() {
     form.setValue("productDescription", product.productDescription);
     form.setValue("isPartnership", product.isPartnership);
     setCurrentProductId(product.id);
+    setActiveTab("creator");
     toast({ title: "Produto Carregado", description: `Produto "${product.productName}" carregado.`});
   };
   
   const handleDeleteProduct = (id: string, name: string) => {
     removeProduct(id);
     toast({ title: "Produto Deletado", description: `"${name}" foi removido.` });
+  };
+  
+  const showNotImplementedToast = () => {
+    toast({
+      title: "Funcionalidade não implementada",
+      description: "Esta funcionalidade ainda está em desenvolvimento.",
+    });
   };
 
 
@@ -487,10 +499,10 @@ export default function AvatarForgePage() {
       </header>
 
       <main className="container mx-auto p-4 md:p-8">
-       <Tabs defaultValue="creator" className="w-full">
+       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
             <TabsList className="grid w-full grid-cols-4 mx-auto max-w-2xl">
               <TabsTrigger value="creator"><Film className="mr-2" />Criador</TabsTrigger>
-              <TabsTrigger value="influencer-gallery"><Palette className="mr-2" />Galeria de Influenciadores</TabsTrigger>
+              <TabsTrigger value="influencer-gallery"><Palette className="mr-2" />Galeria de Personagens</TabsTrigger>
               <TabsTrigger value="scene-gallery"><LayoutGrid className="mr-2" />Galeria de Cenas</TabsTrigger>
               <TabsTrigger value="viral-video"><Zap className="mr-2" />Vídeo Viral</TabsTrigger>
             </TabsList>
@@ -945,34 +957,57 @@ export default function AvatarForgePage() {
 
             <TabsContent value="influencer-gallery">
                <Card className="mt-6">
-                <CardHeader>
-                    <CardTitle className="flex items-center justify-between font-headline text-xl">
-                        <span className="flex items-center gap-2">Galeria de Avatares</span>
-                    </CardTitle>
-                    <CardDescription>Carregue ou delete seus avatares salvos.</CardDescription>
-                </CardHeader>
-                <CardContent>
-                    <ScrollArea className="h-96 pr-4">
-                        <div className="space-y-3">
-                            {!isAvatarGalleryLoaded && Array.from({ length: 3 }).map((_, i) => <Skeleton key={i} className="h-10 w-full rounded-md" />)}
-                            {isAvatarGalleryLoaded && avatars.length === 0 && (
-                                <div className="text-center text-muted-foreground py-10"><p>Sua galeria de avatares está vazia.</p></div>
-                            )}
-                            {isAvatarGalleryLoaded && avatars.map((avatar) => (
-                                <div key={avatar.id} className="flex items-center justify-between p-2 rounded-md hover:bg-accent/10 transition-colors">
-                                    <span className="font-medium truncate pr-2">{avatar.name}</span>
-                                    <div className="flex gap-1 shrink-0">
-                                        <Button variant="outline" size="sm" onClick={() => handleLoadAvatar(avatar)}>Carregar</Button>
-                                        <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-destructive hover:bg-destructive/10 h-8 w-8" onClick={() => handleDeleteAvatar(avatar.id, avatar.name)}>
-                                            <Trash2 className="h-4 w-4" />
-                                        </Button>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    </ScrollArea>
-                </CardContent>
-            </Card>
+                  <CardHeader>
+                      <div className="flex items-center justify-between">
+                          <div>
+                              <CardTitle className="flex items-center gap-2 font-headline text-xl">
+                                  <Users className="text-accent" />
+                                  Galeria de Personagens
+                              </CardTitle>
+                              <CardDescription>Personagens que você criou. Carregue um para editar ou gerar roteiros.</CardDescription>
+                          </div>
+                          <div className="flex gap-2">
+                              <Button variant="outline" onClick={handleNewScene}>
+                                <Plus className="mr-2" /> Novo Personagem
+                              </Button>
+                               <Button variant="outline" onClick={showNotImplementedToast}>
+                                <Download className="mr-2" /> Exportar para CSV
+                              </Button>
+                          </div>
+                      </div>
+                  </CardHeader>
+                  <CardContent>
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                          {!isAvatarGalleryLoaded && Array.from({ length: 4 }).map((_, i) => <Skeleton key={i} className="h-48 w-full rounded-md" />)}
+                          {isAvatarGalleryLoaded && avatars.length === 0 && (
+                              <div className="text-center text-muted-foreground py-10 col-span-full"><p>Sua galeria de personagens está vazia.</p></div>
+                          )}
+                          {isAvatarGalleryLoaded && avatars.map((avatar) => (
+                              <Card key={avatar.id} className="flex flex-col">
+                                  <CardHeader className="flex-1">
+                                      <CardTitle className="truncate">{avatar.name || 'Personagem Sem Nome'}</CardTitle>
+                                  </CardHeader>
+                                  <CardContent className="flex flex-col gap-2">
+                                      <div className="flex gap-2">
+                                          <Button className="flex-1" onClick={() => handleLoadAvatar(avatar)}><Upload className="mr-2"/> Carregar</Button>
+                                          <Button variant="secondary" className="flex-1" onClick={showNotImplementedToast}>Cena Rápida</Button>
+                                      </div>
+                                      <div className="flex justify-end gap-1">
+                                          <Button variant="ghost" size="icon" className="text-muted-foreground h-8 w-8" onClick={showNotImplementedToast}>
+                                              <FileJson className="h-4 w-4" />
+                                              <span className="sr-only">Exportar</span>
+                                          </Button>
+                                          <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-destructive hover:bg-destructive/10 h-8 w-8" onClick={() => handleDeleteAvatar(avatar.id, avatar.name)}>
+                                              <Trash2 className="h-4 w-4" />
+                                              <span className="sr-only">Deletar</span>
+                                          </Button>
+                                      </div>
+                                  </CardContent>
+                              </Card>
+                          ))}
+                      </div>
+                  </CardContent>
+              </Card>
             </TabsContent>
 
             <TabsContent value="scene-gallery">
