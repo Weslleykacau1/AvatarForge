@@ -253,8 +253,19 @@ export default function AvatarForgePage() {
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        form.setValue("sceneImage", reader.result as string, { shouldValidate: true });
-        toast({ title: "Imagem Carregada" });
+        const dataUri = reader.result as string;
+        form.setValue("sceneImage", dataUri, { shouldValidate: true });
+        toast({ title: "Imagem da Cena Carregada", description: "Analisando imagem para preencher o cenário..." });
+
+        startImageAnalysisTransition(async () => {
+            const result = await analyzeImageAction({ photoDataUri: dataUri });
+            if (result.success && result.description) {
+                form.setValue("scenarioPrompt", result.description, { shouldValidate: true });
+                toast({ title: "Análise da Cena Concluída", description: "O campo 'Cenário' foi preenchido." });
+            } else {
+                toast({ variant: "destructive", title: "Falha na Análise da Cena", description: result.error });
+            }
+        });
       };
       reader.readAsDataURL(file);
     }
@@ -697,6 +708,24 @@ export default function AvatarForgePage() {
                                 </FormItem>
                               )} />
                               
+                              <FormField control={form.control} name="sceneImage" render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel>Gerar a partir de uma imagem de referência</FormLabel>
+                                  <FormControl>
+                                    <>
+                                      <input type="file" accept="image/*" ref={fileInputRef} onChange={handleSceneFileChange} className="hidden" />
+                                      <Button type="button" variant="outline" onClick={() => fileInputRef.current?.click()} disabled={isAnalyzingImage}>
+                                        {isAnalyzingImage ? <Loader className="animate-spin mr-2" /> : <FileImage className="mr-2" />}
+                                        {isAnalyzingImage ? 'Analisando...' : 'Escolher ficheiro'}
+                                      </Button>
+                                    </>
+                                  </FormControl>
+                                  <p className="text-xs text-muted-foreground">Preenche o campo "Cenário" ao carregar a imagem.</p>
+                                  {field.value && !isAnalyzingImage && <p className="text-sm text-muted-foreground">Imagem selecionada.</p>}
+                                  <FormMessage />
+                                </FormItem>
+                              )} />
+
                               <Button type="button" variant="outline" size="sm" onClick={handleGenerateTitle} disabled={isGeneratingTitle}>
                                 {isGeneratingTitle ? <Loader className="animate-spin mr-2" /> : <Wand2 />} Gerar Título da Cena com IA
                               </Button>
@@ -864,22 +893,6 @@ export default function AvatarForgePage() {
                                 </CardContent>
                               </Card>
 
-                              <FormField control={form.control} name="sceneImage" render={({ field }) => (
-                                <FormItem>
-                                  <FormLabel>Gerar a partir de uma imagem de referência</FormLabel>
-                                  <FormControl>
-                                    <>
-                                      <input type="file" accept="image/*" ref={fileInputRef} onChange={handleSceneFileChange} className="hidden" />
-                                      <Button type="button" variant="outline" onClick={() => fileInputRef.current?.click()}>
-                                        <FileImage className="mr-2" />
-                                        Escolher ficheiro
-                                      </Button>
-                                    </>
-                                  </FormControl>
-                                  {field.value && <p className="text-sm text-muted-foreground">Imagem selecionada.</p>}
-                                  <FormMessage />
-                                </FormItem>
-                              )} />
                             </TabsContent>
                           </Tabs>
 
