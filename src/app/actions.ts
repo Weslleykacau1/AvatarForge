@@ -10,6 +10,7 @@ import { generateDialogue } from "@/ai/flows/generate-dialogue-flow";
 import { generateSeo } from "@/ai/flows/generate-seo-flow";
 import { analyzeAvatarDetails, type AnalyzeAvatarDetailsOutput } from "@/ai/flows/analyze-avatar-details-flow";
 import { generateScript } from "@/ai/flows/generate-script-flow";
+import { analyzeProductImage, type AnalyzeProductImageOutput } from "@/ai/flows/analyze-product-image-flow";
 
 const generateVideoSchema = z.object({
   sceneTitle: z.string().min(1, "Título da cena é obrigatório."),
@@ -265,5 +266,31 @@ export async function generateScriptAction(
     } catch (error) {
         const errorMessage = error instanceof Error ? error.message : "An unknown error occurred.";
         return { success: false, error: `Script generation failed: ${errorMessage}` };
+    }
+}
+
+const analyzeProductImageSchema = z.object({
+    photoDataUri: z.string(),
+});
+
+type AnalyzeProductImageState = {
+    success: boolean;
+    details?: AnalyzeProductImageOutput;
+    error?: string;
+};
+
+export async function analyzeProductImageAction(
+    data: z.infer<typeof analyzeProductImageSchema>
+): Promise<AnalyzeProductImageState> {
+    const validatedFields = analyzeProductImageSchema.safeParse(data);
+    if (!validatedFields.success) {
+        return { success: false, error: 'Invalid input' };
+    }
+    try {
+        const result = await analyzeProductImage(validatedFields.data);
+        return { success: true, details: result };
+    } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : "An unknown error occurred.";
+        return { success: false, error: `Product image analysis failed: ${errorMessage}` };
     }
 }

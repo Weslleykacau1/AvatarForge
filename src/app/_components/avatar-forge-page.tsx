@@ -17,7 +17,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useGallery } from "@/hooks/use-gallery";
 import { useAvatars } from "@/hooks/use-avatars";
 import { useProducts } from "@/hooks/use-products";
-import { generateVideoAction, generateTitleAction, generateActionAction, analyzeImageAction, analyzeTextAction, generateDialogueAction, generateSeoAction, analyzeAvatarDetailsAction, generateScriptAction } from "@/app/actions";
+import { generateVideoAction, generateTitleAction, generateActionAction, analyzeImageAction, analyzeTextAction, generateDialogueAction, generateSeoAction, analyzeAvatarDetailsAction, generateScriptAction, analyzeProductImageAction } from "@/app/actions";
 import type { Scene, Avatar, Product } from "@/app/types";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -75,6 +75,7 @@ export default function AvatarForgePage() {
   const [isGeneratingSeo, startSeoTransition] = useTransition();
   const [isAnalyzingAvatar, startAvatarAnalysisTransition] = useTransition();
   const [isGeneratingScript, startScriptTransition] = useTransition();
+  const [isAnalyzingProduct, startProductAnalysisTransition] = useTransition();
   const [referenceImagePreview, setReferenceImagePreview] = useState<string | null>(null);
 
 
@@ -277,8 +278,22 @@ export default function AvatarForgePage() {
     if (file) {
         const reader = new FileReader();
         reader.onloadend = () => {
-            form.setValue("productImage", reader.result as string, { shouldValidate: true });
-            toast({ title: "Imagem do Produto Carregada" });
+            const dataUri = reader.result as string;
+            form.setValue("productImage", dataUri, { shouldValidate: true });
+            toast({ title: "Imagem do Produto Carregada", description: "Analisando imagem para preencher os campos..." });
+
+            startProductAnalysisTransition(async () => {
+                const result = await analyzeProductImageAction({ photoDataUri: dataUri });
+                if (result.success && result.details) {
+                    const { details } = result;
+                    form.setValue("productName", details.productName, { shouldValidate: true });
+                    form.setValue("partnerBrand", details.partnerBrand, { shouldValidate: true });
+                    form.setValue("productDescription", details.productDescription, { shouldValidate: true });
+                    toast({ title: "Análise do Produto Concluída", description: "Os campos do produto foram preenchidos." });
+                } else {
+                    toast({ variant: "destructive", title: "Falha na Análise do Produto", description: result.error });
+                }
+            });
         };
         reader.readAsDataURL(file);
     }
@@ -801,37 +816,38 @@ export default function AvatarForgePage() {
                                   <FormField control={form.control} name="productName" render={({ field }) => (
                                       <FormItem>
                                           <FormLabel>Nome do Produto</FormLabel>
-                                          <FormControl><Input placeholder="Nome do produto..." {...field} /></FormControl>
+                                          <FormControl><Input placeholder="Nome do produto..." {...field} disabled={isAnalyzingProduct} /></FormControl>
                                           <FormMessage />
                                       </FormItem>
                                   )} />
                                   <FormField control={form.control} name="partnerBrand" render={({ field }) => (
                                       <FormItem>
                                           <FormLabel>Marca Parceira</FormLabel>
-                                          <FormControl><Input placeholder="Marca parceira..." {...field} /></FormControl>
+                                          <FormControl><Input placeholder="Marca parceira..." {...field} disabled={isAnalyzingProduct} /></FormControl>
                                           <FormMessage />
                                       </FormItem>
                                   )} />
                                    <FormField control={form.control} name="productImage" render={({ field }) => (
                                       <FormItem>
-                                          <FormLabel>Carregue o vídeo ou a imagem do produto</FormLabel>
+                                          <FormLabel>Carregue a imagem do produto</FormLabel>
                                           <FormControl>
                                           <>
-                                              <input type="file" accept="image/*,video/*" ref={productFileInputRef} onChange={handleProductFileChange} className="hidden" />
-                                              <Button type="button" variant="outline" onClick={() => productFileInputRef.current?.click()}>
-                                                  <FileImage className="mr-2" />
-                                                  Escolher ficheiro
+                                              <input type="file" accept="image/*" ref={productFileInputRef} onChange={handleProductFileChange} className="hidden" />
+                                              <Button type="button" variant="outline" onClick={() => productFileInputRef.current?.click()} disabled={isAnalyzingProduct}>
+                                                  {isAnalyzingProduct ? <Loader className="animate-spin mr-2" /> : <FileImage className="mr-2" />}
+                                                  {isAnalyzingProduct ? 'Analisando...' : 'Escolher ficheiro'}
                                               </Button>
                                           </>
                                           </FormControl>
-                                          {field.value && <p className="text-sm text-muted-foreground">Ficheiro selecionado.</p>}
+                                          <p className="text-xs text-muted-foreground">Preenche as informações do produto ao carregar a imagem.</p>
+                                          {field.value && !isAnalyzingProduct && <p className="text-sm text-muted-foreground">Ficheiro selecionado.</p>}
                                           <FormMessage />
                                       </FormItem>
                                   )} />
                                   <FormField control={form.control} name="productDescription" render={({ field }) => (
                                       <FormItem>
                                           <FormLabel>Descrição do Produto</FormLabel>
-                                          <FormControl><Textarea placeholder="Descrição detalhada do produto..." {...field} rows={3} /></FormControl>
+                                          <FormControl><Textarea placeholder="Descrição detalhada do produto..." {...field} rows={3} disabled={isAnalyzingProduct} /></FormControl>
                                           <FormMessage />
                                       </FormItem>
                                   )} />
