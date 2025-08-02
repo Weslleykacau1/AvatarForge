@@ -14,4 +14,10 @@ export type Influencer = {
   uniqueTrait?: string;
   age?: string;
   gender?: string;
+  dialogue?: string;
+  cameraAngle?: string;
+  duration?: number;
+  videoFormat?: string;
+  allowDigitalText?: string; // "true" or "false"
+  allowPhysicalText?: string; // "true" or "false"
 };

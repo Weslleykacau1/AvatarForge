@@ -16,6 +16,12 @@ const GenerateAvatarVideoInputSchema = z.object({
   sceneTitle: z.string().describe('Title of the scene.'),
   scenarioPrompt: z.string().describe('Detailed description of the environment and the influencer, including lighting, colors, objects, and atmosphere.'),
   actionPrompt: z.string().describe('The main action the influencer is performing.'),
+  dialogue: z.string().optional().describe('The dialogue the influencer is speaking.'),
+  cameraAngle: z.string().optional().describe('The camera angle for the video.'),
+  duration: z.number().optional().describe('The duration of the video in seconds.'),
+  videoFormat: z.string().optional().describe('The format of the video (e.g., 9:16).'),
+  allowDigitalText: z.boolean().optional().describe('Whether to allow digital on-screen text.'),
+  allowPhysicalText: z.boolean().optional().describe('Whether to allow only physical text like labels and signs.'),
   sceneImageDataUri: z.string().optional().describe("An optional reference photo for the scene, as a data URI that must include a MIME type and use Base64 encoding. Expected format: 'data:<mimetype>;base64,<encoded_data>'."),
 });
 
@@ -44,7 +50,12 @@ const generateAvatarVideoFlow = ai.defineFlow(
       Scene Title: ${input.sceneTitle}
       Scenario and Influencer Details: ${input.scenarioPrompt}
       Main Action: ${input.actionPrompt}
-      Generate a video of the described influencer in the specified scenario, performing the main action.
+      Dialogue: ${input.dialogue || 'No dialogue.'}
+      Camera Angle: ${input.cameraAngle || 'Dynamic Camera'}
+      Video Format: ${input.videoFormat || '9:16'}
+      Allow Digital On-Screen Text: ${input.allowDigitalText ? 'Yes' : 'No'}
+      Allow Only Physical Text (labels, signs): ${input.allowPhysicalText ? 'Yes' : 'No'}
+      Generate a video of the described influencer in the specified scenario, performing the main action and speaking the dialogue.
     `;
 
     const prompt: (string | {media: {url: string}})[] = [{text: promptText}];
@@ -57,8 +68,8 @@ const generateAvatarVideoFlow = ai.defineFlow(
       model: googleAI.model('veo-2.0-generate-001'),
       prompt: prompt,
       config: {
-        durationSeconds: 5,
-        aspectRatio: '16:9',
+        durationSeconds: input.duration || 5,
+        aspectRatio: input.videoFormat || '9:16',
       },
     });
 

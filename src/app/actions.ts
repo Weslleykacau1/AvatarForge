@@ -6,13 +6,20 @@ import { generateTitle } from "@/ai/flows/generate-title-flow";
 import { generateAction } from "@/ai/flows/generate-action-flow";
 import { analyzeImage } from "@/ai/flows/analyze-image-flow";
 import { analyzeText } from "@/ai/flows/analyze-text-flow";
-
+import { generateDialogue } from "@/ai/flows/generate-dialogue-flow";
+import { generateSeo } from "@/ai/flows/generate-seo-flow";
 
 const generateVideoSchema = z.object({
   sceneTitle: z.string().min(1, "Título da cena é obrigatório."),
   scenarioPrompt: z.string().min(1, "Descrição do cenário é obrigatória."),
   actionPrompt: z.string().min(1, "Ação principal é obrigatória."),
   sceneImageDataUri: z.string().optional(),
+  dialogue: z.string().optional(),
+  cameraAngle: z.string().optional(),
+  duration: z.number().optional(),
+  videoFormat: z.string().optional(),
+  allowDigitalText: z.boolean().optional(),
+  allowPhysicalText: z.boolean().optional(),
 });
 
 type VideoState = {
@@ -149,5 +156,57 @@ export async function analyzeTextAction(
     } catch (error) {
         const errorMessage = error instanceof Error ? error.message : "An unknown error occurred.";
         return { success: false, error: `Text analysis failed: ${errorMessage}` };
+    }
+}
+
+const generateDialogueSchema = z.object({
+    context: z.string(),
+});
+
+type DialogueState = {
+    success: boolean;
+    dialogue?: string;
+    error?: string;
+};
+
+export async function generateDialogueAction(
+    data: z.infer<typeof generateDialogueSchema>
+): Promise<DialogueState> {
+    const validatedFields = generateDialogueSchema.safeParse(data);
+    if (!validatedFields.success) {
+        return { success: false, error: 'Invalid input' };
+    }
+    try {
+        const result = await generateDialogue(validatedFields.data);
+        return { success: true, dialogue: result.dialogue };
+    } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : "An unknown error occurred.";
+        return { success: false, error: `Dialogue generation failed: ${errorMessage}` };
+    }
+}
+
+const generateSeoSchema = z.object({
+    context: z.string(),
+});
+
+type SeoState = {
+    success: boolean;
+    seo?: string;
+    error?: string;
+};
+
+export async function generateSeoAction(
+    data: z.infer<typeof generateSeoSchema>
+): Promise<SeoState> {
+    const validatedFields = generateSeoSchema.safeParse(data);
+    if (!validatedFields.success) {
+        return { success: false, error: 'Invalid input' };
+    }
+    try {
+        const result = await generateSeo(validatedFields.data);
+        return { success: true, seo: result.seo };
+    } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : "An unknown error occurred.";
+        return { success: false, error: `SEO generation failed: ${errorMessage}` };
     }
 }

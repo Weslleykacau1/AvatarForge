@@ -4,7 +4,7 @@ import { useEffect, useState, useTransition, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Bot, Save, Trash2, Plus, Loader, Clapperboard, Edit, User, Shirt, Sparkles, Film, Wand2, FileImage, UploadCloud, FileText, Search } from "lucide-react";
+import { Bot, Save, Trash2, Plus, Loader, Clapperboard, Edit, User, Shirt, Sparkles, Film, Wand2, FileImage, UploadCloud, FileText, Search, MessageSquare, Briefcase } from "lucide-react";
 import Image from "next/image";
 
 import { Button } from "@/components/ui/button";
@@ -15,10 +15,11 @@ import { Textarea } from "@/components/ui/textarea";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
 import { useGallery } from "@/hooks/use-gallery";
-import { generateVideoAction, generateTitleAction, generateActionAction, analyzeImageAction, analyzeTextAction } from "@/app/actions";
+import { generateVideoAction, generateTitleAction, generateActionAction, analyzeImageAction, analyzeTextAction, generateDialogueAction, generateSeoAction } from "@/app/actions";
 import type { Influencer } from "@/app/types";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
 const influencerSchema = z.object({
   name: z.string().min(1, "Nome é obrigatório.").max(100, "Nome muito longo."),
@@ -35,6 +36,12 @@ const influencerSchema = z.object({
   uniqueTrait: z.string().optional(),
   age: z.string().optional(),
   gender: z.string().optional(),
+  dialogue: z.string().optional(),
+  cameraAngle: z.string().optional(),
+  duration: z.coerce.number().optional(),
+  videoFormat: z.string().optional(),
+  allowDigitalText: z.string().optional(),
+  allowPhysicalText: z.string().optional(),
 });
 
 type InfluencerFormData = z.infer<typeof influencerSchema>;
@@ -49,6 +56,8 @@ export default function AvatarForgePage() {
   const [isGeneratingAction, startActionTransition] = useTransition();
   const [isAnalyzingImage, startImageAnalysisTransition] = useTransition();
   const [isAnalyzingText, startTextAnalysisTransition] = useTransition();
+  const [isGeneratingDialogue, startDialogueTransition] = useTransition();
+  const [isGeneratingSeo, startSeoTransition] = useTransition();
   const [referenceImagePreview, setReferenceImagePreview] = useState<string | null>(null);
 
 
@@ -73,6 +82,12 @@ export default function AvatarForgePage() {
       uniqueTrait: "",
       age: "",
       gender: "",
+      dialogue: "",
+      cameraAngle: "dynamic",
+      duration: 8,
+      videoFormat: "9:16",
+      allowDigitalText: "false",
+      allowPhysicalText: "false",
     },
   });
 
@@ -97,6 +112,12 @@ export default function AvatarForgePage() {
         scenarioPrompt: `${influencerDescription}\n\n**Cenário:** ${data.scenarioPrompt}`,
         actionPrompt: data.actionPrompt,
         sceneImageDataUri: data.sceneImage,
+        dialogue: data.dialogue,
+        cameraAngle: data.cameraAngle,
+        duration: data.duration,
+        videoFormat: data.videoFormat,
+        allowDigitalText: data.allowDigitalText === 'true',
+        allowPhysicalText: data.allowPhysicalText === 'true',
       });
 
       if (result.success && result.videoDataUri) {
@@ -154,6 +175,43 @@ export default function AvatarForgePage() {
         toast({ title: "Ação Gerada!" });
       } else {
         toast({ variant: "destructive", title: "Falha ao gerar ação", description: result.error });
+      }
+    });
+  };
+  
+  const handleGenerateDialogue = () => {
+    const scenario = form.getValues("scenarioPrompt");
+    const action = form.getValues("actionPrompt");
+    if (!scenario || !action) {
+      toast({ variant: "destructive", title: "Faltando contexto", description: "Preencha o cenário e a ação." });
+      return;
+    }
+    startDialogueTransition(async () => {
+      const result = await generateDialogueAction({ context: `Cenário: ${scenario}, Ação: ${action}` });
+      if (result.success && result.dialogue) {
+        form.setValue("dialogue", result.dialogue, { shouldValidate: true });
+        toast({ title: "Diálogo Gerado!" });
+      } else {
+        toast({ variant: "destructive", title: "Falha ao gerar diálogo", description: result.error });
+      }
+    });
+  };
+
+  const handleGenerateSeo = () => {
+    const title = form.getValues("name");
+    const scenario = form.getValues("scenarioPrompt");
+    const action = form.getValues("actionPrompt");
+    if (!title || !scenario || !action) {
+      toast({ variant: "destructive", title: "Faltando contexto", description: "Preencha o título, cenário e ação." });
+      return;
+    }
+    startSeoTransition(async () => {
+      const result = await generateSeoAction({ context: `Título: ${title}, Cenário: ${scenario}, Ação: ${action}` });
+      if (result.success && result.seo) {
+        // For now, we'll just toast the result. A real app might put this in another field.
+        toast({ title: "Conteúdo SEO Gerado!", description: <pre className="whitespace-pre-wrap">{result.seo}</pre>, duration: 9000 });
+      } else {
+        toast({ variant: "destructive", title: "Falha ao gerar SEO", description: result.error });
       }
     });
   };
@@ -241,7 +299,7 @@ export default function AvatarForgePage() {
   };
 
   const handleNewInfluencer = () => {
-    form.reset({ name: "", niche: "", scenarioPrompt: "", actionPrompt: "", sceneImage: "", referenceImage: "", characteristics: "", personalityTraits: "", appearanceDetails: "", clothing: "", shortBio: "", uniqueTrait: "", age: "", gender: "" });
+    form.reset({ name: "", niche: "", scenarioPrompt: "", actionPrompt: "", sceneImage: "", referenceImage: "", characteristics: "", personalityTraits: "", appearanceDetails: "", clothing: "", shortBio: "", uniqueTrait: "", age: "", gender: "", dialogue: "", cameraAngle: "dynamic", duration: 8, videoFormat: "9:16", allowDigitalText: "false", allowPhysicalText: "false" });
     setCurrentId(null);
     setVideoUrl(null);
     setReferenceImagePreview(null);
@@ -410,7 +468,6 @@ export default function AvatarForgePage() {
                       </FormItem>
                     )} />
 
-
                     <FormField control={form.control} name="scenarioPrompt" render={({ field }) => (
                       <FormItem>
                         <FormLabel>Cenário</FormLabel>
@@ -434,6 +491,96 @@ export default function AvatarForgePage() {
                     <Button type="button" variant="outline" size="sm" onClick={handleGenerateAction} disabled={isGeneratingAction}>
                       {isGeneratingAction ? <Loader className="animate-spin mr-2" /> : <Wand2 />} Gerar Ação com IA
                     </Button>
+
+                    <FormField control={form.control} name="dialogue" render={({ field }) => (
+                        <FormItem>
+                            <FormLabel className="flex items-center gap-2"><MessageSquare /> Diálogo</FormLabel>
+                            <FormControl><Textarea placeholder="O que o influenciador diz (em Português do Brasil)..." {...field} rows={3} /></FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )} />
+                    <div className="flex gap-2">
+                        <Button type="button" variant="outline" size="sm" onClick={handleGenerateDialogue} disabled={isGeneratingDialogue}>
+                            {isGeneratingDialogue ? <Loader className="animate-spin mr-2"/> : <Bot />} Gerar Diálogo
+                        </Button>
+                        <Button type="button" variant="outline" size="sm" onClick={handleGenerateSeo} disabled={isGeneratingSeo}>
+                            {isGeneratingSeo ? <Loader className="animate-spin mr-2"/> : <Briefcase />} Gerar SEO
+                        </Button>
+                    </div>
+
+                    <FormField control={form.control} name="cameraAngle" render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>Ângulo da Câmera</FormLabel>
+                            <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                <FormControl><SelectTrigger><SelectValue placeholder="Selecione..." /></SelectTrigger></FormControl>
+                                <SelectContent>
+                                    <SelectItem value="dynamic">Câmera Dinâmica (Criatividade da IA)</SelectItem>
+                                    <SelectItem value="close-up">Close-up</SelectItem>
+                                    <SelectItem value="medium-shot">Plano Médio</SelectItem>
+                                    <SelectItem value="full-shot">Plano Americano</SelectItem>
+                                </SelectContent>
+                            </Select>
+                            <FormMessage />
+                        </FormItem>
+                    )} />
+
+                    <FormField control={form.control} name="duration" render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>Duração</FormLabel>
+                            <Select onValueChange={(value) => field.onChange(parseInt(value))} defaultValue={String(field.value)}>
+                                <FormControl><SelectTrigger><SelectValue placeholder="Selecione..." /></SelectTrigger></FormControl>
+                                <SelectContent>
+                                    <SelectItem value="5">5 seg</SelectItem>
+                                    <SelectItem value="8">8 seg</SelectItem>
+                                </SelectContent>
+                            </Select>
+                            <FormMessage />
+                        </FormItem>
+                    )} />
+
+                    <FormField control={form.control} name="videoFormat" render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>Formato do Vídeo</FormLabel>
+                            <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                <FormControl><SelectTrigger><SelectValue placeholder="Selecione..." /></SelectTrigger></FormControl>
+                                <SelectContent>
+                                    <SelectItem value="9:16">9:16 (Vertical)</SelectItem>
+                                    <SelectItem value="16:9">16:9 (Horizontal)</SelectItem>
+                                    <SelectItem value="1:1">1:1 (Quadrado)</SelectItem>
+                                </SelectContent>
+                            </Select>
+                            <FormMessage />
+                        </FormItem>
+                    )} />
+
+                    <Card className="p-4 bg-muted/30">
+                        <CardTitle className="text-base mb-2">Controle de Texto no Ecrã</CardTitle>
+                        <div className="space-y-4">
+                            <FormField control={form.control} name="allowDigitalText" render={({ field }) => (
+                                <FormItem className="space-y-2">
+                                    <FormLabel>Permite textos digitais na tela?</FormLabel>
+                                    <FormControl>
+                                        <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="flex gap-4">
+                                            <FormItem className="flex items-center space-x-2"><FormControl><RadioGroupItem value="true" /></FormControl><FormLabel className="font-normal">Sim</FormLabel></FormItem>
+                                            <FormItem className="flex items-center space-x-2"><FormControl><RadioGroupItem value="false" /></FormControl><FormLabel className="font-normal">Não</FormLabel></FormItem>
+                                        </RadioGroup>
+                                    </FormControl>
+                                </FormItem>
+                            )} />
+                             <FormField control={form.control} name="allowPhysicalText" render={({ field }) => (
+                                <FormItem className="space-y-2">
+                                    <FormLabel>Apenas textos físicos como rótulos e placas reais?</FormLabel>
+                                    <FormControl>
+                                        <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="flex gap-4">
+                                            <FormItem className="flex items-center space-x-2"><FormControl><RadioGroupItem value="true" /></FormControl><FormLabel className="font-normal">Sim</FormLabel></FormItem>
+                                            <FormItem className="flex items-center space-x-2"><FormControl><RadioGroupItem value="false" /></FormControl><FormLabel className="font-normal">Não</FormLabel></FormItem>
+                                        </RadioGroup>
+                                    </FormControl>
+                                </FormItem>
+                            )} />
+                        </div>
+                    </Card>
+
 
                     <FormField control={form.control} name="sceneImage" render={({ field }) => (
                       <FormItem>
