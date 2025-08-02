@@ -1097,6 +1097,7 @@ export default function AvatarForgePage() {
                                   type="button"
                                   onClick={() => handleGenerateScript('markdown')}
                                   disabled={isGeneratingScript || !getInfluencerDescription(form.getValues()) || !form.getValues("scenarioPrompt")}
+                                  className={cn("text-white bg-gradient-to-r from-gradient-purple to-gradient-orange hover:from-gradient-purple/90 hover:to-gradient-orange/90")}
                               >
                                   {isGeneratingScript ? <Loader className="animate-spin mr-2" /> : <Bot />}
                                   Gerar Roteiro (Markdown)
