@@ -70,39 +70,39 @@ const exampleScript = `{
   "scenes": [
     {
       "camera_direction": "Dynamic camera focusing on Dr. Roberto as he begins to speak, slight zoom in.",
+      "dialogue": "Você sabia que a indústria farmacêutica esconde um segredo sobre o seu sono?",
       "end_time": 2,
       "expression": "Serious and concerned",
       "id": 1,
       "start_time": 0,
-      "visual_prompt": "Dr. Roberto in a professional studio setting with blue lighting and a brick wall background. He is looking directly at the camera with a concerned expression.",
-      "dialogue": "Você sabia que a indústria farmacêutica esconde um segredo sobre o seu sono?"
+      "visual_prompt": "Dr. Roberto in a professional studio setting with blue lighting and a brick wall background. He is looking directly at the camera with a concerned expression."
     },
     {
       "camera_direction": "Camera zooms in slightly as Dr. Roberto leans forward.",
+      "dialogue": "E se eu te dissesse que existe uma solução natural e eficaz para noites tranquilas, sem os efeitos colaterais dos remédios?",
       "end_time": 4,
       "expression": "Intrigued and conspiratorial",
       "id": 2,
       "start_time": 2,
-      "visual_prompt": "Close-up of Dr. Roberto's face, emphasizing his eyes and facial expression. Blue studio lighting.",
-      "dialogue": "E se eu te dissesse que existe uma solução natural e eficaz para noites tranquilas, sem os efeitos colaterais dos remédios?"
+      "visual_prompt": "Close-up of Dr. Roberto's face, emphasizing his eyes and facial expression. Blue studio lighting."
     },
     {
       "camera_direction": "Camera shows Dr. Roberto holding a bottle of Night Melatonina.",
+      "dialogue": "Apresento a 'Night Melatonina', um suplemento alimentar em pastilha de goma que vai te ajudar a ter noites de sono revigorantes.",
       "end_time": 6,
       "expression": "Confident and reassuring",
       "id": 3,
       "start_time": 4,
-      "visual_prompt": "Dr. Roberto holding a bottle of 'Night Melatonina' in his hand, showcasing the blue bottle and label. Studio setting with soft blue lighting.",
-      "dialogue": "Apresento a 'Night Melatonina', um suplemento alimentar em pastilha de goma que vai te ajudar a ter noites de sono revigorantes."
+      "visual_prompt": "Dr. Roberto holding a bottle of 'Night Melatonina' in his hand, showcasing the blue bottle and label. Studio setting with soft blue lighting."
     },
     {
       "camera_direction": "Close-up of the Night Melatonina bottle, then back to Dr. Roberto.",
+      "dialogue": "Experimente 'Night Melatonina' e acorde se sentindo renovado! Seu sono de qualidade ao seu alcance.",
       "end_time": 8,
       "expression": "Smiling and encouraging",
       "id": 4,
       "start_time": 6,
-      "visual_prompt": "Visual of 'Night Melatonina' bottle and blue gummies. Dr. Roberto smiling and looking directly at the camera, gesturing towards the product.",
-      "dialogue": "Experimente 'Night Melatonina' e acorde se sentindo renovado! Seu sono de qualidade ao seu alcance."
+      "visual_prompt": "Visual of 'Night Melatonina' bottle and blue gummies. Dr. Roberto smiling and looking directly at the camera, gesturing towards the product."
     }
   ],
   "title": "Médico REVELA segredo que a indústria farmacêutica ESCONDE!",
@@ -775,13 +775,6 @@ export default function AvatarForgePage() {
                             </TabsContent>
 
                             <TabsContent value="scene" className="space-y-6 pt-4">
-                              <div className="flex items-center justify-end">
-                                <Button type="button" variant="secondary" size="sm" onClick={handleSaveScene}>
-                                      <Save className="mr-2 h-4 w-4" />
-                                      Salvar Cena
-                                </Button>
-                              </div>
-                              
                               <FormField control={form.control} name="name" render={({ field }) => (
                                 <FormItem>
                                   <FormLabel>Título da Cena</FormLabel>
@@ -1155,8 +1148,9 @@ export default function AvatarForgePage() {
                                 <Button onClick={() => { setActiveTab("creator"); handleNewScene(); }}>
                                   <Plus className="mr-2" /> Nova Cena
                                 </Button>
-                                <Button variant="outline" onClick={showNotImplementedToast}>
-                                  <Download className="mr-2" /> Exportar para CSV
+                                 <Button variant="secondary" onClick={handleSaveScene}>
+                                    <Save className="mr-2 h-4 w-4" />
+                                    Salvar Cena Atual
                                 </Button>
                             </div>
                         </div>
